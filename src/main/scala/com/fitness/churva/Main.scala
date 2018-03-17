@@ -15,7 +15,7 @@ object Main {
       <.div(
         AppBar(position = AppBar.static, color = AppBar.default)()(
           Toolbar()()(
-            Typography(`type` = Typography.Type.title, color = Typography.Color.inherit)()(
+            Typography(variant = Typography.Variant.title, color = Typography.Color.inherit)()(
               "Fitness Web Application"
             )
           )
