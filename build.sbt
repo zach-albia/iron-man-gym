@@ -21,6 +21,9 @@ skip in packageJSDependencies := false
 webpackBundlingMode := BundlingMode.LibraryOnly()
 useYarn := true
 emitSourceMaps := false
+scalaJSUseMainModuleInitializer := true
+scalaJSUseMainModuleInitializer in Test := false
+scalacOptions += "-Ypartial-unification"
 
 libraryDependencies ++=
   "com.pangwarta" %%% "scalajs-react-material-ui" % "0.1.0-SNAPSHOT" ::
