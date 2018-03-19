@@ -3,11 +3,12 @@ package com.fitness.churva
 import com.pangwarta.sjrmui._
 import japgolly.scalajs.react.vdom.html_<^._
 import org.scalajs.dom
+import dom.document
 
 object Main {
 
   def main(args: Array[String]): Unit = {
-    layout.renderIntoDOM(dom.document.getElementById("root"))
+    layout.renderIntoDOM(document.getElementById("root"))
   }
 
   private val layout =

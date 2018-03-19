@@ -26,7 +26,9 @@ scalaJSUseMainModuleInitializer in Test := false
 scalacOptions += "-Ypartial-unification"
 
 libraryDependencies ++=
-  "com.pangwarta" %%% "scalajs-react-material-ui" % "0.1.0-SNAPSHOT" ::
+  "com.pangwarta"     %%% "scalajs-react-material-ui" % "0.1.0-SNAPSHOT" ::
+  "org.typelevel"     %%% "squants"                   % "1.3.0"          ::
+  "io.github.cquiroz" %%% "scala-java-time"           % "2.0.0-M13"      ::
   Nil
 
 enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin)
