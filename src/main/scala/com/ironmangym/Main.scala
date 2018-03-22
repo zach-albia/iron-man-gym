@@ -1,13 +1,12 @@
 package com.ironmangym
 
+import com.ironmangym.CssSettings._
 import com.ironmangym.domain.SPACircuit
 import com.ironmangym.view._
 import com.pangwarta.sjrmui._
 import japgolly.scalajs.react.extra.router._
 import japgolly.scalajs.react.vdom.html_<^._
 import org.scalajs.dom
-import scalacss.ScalaCssReact._
-import CssSettings._
 
 object Main {
 

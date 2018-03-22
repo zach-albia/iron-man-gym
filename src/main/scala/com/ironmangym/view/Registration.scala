@@ -7,6 +7,9 @@ import diode.react.{ ModelProxy, ReactConnectProxy }
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
 import japgolly.scalajs.react.extra.router.RouterCtl
+import Styles._
+
+import scala.scalajs.js
 
 object Registration {
 
@@ -23,9 +26,36 @@ object Registration {
         ^.maxWidth := 900.px,
         ^.paddingLeft := 24.px,
         ^.paddingRight := 24.px,
-        Typography(variant = Typography.Variant.headline)()("Sign Up"),
-        FormControl()()(
-          FormHelperText()()("Foo")
+        Grid(container = true)()(
+          Grid(item = true, xs = 12, md = 5)()(
+            Paper(className = Styles.paperPadding)()(
+              Typography(variant = Typography.Variant.headline)()("Sign up as a Trainee"),
+              FormControl()()(
+                TextField(
+                  id    = "name",
+                  label = "Name"
+                )()()
+              )
+            )
+          ),
+          Grid(item    = true, xs = 12, md = 2, classes = Map())("style" -> js.Dynamic.literal(position = "relative"))(
+            Typography(
+              variant   = Typography.Variant.headline,
+              align     = Typography.Alignment.center,
+              className = Styles.verticalCenter
+            )()("or")
+          ),
+          Grid(item = true, xs = 12, md = 5)()(
+            Paper(className = Styles.paperPadding)()(
+              Typography(variant = Typography.Variant.headline)()("Sign up as a Trainer"),
+              FormControl()()(
+                TextField(
+                  id    = "name",
+                  label = "Name"
+                )()()
+              )
+            )
+          )
         )
       )
     }

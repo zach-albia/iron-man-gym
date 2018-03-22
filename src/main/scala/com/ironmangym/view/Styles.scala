@@ -12,6 +12,21 @@ object Styles extends StyleSheet.Inline {
     margin :=! "0 auto"
   )
 
+  val verticalCenter = style(
+    media.minWidth(960.px)(
+      position.absolute,
+      top(50.%%),
+      left(50.%%),
+      height(30.%%),
+      width(50.%%),
+      margin :=! "-15% 0 0 -25%"
+    )
+  )
+
+  val paperPadding = style(
+    padding(24.px)
+  )
+
   implicit def styleAToClassName(styleA: StyleA): String =
     styleA.className.value
 
