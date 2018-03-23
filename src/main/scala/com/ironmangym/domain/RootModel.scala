@@ -5,14 +5,16 @@ import java.time.LocalDate
 import squants.space.Length
 import squants.mass.{ AreaDensity, Mass }
 
+sealed trait User
+
 case class Trainee(
     name:            String,
-    birthDate:       LocalDate,
+    birthday:        LocalDate,
     height:          Length,
     phoneNumber:     String,
     credentials:     Credentials,
     trainingProgram: Option[TrainingProgram]
-)
+) extends User
 
 case class Credentials(
     username: String,
@@ -23,7 +25,7 @@ case class Trainer(
     name:             String,
     credentials:      Credentials,
     trainingPrograms: Map[Trainee, TrainingProgram]
-)
+) extends User
 
 case class TrainingProgram(
     trainer:          Trainer,
@@ -63,8 +65,9 @@ case class TrainingModule(
 )
 
 case class Users(
-    trainer: Seq[Trainer],
-    trainee: Seq[Trainee]
+    trainer:     Seq[Trainer],
+    trainee:     Seq[Trainee],
+    currentUser: Option[User]
 )
 
 case class RootModel(
