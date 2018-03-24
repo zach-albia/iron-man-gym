@@ -4,30 +4,46 @@ import java.time.YearMonth
 
 import com.ironmangym.Main.Page
 import com.ironmangym.domain._
+import com.ironmangym.view.Styles._
+import com.pangwarta.sjrmui._
 import diode.react.{ ModelProxy, ReactConnectProxy }
 import japgolly.scalajs.react._
-import japgolly.scalajs.react.vdom.html_<^._
 import japgolly.scalajs.react.extra.router.RouterCtl
-import Styles._
-import com.pangwarta.sjrmui.{ Button, FormControl, FormLabel, Grid, Input, InputAdornment, Paper, Select, TextField, Typography }
+import japgolly.scalajs.react.vdom.html_<^._
+import org.scalajs.dom.raw.{ HTMLInputElement, HTMLSelectElement }
 
 import scala.scalajs.js
+import scala.scalajs.js.UndefOr._
 
 object Registration {
 
   case class Props(router: RouterCtl[Page], proxy: ModelProxy[Users])
 
   case class State(
-      usersWrapper:  ReactConnectProxy[Users],
-      traineeName:   Option[String],
-      contactNumber: Option[String],
-      birthday:      js.Date,
-      username:      Option[String],
-      password:      Option[String],
-      trainerName:   Option[String]
-  )
+      usersWrapper:     ReactConnectProxy[Users],
+      traineeName:      Option[String],
+      contactNumber:    Option[String],
+      birthday:         js.Date,
+      height:           Option[String],
+      username:         Option[String],
+      password:         Option[String],
+      trainerName:      Option[String],
+      traineeFormValid: Boolean,
+      trainerFormValid: Boolean
+  ) {
+    def validate(): State =
+      copy(
+        traineeFormValid =
+          traineeName.exists(_.nonEmpty) &&
+            height.exists(_.nonEmpty) &&
+            username.exists(_.nonEmpty) &&
+            password.exists(_.nonEmpty),
+        trainerFormValid =
+          trainerName.exists(_.nonEmpty)
+      )
+  }
 
-  val monthNames = List("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+  val monthNames = Seq("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 
   private class Backend(bs: BackendScope[Props, State]) {
 
@@ -47,11 +63,15 @@ object Registration {
                   id       = "traineeName",
                   label    = "Name",
                   required = true,
-                  onChange = (e: ReactEvent) => formChange(e)
+                  onChange = (e: ReactEvent) => traineeNameChanged(bs, e),
+                  value    = s.traineeName.getOrElse("").toString,
+                  error    = s.traineeName.exists(_.isEmpty)
                 )()(),
                 TextField(
-                  id    = "traineePhoneNumber",
-                  label = "Contact Number"
+                  id       = "traineePhoneNumber",
+                  label    = "Contact Number (optional)",
+                  onChange = (e: ReactEvent) => contactNumberChanged(bs, e),
+                  value    = s.contactNumber.getOrElse("").toString
                 )()(),
                 FormLabel(component = "legend", className = Styles.registrationBirthday)()("Birthday"),
                 <.div(
@@ -63,7 +83,8 @@ object Registration {
                     SelectProps = js.Dynamic.literal(
                       native = true,
                       value  = s.birthday.getFullYear
-                    ).asInstanceOf[Select.Props]
+                    ).asInstanceOf[Select.Props],
+                    onChange    = (e: ReactEvent) => birthdayYearChanged(bs, e)
                   )()(
                       (1900 to new js.Date().getFullYear).map(
                         year => <.option(^.key := s"year-$year", ^.value := year, year).render
@@ -75,10 +96,11 @@ object Registration {
                     SelectProps = js.Dynamic.literal(
                       native = true,
                       value  = s.birthday.getMonth
-                    ).asInstanceOf[Select.Props]
+                    ).asInstanceOf[Select.Props],
+                    onChange    = (e: ReactEvent) => birthdayMonthChanged(bs, e)
                   )()(
-                      (1 to 12).map(
-                        month => <.option(^.key := s"month-$month", ^.value := month, monthNames(month - 1)).render
+                      (0 to 11).map(
+                        month => <.option(^.key := s"month-$month", ^.value := month, monthNames(month)).render
                       ): _*
                     ),
                   TextField(
@@ -87,7 +109,8 @@ object Registration {
                     SelectProps = js.Dynamic.literal(
                       native = true,
                       value  = s.birthday.getDate
-                    ).asInstanceOf[Select.Props]
+                    ).asInstanceOf[Select.Props],
+                    onChange    = (e: ReactEvent) => birthdayDateChanged(bs, e)
                   )()(
                       (1 to daysInMonth(s)).map(
                         date => <.option(^.key := s"date-$date", ^.value := date, date).render
@@ -97,25 +120,37 @@ object Registration {
                     id         = "height",
                     label      = "Height",
                     required   = true,
-                    InputProps = {
-                      val adornment = InputAdornment(position = InputAdornment.Position.end)()("meters")
-                      val p = js.Dynamic.literal()
-                      p.updateDynamic("endAdornment")(adornment.rawNode.asInstanceOf[js.Any])
-                      p.asInstanceOf[Input.Props]
-                    }
+                    InputProps = js.Dynamic.literal(
+                      endAdornment = InputAdornment(position = InputAdornment.Position.end)()("meters")
+                        .rawNode.asInstanceOf[js.Any]
+                    ).asInstanceOf[Input.Props],
+                    typ        = "number",
+                    value      = s.height.getOrElse("").toString,
+                    onChange   = (e: ReactEvent) => heightChanged(bs, e),
+                    error      = s.height.exists(_.isEmpty)
                   )()(),
                   TextField(
                     id       = "traineeUsername",
                     label    = "Username",
-                    required = true
+                    required = true,
+                    value    = s.username.getOrElse("").toString,
+                    onChange = (e: ReactEvent) => usernameChanged(bs, e),
+                    error    = s.username.exists(_.isEmpty)
                   )()(),
                   TextField(
                     id       = "traineePassword",
                     label    = "Password",
                     required = true,
-                    typ      = "password"
+                    typ      = "password",
+                    value    = s.password.getOrElse("").toString,
+                    onChange = (e: ReactEvent) => passwordChanged(bs, e),
+                    error    = s.password.exists(_.isEmpty)
                   )()(),
-                  Button(variant   = Button.Variant.raised, className = Styles.registrationButton)()("Create Account")
+                  Button(
+                    variant   = Button.Variant.raised,
+                    className = Styles.registrationButton,
+                    disabled  = !s.traineeFormValid
+                  )()("Create Account")
                 )
               )
             )
@@ -134,32 +169,94 @@ object Registration {
                 TextField(
                   id       = "name",
                   label    = "Name",
-                  required = true
+                  required = true,
+                  value    = s.trainerName.getOrElse("").toString,
+                  onChange = (e: ReactEvent) => trainerNameChanged(bs, e),
+                  error    = s.trainerName.exists(_.isEmpty)
                 )()(),
-                Button(variant   = Button.Variant.raised, className = Styles.registrationButton)()("Create Account")
+                Button(
+                  variant   = Button.Variant.raised,
+                  className = Styles.registrationButton,
+                  disabled  = !s.trainerFormValid
+                )()("Create Account")
               )
             )
           )
         )
       )
 
-    private def daysInMonth(s: State) = YearMonth.of(s.birthday.getFullYear, s.birthday.getMonth + 1).lengthOfMonth
+    def daysInMonth(s: State) = YearMonth.of(s.birthday.getFullYear, s.birthday.getMonth + 1).lengthOfMonth
 
-    def formChange(e: ReactEvent): Callback =
-      Callback.alert("foo")
+    def traineeNameChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
+      val traineeName = getValue(e)
+      fieldChanged($, _.copy(traineeName = Some(traineeName)).validate())
+    }
 
+    def contactNumberChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
+      val contactNumber = getValue(e)
+      fieldChanged($, _.copy(contactNumber = Some(contactNumber)).validate())
+    }
+
+    def birthdayYearChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
+      val birthdayYear = getValue(e)
+      fieldChanged($, s =>
+        s.copy(birthday =
+          new js.Date(birthdayYear.toInt, s.birthday.getMonth, math.min(s.birthday.getDate(), daysInMonth(s)))).validate())
+    }
+
+    def birthdayMonthChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
+      val birthdayMonth = e.currentTarget.asInstanceOf[HTMLSelectElement].selectedIndex
+      fieldChanged($, s =>
+        s.copy(birthday =
+          new js.Date(s.birthday.getFullYear, birthdayMonth, math.min(s.birthday.getDate(), daysInMonth(s)))).validate())
+    }
+
+    def birthdayDateChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
+      val birthdayDate = getValue(e)
+      fieldChanged($, s =>
+        s.copy(birthday =
+          new js.Date(s.birthday.getFullYear, s.birthday.getMonth, birthdayDate.toInt)).validate())
+    }
+
+    def heightChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
+      val height = getValue(e)
+      fieldChanged($, _.copy(height = Some(height)).validate())
+    }
+
+    def usernameChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
+      val username = getValue(e)
+      fieldChanged($, _.copy(username = Some(username)).validate())
+    }
+
+    def passwordChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
+      val password = getValue(e)
+      fieldChanged($, _.copy(password = Some(password)).validate())
+    }
+
+    def trainerNameChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
+      val trainerName = getValue(e)
+      fieldChanged($, _.copy(trainerName = Some(trainerName)).validate())
+    }
+
+    def getValue(e: ReactEvent) = e.currentTarget.asInstanceOf[HTMLInputElement].value
+
+    private def fieldChanged($: BackendScope[Props, State], copyFunc: State => State) =
+      $.modState(copyFunc)
   }
 
   private val component = ScalaComponent.builder[Props]("Registration")
     .initialStateFromProps(props =>
       State(
         props.proxy.connect(identity),
-        None,
-        None,
-        new js.Date(2000, 0),
-        None,
-        None,
-        None
+        traineeName      = None,
+        contactNumber    = None,
+        birthday         = new js.Date(2000, 0),
+        height           = None,
+        username         = None,
+        password         = None,
+        trainerName      = None,
+        traineeFormValid = false,
+        trainerFormValid = false
       ))
     .renderBackend[Backend]
     .build
