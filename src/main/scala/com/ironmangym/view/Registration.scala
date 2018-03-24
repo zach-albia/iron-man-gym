@@ -1,6 +1,6 @@
 package com.ironmangym.view
 
-import java.time.YearMonth
+import java.time.{ LocalDate, YearMonth }
 
 import com.ironmangym.Main.Page
 import com.ironmangym.domain._
@@ -11,6 +11,7 @@ import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router.RouterCtl
 import japgolly.scalajs.react.vdom.html_<^._
 import org.scalajs.dom.raw.{ HTMLInputElement, HTMLSelectElement }
+import squants.space.Meters
 
 import scala.scalajs.js
 import scala.scalajs.js.UndefOr._
@@ -149,7 +150,8 @@ object Registration {
                   Button(
                     variant   = Button.Variant.raised,
                     className = Styles.registrationButton,
-                    disabled  = !s.traineeFormValid
+                    disabled  = !s.traineeFormValid,
+                    onClick   = (e: ReactMouseEvent) => createTraineeAccount(bs, e)
                   )()("Create Account")
                 )
               )
@@ -185,7 +187,8 @@ object Registration {
         )
       )
 
-    def daysInMonth(s: State) = YearMonth.of(s.birthday.getFullYear, s.birthday.getMonth + 1).lengthOfMonth
+    private def daysInMonth(s: State) =
+      YearMonth.of(s.birthday.getFullYear, s.birthday.getMonth + 1).lengthOfMonth
 
     def traineeNameChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
       val traineeName = getValue(e)
@@ -238,7 +241,20 @@ object Registration {
       fieldChanged($, _.copy(trainerName = Some(trainerName)).validate())
     }
 
-    def getValue(e: ReactEvent) = e.currentTarget.asInstanceOf[HTMLInputElement].value
+    def createTraineeAccount($: BackendScope[Props, State], e: ReactMouseEvent): Callback =
+      $.props >>= (p => $.state >>= (s =>
+        p.proxy.dispatchCB(
+          CreateTraineeAccount(Trainee(
+            name            = s.traineeName.get,
+            birthday        = Date(s.birthday.getFullYear, s.birthday.getMonth() + 1, s.birthday.getDate),
+            height          = s.height.get.toDouble,
+            phoneNumber     = s.contactNumber,
+            credentials     = Credentials(s.username.get, s.password.get),
+            trainingProgram = None
+          ))
+        )))
+
+    private def getValue(e: ReactEvent) = e.currentTarget.asInstanceOf[HTMLInputElement].value
 
     private def fieldChanged($: BackendScope[Props, State], copyFunc: State => State) =
       $.modState(copyFunc)

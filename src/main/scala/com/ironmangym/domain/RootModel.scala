@@ -9,12 +9,18 @@ sealed trait User
 
 case class Trainee(
     name:            String,
-    birthday:        LocalDate,
-    height:          Length,
-    phoneNumber:     String,
+    birthday:        Date,
+    height:          Double,
+    phoneNumber:     Option[String],
     credentials:     Credentials,
-    trainingProgram: Option[TrainingProgram]
+    trainingProgram: Option[TrainingProgram] = None
 ) extends User
+
+case class Date(
+    year:  Int,
+    month: Int,
+    date:  Int
+)
 
 case class Credentials(
     username: String,
@@ -22,41 +28,35 @@ case class Credentials(
 )
 
 case class Trainer(
-    name:             String,
-    credentials:      Credentials,
-    trainingPrograms: Map[Trainee, TrainingProgram]
+    name:        String,
+    credentials: Credentials
 ) extends User
 
 case class TrainingProgram(
-    trainer:          Trainer,
-    trainee:          Trainee,
-    trainingSchedule: TrainingSchedule,
-    goal:             Goal
+    trainer:     String,
+    workoutDays: Seq[WorkoutDay],
+    goal:        Goal
 )
 
 case class Progress(
     bodyFatPercentage: Double,
-    bodyMassIndex:     AreaDensity,
+    bodyMassIndex:     Double,
     weight:            Mass
 )
 
 case class Goal(
     bodyFatPercentage: Option[Double],
-    bodyMassIndex:     Option[AreaDensity],
-    weight:            Option[Mass]
-)
-
-case class TrainingSchedule(
-    workoutDays: Seq[WorkoutDay]
+    bodyMassIndex:     Option[Double],
+    weight:            Option[Double]
 )
 
 case class WorkoutDay(
-    date:              LocalDate,
+    date:              Date,
     description:       String,
     done:              Boolean,
     bodyFatPercentage: Double,
-    bodyMassIndex:     AreaDensity,
-    weight:            Mass
+    bodyMassIndex:     Double,
+    weight:            Double
 )
 
 case class TrainingModule(
@@ -65,8 +65,8 @@ case class TrainingModule(
 )
 
 case class Users(
-    trainer:     Seq[Trainer],
-    trainee:     Seq[Trainee],
+    trainers:    Seq[Trainer],
+    trainees:    Seq[Trainee],
     currentUser: Option[User]
 )
 
