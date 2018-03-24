@@ -16,12 +16,11 @@ object Main {
     case object Login extends Page
   }
 
-  val routerConfig = RouterConfigDsl[Page].buildConfig { dsl =>
+  val routerConfig: RouterConfig[Page] = RouterConfigDsl[Page].buildConfig { dsl =>
     import dsl._
 
     (
-      staticRoute(root, Page.Registration) ~>
-      renderR(ctl => SPACircuit.wrap(_.users)(proxy => Registration(ctl, proxy)))
+      staticRoute(root, Page.Registration) ~> renderR(ctl => SPACircuit.wrap(_.users)(proxy => Registration(ctl, proxy)))
     ).notFound(redirectToPage(Page.Registration)(Redirect.Replace))
   }.renderWith(layout)
 

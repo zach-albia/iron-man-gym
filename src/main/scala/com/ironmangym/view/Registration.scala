@@ -9,7 +9,7 @@ import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
 import japgolly.scalajs.react.extra.router.RouterCtl
 import Styles._
-import com.pangwarta.sjrmui.{ FormControl, FormLabel, Grid, Paper, Select, TextField, Typography }
+import com.pangwarta.sjrmui.{ Button, FormControl, FormLabel, Grid, Input, InputAdornment, Paper, Select, TextField, Typography }
 
 import scala.scalajs.js
 
@@ -17,7 +17,15 @@ object Registration {
 
   case class Props(router: RouterCtl[Page], proxy: ModelProxy[Users])
 
-  case class State(usersWrapper: ReactConnectProxy[Users], birthday: js.Date)
+  case class State(
+      usersWrapper:  ReactConnectProxy[Users],
+      traineeName:   Option[String],
+      contactNumber: Option[String],
+      birthday:      js.Date,
+      username:      Option[String],
+      password:      Option[String],
+      trainerName:   Option[String]
+  )
 
   val monthNames = List("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 
@@ -38,7 +46,8 @@ object Registration {
                 TextField(
                   id       = "traineeName",
                   label    = "Name",
-                  required = true
+                  required = true,
+                  onChange = (e: ReactEvent) => formChange(e)
                 )()(),
                 TextField(
                   id    = "traineePhoneNumber",
@@ -57,7 +66,7 @@ object Registration {
                     ).asInstanceOf[Select.Props]
                   )()(
                       (1900 to new js.Date().getFullYear).map(
-                        year => <.option(^.key := s"birthday-$year", ^.value := year, year).render
+                        year => <.option(^.key := s"year-$year", ^.value := year, year).render
                       ): _*
                     ),
                   TextField(
@@ -69,7 +78,7 @@ object Registration {
                     ).asInstanceOf[Select.Props]
                   )()(
                       (1 to 12).map(
-                        month => <.option(^.key := s"birthday-$month", ^.value := month, monthNames(month - 1)).render
+                        month => <.option(^.key := s"month-$month", ^.value := month, monthNames(month - 1)).render
                       ): _*
                     ),
                   TextField(
@@ -81,9 +90,20 @@ object Registration {
                     ).asInstanceOf[Select.Props]
                   )()(
                       (1 to daysInMonth(s)).map(
-                        date => <.option(^.key := s"birthday-$date", ^.value := date, date).render
+                        date => <.option(^.key := s"date-$date", ^.value := date, date).render
                       ): _*
                     ),
+                  TextField(
+                    id         = "height",
+                    label      = "Height",
+                    required   = true,
+                    InputProps = {
+                      val adornment = InputAdornment(position = InputAdornment.Position.end)()("meters")
+                      val p = js.Dynamic.literal()
+                      p.updateDynamic("endAdornment")(adornment.rawNode.asInstanceOf[js.Any])
+                      p.asInstanceOf[Input.Props]
+                    }
+                  )()(),
                   TextField(
                     id       = "traineeUsername",
                     label    = "Username",
@@ -94,7 +114,8 @@ object Registration {
                     label    = "Password",
                     required = true,
                     typ      = "password"
-                  )()()
+                  )()(),
+                  Button(variant   = Button.Variant.raised, className = Styles.registrationButton)()("Create Account")
                 )
               )
             )
@@ -114,7 +135,8 @@ object Registration {
                   id       = "name",
                   label    = "Name",
                   required = true
-                )()()
+                )()(),
+                Button(variant   = Button.Variant.raised, className = Styles.registrationButton)()("Create Account")
               )
             )
           )
@@ -122,10 +144,23 @@ object Registration {
       )
 
     private def daysInMonth(s: State) = YearMonth.of(s.birthday.getFullYear, s.birthday.getMonth + 1).lengthOfMonth
+
+    def formChange(e: ReactEvent): Callback =
+      Callback.alert("foo")
+
   }
 
   private val component = ScalaComponent.builder[Props]("Registration")
-    .initialStateFromProps(props => State(props.proxy.connect(identity), new js.Date(2000, 0)))
+    .initialStateFromProps(props =>
+      State(
+        props.proxy.connect(identity),
+        None,
+        None,
+        new js.Date(2000, 0),
+        None,
+        None,
+        None
+      ))
     .renderBackend[Backend]
     .build
 

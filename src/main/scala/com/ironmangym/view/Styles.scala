@@ -24,7 +24,7 @@ object Styles extends StyleSheet.Inline {
   )
 
   val paperPadding = style(
-    padding(24.px)
+    padding :=! "24px"
   )
 
   val registrationBirthday = style(
@@ -33,6 +33,10 @@ object Styles extends StyleSheet.Inline {
 
   val birthdayYear = style(
     width(70.px)
+  )
+
+  val registrationButton = style(
+    marginTop(24.px)
   )
 
   implicit def styleAToClassName(styleA: StyleA): String =
