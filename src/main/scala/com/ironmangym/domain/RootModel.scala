@@ -1,10 +1,5 @@
 package com.ironmangym.domain
 
-import java.time.LocalDate
-
-import squants.space.Length
-import squants.mass.{ AreaDensity, Mass }
-
 sealed trait User
 
 case class Trainee(
@@ -41,7 +36,7 @@ case class TrainingProgram(
 case class Progress(
     bodyFatPercentage: Double,
     bodyMassIndex:     Double,
-    weight:            Mass
+    weight:            Double
 )
 
 case class Goal(
