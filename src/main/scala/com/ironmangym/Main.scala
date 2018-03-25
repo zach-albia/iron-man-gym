@@ -2,7 +2,7 @@ package com.ironmangym
 
 import com.ironmangym.CssSettings._
 import com.ironmangym.domain.SPACircuit
-import com.ironmangym.view._
+import com.ironmangym.logout._
 import com.pangwarta.sjrmui._
 import japgolly.scalajs.react.extra.router._
 import japgolly.scalajs.react.vdom.html_<^._
@@ -12,16 +12,15 @@ object Main {
 
   sealed trait Page
   object Page {
-    case object Registration extends Page
-    case object Login extends Page
+    case object Logout extends Page
   }
 
   val routerConfig: RouterConfig[Page] = RouterConfigDsl[Page].buildConfig { dsl =>
     import dsl._
 
     (
-      staticRoute(root, Page.Registration) ~> renderR(ctl => SPACircuit.wrap(_.users)(proxy => Registration(ctl, proxy)))
-    ).notFound(redirectToPage(Page.Registration)(Redirect.Replace))
+      staticRoute(root, Page.Logout) ~> renderR(ctl => SPACircuit.wrap(_.users)(proxy => Registration(ctl, proxy)))
+    ).notFound(redirectToPage(Page.Logout)(Redirect.Replace))
   }.renderWith(layout)
 
   def layout(c: RouterCtl[Page], r: Resolution[Page]) =

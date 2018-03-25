@@ -1,4 +1,4 @@
-package com.ironmangym.view
+package com.ironmangym
 
 import scalacss.DevDefaults._
 

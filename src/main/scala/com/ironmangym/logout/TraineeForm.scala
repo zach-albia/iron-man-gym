@@ -1,60 +1,19 @@
-package com.ironmangym.view
+package com.ironmangym.logout
 
 import java.time.YearMonth
 
 import com.ironmangym.Main.Page
+import com.ironmangym.Styles
+import com.ironmangym.Styles._
 import com.ironmangym.domain._
-import com.ironmangym.view.Styles._
 import com.pangwarta.sjrmui._
 import diode.react.{ ModelProxy, ReactConnectProxy }
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router.RouterCtl
 import japgolly.scalajs.react.vdom.html_<^._
-import org.scalajs.dom.raw.{ HTMLInputElement, HTMLSelectElement }
+import org.scalajs.dom.raw.HTMLSelectElement
 
 import scala.scalajs.js
-import scala.scalajs.js.UndefOr._
-
-object Registration {
-
-  case class Props(router: RouterCtl[Page], proxy: ModelProxy[Users])
-
-  private class Backend($: BackendScope[Props, Unit]) {
-
-    def render(p: Props): VdomElement =
-      <.div(
-        ^.margin := "0 auto",
-        ^.marginTop := 40.px,
-        ^.maxWidth := 900.px,
-        ^.paddingLeft := 24.px,
-        ^.paddingRight := 24.px,
-        Grid(container = true)()(
-          Grid(item = true, xs = 12, md = 5)()(TraineeForm(p.router, p.proxy)),
-          Grid(item    = true, xs = 12, md = 2, classes = Map())("style" -> js.Dynamic.literal(position = "relative"))(
-            Typography(
-              variant   = Typography.Variant.headline,
-              align     = Typography.Alignment.center,
-              className = Styles.verticalCenter
-            )()("or")
-          ),
-          Grid(item = true, xs = 12, md = 5)()(TrainerForm(p.router, p.proxy))
-        )
-      )
-  }
-
-  private val component = ScalaComponent.builder[Props]("Registration")
-    .renderBackend[Backend]
-    .build
-
-  def apply(router: RouterCtl[Page], proxy: ModelProxy[Users]): VdomElement = component(Props(router, proxy))
-}
-
-object Common {
-  def getValue(e: ReactEvent): String = e.currentTarget.asInstanceOf[HTMLInputElement].value
-
-  def fieldChanged[Props, State]($: BackendScope[Props, State], copyFunc: State => State): CallbackTo[Unit] =
-    $.modState(copyFunc)
-}
 
 object TraineeForm {
 
@@ -80,8 +39,8 @@ object TraineeForm {
   val monthNames = Seq("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 
   private class Backend($: BackendScope[Registration.Props, State]) {
-    import Registration.Props
     import Common._
+    import Registration.Props
 
     def render(p: Props, s: State): VdomElement =
       Paper(className = Styles.paperPadding)()(
@@ -258,106 +217,6 @@ object TraineeForm {
         traineeUsername  = None,
         traineePassword  = None,
         traineeFormValid = false
-      ))
-    .renderBackend[Backend]
-    .build
-
-  def apply(router: RouterCtl[Page], proxy: ModelProxy[Users]): VdomElement =
-    component(Registration.Props(router, proxy))
-}
-
-object TrainerForm {
-
-  case class State(
-      usersWrapper:     ReactConnectProxy[Users],
-      trainerName:      Option[String],
-      trainerUsername:  Option[String],
-      trainerPassword:  Option[String],
-      trainerFormValid: Boolean
-  ) {
-    def validate(): State = copy(
-      trainerFormValid = trainerName.exists(_.nonEmpty)
-        && trainerUsername.exists(_.nonEmpty)
-        && trainerPassword.exists(_.nonEmpty)
-    )
-  }
-
-  private class Backend($: BackendScope[Registration.Props, State]) {
-
-    import Registration.Props
-    import Common._
-
-    def render(p: Props, s: State): VdomElement =
-      Paper(className = Styles.paperPadding)()(
-        Typography(variant = Typography.Variant.headline)()("Sign up as a Trainer"),
-        FormControl()()(
-          TextField(
-            id       = "name",
-            label    = "Name",
-            required = true,
-            value    = s.trainerName.getOrElse("").toString,
-            onChange = (e: ReactEvent) => trainerNameChanged($, e),
-            error    = s.trainerName.exists(_.isEmpty)
-          )()(),
-          TextField(
-            id       = "trainerUsername",
-            label    = "Username",
-            required = true,
-            value    = s.trainerUsername.getOrElse("").toString,
-            onChange = (e: ReactEvent) => trainerUsernameChanged($, e),
-            error    = s.trainerUsername.exists(_.isEmpty)
-          )()(),
-          TextField(
-            id       = "trainerPassword",
-            label    = "Password",
-            required = true,
-            typ      = "password",
-            value    = s.trainerPassword.getOrElse("").toString,
-            onChange = (e: ReactEvent) => trainerPasswordChanged($, e),
-            error    = s.trainerPassword.exists(_.isEmpty)
-          )()(),
-          Button(
-            variant   = Button.Variant.raised,
-            className = Styles.registrationButton,
-            disabled  = !s.trainerFormValid,
-            onClick   = (e: ReactMouseEvent) => createTrainerAccount($, e)
-          )()("Create Account")
-        )
-      )
-
-    def trainerNameChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
-      val trainerName = getValue(e)
-      fieldChanged[Props, State]($, _.copy(trainerName = Some(trainerName)).validate())
-    }
-
-    def trainerUsernameChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
-      val username = getValue(e)
-      fieldChanged[Props, State]($, _.copy(trainerUsername = Some(username)).validate())
-    }
-
-    def trainerPasswordChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
-      val password = getValue(e)
-      fieldChanged[Props, State]($, _.copy(trainerPassword = Some(password)).validate())
-    }
-
-    def createTrainerAccount($: BackendScope[Props, State], e: ReactMouseEvent): Callback =
-      $.props >>= (p => $.state >>= (s =>
-        p.proxy.dispatchCB(
-          CreateTrainerAccount(Trainer(
-            name        = s.trainerName.get,
-            credentials = Credentials(s.trainerUsername.get, s.trainerPassword.get)
-          ))
-        )))
-  }
-
-  private val component = ScalaComponent.builder[Registration.Props]("Trainer Form")
-    .initialStateFromProps(props =>
-      State(
-        props.proxy.connect(identity),
-        trainerName      = None,
-        trainerUsername  = None,
-        trainerPassword  = None,
-        trainerFormValid = false
       ))
     .renderBackend[Backend]
     .build
