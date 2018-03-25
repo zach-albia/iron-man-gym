@@ -1,5 +1,5 @@
 package com.ironmangym.logout
 
-object LandingPage {
+object Landing {
 
 }

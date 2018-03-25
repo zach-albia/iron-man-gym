@@ -1,6 +1,8 @@
 package com.ironmangym.domain
 
-sealed trait User
+sealed trait User {
+  def credentials: Credentials
+}
 
 case class Trainee(
     name:            String,

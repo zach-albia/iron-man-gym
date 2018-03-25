@@ -26,10 +26,9 @@ object TrainerForm {
     )
   }
 
-  private class Backend($: BackendScope[Registration.Props, State]) {
-
+  private class Backend($: BackendScope[Logout.Props, State]) {
     import Common._
-    import Registration.Props
+    import Logout.Props
 
     def render(p: Props, s: State): VdomElement =
       Paper(className = Styles.paperPadding)()(
@@ -94,7 +93,7 @@ object TrainerForm {
         )))
   }
 
-  private val component = ScalaComponent.builder[Registration.Props]("Trainer Form")
+  private val component = ScalaComponent.builder[Logout.Props]("Trainer Form")
     .initialStateFromProps(props =>
       State(
         props.proxy.connect(identity),
@@ -107,5 +106,5 @@ object TrainerForm {
     .build
 
   def apply(router: RouterCtl[Page], proxy: ModelProxy[Users]): VdomElement =
-    component(Registration.Props(router, proxy))
+    component(Logout.Props(router, proxy))
 }

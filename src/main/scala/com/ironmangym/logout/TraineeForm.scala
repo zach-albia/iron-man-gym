@@ -25,7 +25,8 @@ object TraineeForm {
       height:           Option[String],
       traineeUsername:  Option[String],
       traineePassword:  Option[String],
-      traineeFormValid: Boolean
+      traineeFormValid: Boolean,
+      snackbarOpen:     Boolean
   ) {
     def validate(): State = copy(
       traineeFormValid =
@@ -38,9 +39,9 @@ object TraineeForm {
 
   val monthNames = Seq("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 
-  private class Backend($: BackendScope[Registration.Props, State]) {
+  private class Backend($: BackendScope[Logout.Props, State]) {
     import Common._
-    import Registration.Props
+    import Logout.Props
 
     def render(p: Props, s: State): VdomElement =
       Paper(className = Styles.paperPadding)()(
@@ -138,8 +139,18 @@ object TraineeForm {
             variant   = Button.Variant.raised,
             className = Styles.registrationButton,
             disabled  = !s.traineeFormValid,
-            onClick   = (e: ReactMouseEvent) => createTraineeAccount($, e)
-          )()("Create Account")
+            onClick   = (e: ReactMouseEvent) => createTraineeAccount($, e) >> $.modState(_.copy(snackbarOpen = true))
+          )()("Create Account"),
+          Snackbar(
+            anchorOrigin     = Snackbar.Origin(
+              Left(Snackbar.Horizontal.center),
+              Left(Snackbar.Vertical.bottom)
+            ),
+            open             = s.snackbarOpen,
+            message          = <.span("Your account has been created. You may now log in with it.").rawElement,
+            autoHideDuration = 6000,
+            onClose          = (_: ReactEvent, _: String) => onSnackbarClose($)
+          )()()
         )
       )
 
@@ -202,11 +213,13 @@ object TraineeForm {
           ))
         )))
 
+    def onSnackbarClose($: BackendScope[Props, State]) = $.modState(_.copy(snackbarOpen = false))
+
     private def daysInMonth(s: State) =
       YearMonth.of(s.birthday.getFullYear, s.birthday.getMonth + 1).lengthOfMonth
   }
 
-  private val component = ScalaComponent.builder[Registration.Props]("Trainee Form")
+  private val component = ScalaComponent.builder[Logout.Props]("Trainee Form")
     .initialStateFromProps(props =>
       State(
         props.proxy.connect(identity),
@@ -216,11 +229,12 @@ object TraineeForm {
         height           = None,
         traineeUsername  = None,
         traineePassword  = None,
-        traineeFormValid = false
+        traineeFormValid = false,
+        snackbarOpen     = false
       ))
     .renderBackend[Backend]
     .build
 
   def apply(router: RouterCtl[Page], proxy: ModelProxy[Users]): VdomElement =
-    component(Registration.Props(router, proxy))
+    component(Logout.Props(router, proxy))
 }

@@ -5,7 +5,7 @@ import com.ironmangym.Styles
 import com.ironmangym.Styles._
 import com.ironmangym.domain._
 import com.pangwarta.sjrmui._
-import diode.react.{ ModelProxy, ReactConnectProxy }
+import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router.RouterCtl
 import japgolly.scalajs.react.vdom.html_<^._
@@ -15,8 +15,7 @@ import scala.scalajs.js
 import scala.scalajs.js.UndefOr._
 
 object Registration {
-
-  case class Props(router: RouterCtl[Page], proxy: ModelProxy[Users])
+  import Logout.Props
 
   private class Backend($: BackendScope[Props, Unit]) {
 

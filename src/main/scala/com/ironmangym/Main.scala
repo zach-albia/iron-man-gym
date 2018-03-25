@@ -12,15 +12,16 @@ object Main {
 
   sealed trait Page
   object Page {
-    case object Logout extends Page
+    case object Landing extends Page
+    case object Profile extends Page
   }
 
   val routerConfig: RouterConfig[Page] = RouterConfigDsl[Page].buildConfig { dsl =>
     import dsl._
 
     (
-      staticRoute(root, Page.Logout) ~> renderR(ctl => SPACircuit.wrap(_.users)(proxy => Registration(ctl, proxy)))
-    ).notFound(redirectToPage(Page.Logout)(Redirect.Replace))
+      staticRoute(root, Page.Landing) ~> renderR(ctl => SPACircuit.wrap(_.users)(proxy => Registration(ctl, proxy)))
+    ).notFound(redirectToPage(Page.Landing)(Redirect.Replace))
   }.renderWith(layout)
 
   def layout(c: RouterCtl[Page], r: Resolution[Page]) =
