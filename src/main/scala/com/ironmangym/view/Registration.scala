@@ -19,7 +19,7 @@ object Registration {
 
   case class Props(router: RouterCtl[Page], proxy: ModelProxy[Users])
 
-  private class Backend(bs: BackendScope[Props, Unit]) {
+  private class Backend($: BackendScope[Props, Unit]) {
 
     def render(p: Props): VdomElement =
       <.div(
@@ -50,9 +50,9 @@ object Registration {
 }
 
 object Common {
-  def getValue(e: ReactEvent) = e.currentTarget.asInstanceOf[HTMLInputElement].value
+  def getValue(e: ReactEvent): String = e.currentTarget.asInstanceOf[HTMLInputElement].value
 
-  def fieldChanged[Props, State]($: BackendScope[Props, State], copyFunc: State => State) =
+  def fieldChanged[Props, State]($: BackendScope[Props, State], copyFunc: State => State): CallbackTo[Unit] =
     $.modState(copyFunc)
 }
 
@@ -319,7 +319,8 @@ object TrainerForm {
           Button(
             variant   = Button.Variant.raised,
             className = Styles.registrationButton,
-            disabled  = !s.trainerFormValid
+            disabled  = !s.trainerFormValid,
+            onClick   = (e: ReactMouseEvent) => createTrainerAccount($, e)
           )()("Create Account")
         )
       )
@@ -338,6 +339,15 @@ object TrainerForm {
       val password = getValue(e)
       fieldChanged[Props, State]($, _.copy(trainerPassword = Some(password)).validate())
     }
+
+    def createTrainerAccount($: BackendScope[Props, State], e: ReactMouseEvent): Callback =
+      $.props >>= (p => $.state >>= (s =>
+        p.proxy.dispatchCB(
+          CreateTrainerAccount(Trainer(
+            name        = s.trainerName.get,
+            credentials = Credentials(s.trainerUsername.get, s.trainerPassword.get)
+          ))
+        )))
   }
 
   private val component = ScalaComponent.builder[Registration.Props]("Trainer Form")

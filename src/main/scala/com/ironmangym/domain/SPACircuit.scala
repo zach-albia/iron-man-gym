@@ -7,6 +7,8 @@ import prickle._
 
 case class CreateTraineeAccount(trainee: Trainee) extends Action
 
+case class CreateTrainerAccount(trainer: Trainer) extends Action
+
 object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
   override protected def initialModel: RootModel = RootModel(Users(Seq.empty, Seq.empty, None), Seq.empty)
 
@@ -22,7 +24,10 @@ class RegistrationHandler[M](modelRW: ModelRW[M, Users]) extends ActionHandler(m
 
   override def handle = {
     case CreateTraineeAccount(trainee) =>
-      dom.window.localStorage.setItem(s"trainee-${trainee.name}", Pickle.intoString(trainee))
+      dom.window.localStorage.setItem(s"trainee-${trainee.credentials.username}", Pickle.intoString(trainee))
       updated(value.copy(trainees = value.trainees :+ trainee))
+    case CreateTrainerAccount(trainer) =>
+      dom.window.localStorage.setItem(s"trainer-${trainer.credentials.username}", Pickle.intoString(trainer))
+      updated(value.copy(trainers = value.trainers :+ trainer))
   }
 }
