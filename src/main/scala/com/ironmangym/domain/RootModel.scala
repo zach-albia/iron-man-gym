@@ -1,7 +1,10 @@
 package com.ironmangym.domain
 
+import scala.language.implicitConversions
+
 sealed trait User {
   def credentials: Credentials
+  def name: String
 }
 
 case class Trainee(
@@ -42,9 +45,9 @@ case class Progress(
 )
 
 case class Goal(
-    bodyFatPercentage: Option[Double],
-    bodyMassIndex:     Option[Double],
-    weight:            Option[Double]
+    bodyFatPercentage: Option[Double] = None,
+    bodyMassIndex:     Option[Double] = None,
+    weight:            Option[Double] = None
 )
 
 case class WorkoutDay(
@@ -61,13 +64,22 @@ case class TrainingModule(
     exercises: List[String]
 )
 
+case class PersistentUser(
+    credentials: Credentials,
+    name:        String
+)
+
+object PersistentUser {
+  implicit def fromUser(user: User): PersistentUser = PersistentUser(user.credentials, user.name)
+}
+
 case class Users(
-    trainers:    Seq[Trainer],
-    trainees:    Seq[Trainee],
-    currentUser: Option[User]
+    trainers:    Seq[Trainer]           = Seq.empty,
+    trainees:    Seq[Trainee]           = Seq.empty,
+    currentUser: Option[PersistentUser] = None
 )
 
 case class RootModel(
     users:           Users,
-    trainingModules: Seq[TrainingModule]
+    trainingModules: Seq[TrainingModule] = Seq.empty
 )

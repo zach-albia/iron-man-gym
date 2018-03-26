@@ -3,12 +3,15 @@ package com.ironmangym.logout
 import com.ironmangym.Main.Page
 import com.ironmangym.Styles
 import com.ironmangym.Styles._
+import com.ironmangym.common._
 import com.ironmangym.domain._
 import com.pangwarta.sjrmui._
 import diode.react.{ ModelProxy, ReactConnectProxy }
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router.RouterCtl
 import japgolly.scalajs.react.vdom.html_<^._
+
+import scala.scalajs.js
 
 object TrainerForm {
 
@@ -17,8 +20,8 @@ object TrainerForm {
       trainerName:      Option[String],
       trainerUsername:  Option[String],
       trainerPassword:  Option[String],
-      trainerFormValid: Boolean
-  ) {
+      trainerFormValid: Boolean                  = false
+  ) extends FormState {
     def validate(): State = copy(
       trainerFormValid = trainerName.exists(_.nonEmpty)
         && trainerUsername.exists(_.nonEmpty)
@@ -27,7 +30,6 @@ object TrainerForm {
   }
 
   private class Backend($: BackendScope[Logout.Props, State]) {
-    import Common._
     import Logout.Props
 
     def render(p: Props, s: State): VdomElement =
@@ -35,35 +37,38 @@ object TrainerForm {
         Typography(variant = Typography.Variant.headline)()("Sign up as a Trainer"),
         FormControl()()(
           TextField(
-            id       = "name",
-            label    = "Name",
-            required = true,
-            value    = s.trainerName.getOrElse("").toString,
-            onChange = (e: ReactEvent) => trainerNameChanged($, e),
-            error    = s.trainerName.exists(_.isEmpty)
+            id         = "name",
+            label      = "Name",
+            required   = true,
+            value      = s.trainerName.getOrElse("").toString,
+            onChange   = (e: ReactEvent) => trainerNameChanged($, e),
+            error      = s.wasMadeEmpty[State](_.trainerName),
+            helperText = if (s.wasMadeEmpty[State](_.trainerName)) "Your name is required." else js.undefined
           )()(),
           TextField(
-            id       = "trainerUsername",
-            label    = "Username",
-            required = true,
-            value    = s.trainerUsername.getOrElse("").toString,
-            onChange = (e: ReactEvent) => trainerUsernameChanged($, e),
-            error    = s.trainerUsername.exists(_.isEmpty)
+            id         = "trainerUsername",
+            label      = "Username",
+            required   = true,
+            value      = s.trainerUsername.getOrElse("").toString,
+            onChange   = (e: ReactEvent) => trainerUsernameChanged($, e),
+            error      = s.wasMadeEmpty[State](_.trainerUsername),
+            helperText = if (s.wasMadeEmpty[State](_.trainerUsername)) "A unique username is required." else js.undefined
           )()(),
           TextField(
-            id       = "trainerPassword",
-            label    = "Password",
-            required = true,
-            typ      = "password",
-            value    = s.trainerPassword.getOrElse("").toString,
-            onChange = (e: ReactEvent) => trainerPasswordChanged($, e),
-            error    = s.trainerPassword.exists(_.isEmpty)
+            id         = "trainerPassword",
+            label      = "Password",
+            required   = true,
+            typ        = "password",
+            value      = s.trainerPassword.getOrElse("").toString,
+            onChange   = (e: ReactEvent) => trainerPasswordChanged($, e),
+            error      = s.wasMadeEmpty[State](_.trainerPassword),
+            helperText = if (s.wasMadeEmpty[State](_.trainerPassword)) "A password is required." else js.undefined
           )()(),
           Button(
             variant   = Button.Variant.raised,
             className = Styles.registrationButton,
             disabled  = !s.trainerFormValid,
-            onClick   = (e: ReactMouseEvent) => createTrainerAccount($, e)
+            onClick   = createTrainerAccount($)(_)
           )()("Create Account")
         )
       )
@@ -83,7 +88,7 @@ object TrainerForm {
       fieldChanged[Props, State]($, _.copy(trainerPassword = Some(password)).validate())
     }
 
-    def createTrainerAccount($: BackendScope[Props, State], e: ReactMouseEvent): Callback =
+    def createTrainerAccount($: BackendScope[Props, State])(e: ReactMouseEvent): Callback =
       $.props >>= (p => $.state >>= (s =>
         p.proxy.dispatchCB(
           CreateTrainerAccount(Trainer(
@@ -97,10 +102,9 @@ object TrainerForm {
     .initialStateFromProps(props =>
       State(
         props.proxy.connect(identity),
-        trainerName      = None,
-        trainerUsername  = None,
-        trainerPassword  = None,
-        trainerFormValid = false
+        trainerName     = None,
+        trainerUsername = None,
+        trainerPassword = None
       ))
     .renderBackend[Backend]
     .build

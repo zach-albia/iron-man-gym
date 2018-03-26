@@ -23,7 +23,7 @@ object Registration {
       <.div(
         ^.margin := "0 auto",
         ^.marginTop := 40.px,
-        ^.maxWidth := 900.px,
+        ^.maxWidth := 960.px,
         ^.paddingLeft := 24.px,
         ^.paddingRight := 24.px,
         Grid(container = true)()(
@@ -45,11 +45,4 @@ object Registration {
     .build
 
   def apply(router: RouterCtl[Page], proxy: ModelProxy[Users]): VdomElement = component(Props(router, proxy))
-}
-
-object Common {
-  def getValue(e: ReactEvent): String = e.currentTarget.asInstanceOf[HTMLInputElement].value
-
-  def fieldChanged[Props, State]($: BackendScope[Props, State], copyFunc: State => State): CallbackTo[Unit] =
-    $.modState(copyFunc)
 }

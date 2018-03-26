@@ -31,12 +31,12 @@ object Styles extends StyleSheet.Inline {
     marginTop(24.px)
   )
 
-  val birthdayYear = style(
-    width(70.px)
-  )
-
   val registrationButton = style(
     marginTop(24.px)
+  )
+
+  val appBarHeight = style(
+    height(72.px)
   )
 
   implicit def styleAToClassName(styleA: StyleA): String =
@@ -50,4 +50,5 @@ object Styles extends StyleSheet.Inline {
 
   implicit def stylesToUndefOrClassName(styleAs: Seq[StyleA]): js.UndefOr[String] =
     stylesToClassName(styleAs)
+
 }

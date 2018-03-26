@@ -6,6 +6,7 @@ import com.ironmangym.Main.Page
 import com.ironmangym.Styles
 import com.ironmangym.Styles._
 import com.ironmangym.domain._
+import com.ironmangym.common._
 import com.pangwarta.sjrmui._
 import diode.react.{ ModelProxy, ReactConnectProxy }
 import japgolly.scalajs.react._
@@ -25,9 +26,9 @@ object TraineeForm {
       height:           Option[String],
       traineeUsername:  Option[String],
       traineePassword:  Option[String],
-      traineeFormValid: Boolean,
-      snackbarOpen:     Boolean
-  ) {
+      traineeFormValid: Boolean                  = false,
+      snackbarOpen:     Boolean                  = false
+  ) extends FormState {
     def validate(): State = copy(
       traineeFormValid =
         traineeName.exists(_.nonEmpty) &&
@@ -40,7 +41,6 @@ object TraineeForm {
   val monthNames = Seq("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 
   private class Backend($: BackendScope[Logout.Props, State]) {
-    import Common._
     import Logout.Props
 
     def render(p: Props, s: State): VdomElement =
@@ -48,12 +48,14 @@ object TraineeForm {
         Typography(variant = Typography.Variant.headline)()("Sign up as a Trainee"),
         FormControl()()(
           TextField(
-            id       = "traineeName",
-            label    = "Name",
-            required = true,
-            onChange = (e: ReactEvent) => traineeNameChanged($, e),
-            value    = s.traineeName.getOrElse("").toString,
-            error    = s.traineeName.exists(_.isEmpty)
+            id         = "traineeName",
+            label      = "Name",
+            required   = true,
+            onChange   = (e: ReactEvent) => traineeNameChanged($, e),
+            value      = s.traineeName.getOrElse("").toString,
+            error      = s.wasMadeEmpty[State](_.traineeName),
+            autoFocus  = true,
+            helperText = if (s.wasMadeEmpty[State](_.traineeName)) "Your name is required." else js.undefined
           )()(),
           TextField(
             id       = "traineePhoneNumber",
@@ -67,7 +69,6 @@ object TraineeForm {
             TextField(
               id          = "birthdayYear",
               select      = true,
-              className   = Styles.birthdayYear,
               SelectProps = js.Dynamic.literal(
                 native = true,
                 value  = s.birthday.getFullYear
@@ -116,24 +117,27 @@ object TraineeForm {
             typ        = "number",
             value      = s.height.getOrElse("").toString,
             onChange   = (e: ReactEvent) => heightChanged($, e),
-            error      = s.height.exists(_.isEmpty)
+            error      = s.wasMadeEmpty[State](_.height),
+            helperText = if (s.wasMadeEmpty[State](_.height)) "Your heigh in meters is required." else js.undefined
           )()(),
           TextField(
-            id       = "traineeUsername",
-            label    = "Username",
-            required = true,
-            value    = s.traineeUsername.getOrElse("").toString,
-            onChange = (e: ReactEvent) => traineeUsernameChanged($, e),
-            error    = s.traineeUsername.exists(_.isEmpty)
+            id         = "traineeUsername",
+            label      = "Username",
+            required   = true,
+            value      = s.traineeUsername.getOrElse("").toString,
+            onChange   = (e: ReactEvent) => traineeUsernameChanged($, e),
+            error      = s.wasMadeEmpty[State](_.traineeUsername),
+            helperText = if (s.wasMadeEmpty[State](_.traineeUsername)) "A unique username is required." else js.undefined
           )()(),
           TextField(
-            id       = "traineePassword",
-            label    = "Password",
-            required = true,
-            typ      = "password",
-            value    = s.traineePassword.getOrElse("").toString,
-            onChange = (e: ReactEvent) => traineePasswordChanged($, e),
-            error    = s.traineePassword.exists(_.isEmpty)
+            id         = "traineePassword",
+            label      = "Password",
+            required   = true,
+            typ        = "password",
+            value      = s.traineePassword.getOrElse("").toString,
+            onChange   = (e: ReactEvent) => traineePasswordChanged($, e),
+            error      = s.wasMadeEmpty[State](_.traineePassword),
+            helperText = if (s.wasMadeEmpty[State](_.traineePassword)) "A password is required." else js.undefined
           )()(),
           Button(
             variant   = Button.Variant.raised,
@@ -144,7 +148,7 @@ object TraineeForm {
           Snackbar(
             anchorOrigin     = Snackbar.Origin(
               Left(Snackbar.Horizontal.center),
-              Left(Snackbar.Vertical.bottom)
+              Left(Snackbar.Vertical.center)
             ),
             open             = s.snackbarOpen,
             message          = <.span("Your account has been created. You may now log in with it.").rawElement,
@@ -213,7 +217,7 @@ object TraineeForm {
           ))
         )))
 
-    def onSnackbarClose($: BackendScope[Props, State]) = $.modState(_.copy(snackbarOpen = false))
+    def onSnackbarClose($: BackendScope[Props, State]): CallbackTo[Unit] = $.modState(_.copy(snackbarOpen = false))
 
     private def daysInMonth(s: State) =
       YearMonth.of(s.birthday.getFullYear, s.birthday.getMonth + 1).lengthOfMonth
@@ -223,14 +227,12 @@ object TraineeForm {
     .initialStateFromProps(props =>
       State(
         props.proxy.connect(identity),
-        traineeName      = None,
-        contactNumber    = None,
-        birthday         = new js.Date(2000, 0),
-        height           = None,
-        traineeUsername  = None,
-        traineePassword  = None,
-        traineeFormValid = false,
-        snackbarOpen     = false
+        traineeName     = None,
+        contactNumber   = None,
+        birthday        = new js.Date(2000, 0),
+        height          = None,
+        traineeUsername = None,
+        traineePassword = None
       ))
     .renderBackend[Backend]
     .build

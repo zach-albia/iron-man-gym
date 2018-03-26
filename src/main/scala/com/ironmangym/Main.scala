@@ -1,12 +1,15 @@
 package com.ironmangym
 
 import com.ironmangym.CssSettings._
+import com.ironmangym.Styles._
 import com.ironmangym.domain.SPACircuit
 import com.ironmangym.logout._
 import com.pangwarta.sjrmui._
 import japgolly.scalajs.react.extra.router._
 import japgolly.scalajs.react.vdom.html_<^._
 import org.scalajs.dom
+
+import scala.scalajs.js
 
 object Main {
 
@@ -27,15 +30,19 @@ object Main {
   def layout(c: RouterCtl[Page], r: Resolution[Page]) =
     CssBaseline(
       <.div(
-        AppBar(position = AppBar.static, color = AppBar.default)()(
-          Toolbar()()(
+        AppBar(position  = AppBar.static, color = AppBar.default, className = Styles.appBarHeight)()(
+          Toolbar(className = Styles.appBarHeight)()(
             <.img(
               ^.src := "./target/scala-2.12/classes/ironmangym_logo.png",
-              ^.height := 40.px, ^.width := 40.px, ^.marginRight := 12.px
+              ^.height := 48.px, ^.width := 48.px, ^.marginRight := 12.px
             ),
-            Typography(variant = Typography.Variant.headline, color = Typography.Color.inherit)()(
+            Typography(
+              variant = Typography.Variant.headline,
+              color   = Typography.Color.inherit
+            )("style" -> js.Dynamic.literal(flex = 1))(
               "Iron Man Gym"
-            )
+            ),
+            SPACircuit.wrap(_.users)(toolbar.Content(c, _))
           )
         ),
         <.div(
