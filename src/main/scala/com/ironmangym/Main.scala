@@ -24,10 +24,10 @@ object Main {
   val routerConfig: RouterConfig[Page] = RouterConfigDsl[Page].buildConfig { dsl =>
     import dsl._
 
-    (
-      staticRoute(root, Page.Landing) ~> renderR(ctl => SPACircuit.wrap(_.users)(proxy => Registration(ctl, proxy)))
-      | staticRoute("#about", Page.About) ~> render(About())
-    ).notFound(redirectToPage(Page.Landing)(Redirect.Replace))
+    (emptyRule
+      | staticRoute(root, Page.Landing) ~> renderR(ctl => SPACircuit.wrap(_.users)(proxy => Registration(ctl, proxy)))
+      | staticRoute("#profile", Page.Profile) ~> render(Typography(variant = Typography.Variant.title)()("Profile"))
+      | staticRoute("#about", Page.About) ~> render(About())).notFound(redirectToPage(Page.Landing)(Redirect.Replace))
   }.renderWith(layout)
 
   def layout(c: RouterCtl[Page], r: Resolution[Page]) =
@@ -40,9 +40,11 @@ object Main {
               ^.height := 48.px, ^.width := 48.px, ^.marginRight := 12.px
             ),
             Typography(
-              variant = Typography.Variant.headline,
-              color   = Typography.Color.inherit
-            )("style" -> js.Dynamic.literal(flex = 1))(
+              component = "a",
+              variant   = Typography.Variant.headline,
+              color     = Typography.Color.inherit,
+              className = Styles.ironManGymTitle,
+            )("href" -> c.baseUrl.value)(
               "Iron Man Gym"
             ),
             SPACircuit.wrap(_.users)(toolbar.AppBarContent(c, _))

@@ -1,18 +1,20 @@
 package com.ironmangym.toolbar
 
+import com.ironmangym.Main.Page
 import com.ironmangym.common._
 import com.ironmangym.domain.{ Credentials, LogIn, Users }
 import com.pangwarta.sjrmui.{ Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormHelperText, Hidden, ReactHandler1, TextField }
 import diode.react.{ ModelProxy, ReactConnectProxy }
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.component.Scala.BackendScope
+import japgolly.scalajs.react.extra.router.RouterCtl
 import japgolly.scalajs.react.vdom.html_<^._
 
 import scala.scalajs.js
 
 object LoginDialog {
 
-  case class Props(proxy: ModelProxy[Users], open: Boolean, onClose: ReactHandler1[ReactEvent])
+  case class Props(router: RouterCtl[Page], proxy: ModelProxy[Users], open: Boolean, onClose: ReactHandler1[ReactEvent])
 
   case class State(
       usersWrapper: ReactConnectProxy[Users],
@@ -80,10 +82,13 @@ object LoginDialog {
     }
 
     def resetAndClose(e: ReactEvent): Callback =
-      $.modState(_.reset()) >> $.props >>= { p => p.onClose.getOrElse((_: ReactEvent) => Callback.empty)(e) }
+      $.modState(_.reset()) >> closeForm(e)
 
     def handleGoButton(e: ReactEvent): Callback =
-      login(e) >> $.props >>= { p => p.onClose.getOrElse((_: ReactEvent) => Callback.empty)(e) }
+      login(e) >> closeForm(e) >> ($.props >>= { p => p.router.set(Page.Profile) })
+
+    def closeForm(e: ReactEvent): Callback =
+      $.props >>= { p => p.onClose.getOrElse((_: ReactEvent) => Callback.empty)(e) }
 
     def login(e: ReactEvent): Callback = {
       $.props >>= (p => $.state >>= (s => {
@@ -104,8 +109,9 @@ object LoginDialog {
     .build
 
   def apply(
+      router:  RouterCtl[Page],
       proxy:   ModelProxy[Users],
       open:    Boolean,
       onClose: ReactHandler1[ReactEvent]
-  ): VdomElement = component(Props(proxy, open, onClose))
+  ): VdomElement = component(Props(router, proxy, open, onClose))
 }

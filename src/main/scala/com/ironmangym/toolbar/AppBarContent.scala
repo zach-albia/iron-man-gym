@@ -56,7 +56,7 @@ object AppBarContent {
             else
               MenuItem()("onClick" -> handleSignOutMenuItem)("Sign Out")
           ),
-        LoginDialog(p.proxy, s.dialogOpen, closeLoginDialog(_))
+        LoginDialog(p.router, p.proxy, s.dialogOpen, closeLoginDialog(_))
       )
     }
 

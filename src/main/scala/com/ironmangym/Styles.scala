@@ -39,6 +39,11 @@ object Styles extends StyleSheet.Inline {
     height(72.px)
   )
 
+  val ironManGymTitle = style(
+    flex := "1",
+    textDecoration := "none"
+  )
+
   implicit def styleAToClassName(styleA: StyleA): String =
     styleA.className.value
 
