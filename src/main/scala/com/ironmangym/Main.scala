@@ -4,6 +4,7 @@ import com.ironmangym.CssSettings._
 import com.ironmangym.Styles._
 import com.ironmangym.domain.SPACircuit
 import com.ironmangym.logout._
+import com.ironmangym.about.About
 import com.pangwarta.sjrmui._
 import japgolly.scalajs.react.extra.router._
 import japgolly.scalajs.react.vdom.html_<^._
@@ -17,6 +18,7 @@ object Main {
   object Page {
     case object Landing extends Page
     case object Profile extends Page
+    case object About extends Page
   }
 
   val routerConfig: RouterConfig[Page] = RouterConfigDsl[Page].buildConfig { dsl =>
@@ -24,6 +26,7 @@ object Main {
 
     (
       staticRoute(root, Page.Landing) ~> renderR(ctl => SPACircuit.wrap(_.users)(proxy => Registration(ctl, proxy)))
+      | staticRoute("#about", Page.About) ~> render(About())
     ).notFound(redirectToPage(Page.Landing)(Redirect.Replace))
   }.renderWith(layout)
 

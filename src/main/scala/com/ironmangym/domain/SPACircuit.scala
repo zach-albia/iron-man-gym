@@ -5,8 +5,6 @@ import diode.react.ReactConnector
 import org.scalajs.dom
 import prickle._
 
-import scala.concurrent.Future
-
 case class CreateTraineeAccount(trainee: Trainee) extends Action
 
 case class CreateTrainerAccount(trainer: Trainer) extends Action
