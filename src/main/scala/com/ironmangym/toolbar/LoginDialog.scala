@@ -61,7 +61,7 @@ object LoginDialog {
             ),
             DialogActions()()(
               Button(
-                onClick  = login(_),
+                onClick  = handleGoButton(_),
                 variant  = Button.Variant.raised,
                 disabled = !s.formValid
               )()("Go")
@@ -81,6 +81,9 @@ object LoginDialog {
 
     def resetAndClose(e: ReactEvent): Callback =
       $.modState(_.reset()) >> $.props >>= { p => p.onClose.getOrElse((_: ReactEvent) => Callback.empty)(e) }
+
+    def handleGoButton(e: ReactEvent): Callback =
+      login(e) >> $.props >>= { p => p.onClose.getOrElse((_: ReactEvent) => Callback.empty)(e) }
 
     def login(e: ReactEvent): Callback = {
       $.props >>= (p => $.state >>= (s => {

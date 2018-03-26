@@ -45,13 +45,10 @@ object Main {
             )("style" -> js.Dynamic.literal(flex = 1))(
               "Iron Man Gym"
             ),
-            SPACircuit.wrap(_.users)(toolbar.Content(c, _))
+            SPACircuit.wrap(_.users)(toolbar.AppBarContent(c, _))
           )
         ),
-        <.div(
-          ^.id := "container",
-          r.render()
-        )
+        <.div(^.id := "container", r.render())
       ).rawElement
     )
 

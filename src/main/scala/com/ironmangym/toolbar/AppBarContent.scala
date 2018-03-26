@@ -1,9 +1,9 @@
 package com.ironmangym.toolbar
 
 import com.ironmangym.Main.Page
-import com.ironmangym.domain.Users
-import com.pangwarta.sjrmui.{ Button, Dialog, DialogTitle, Hidden, IconButton, Menu, MenuItem, Popover, Tooltip, Typography }
+import com.ironmangym.domain.{ LogOut, Users }
 import com.pangwarta.sjrmui.icons.MuiSvgIcons.AccountBoxIcon
+import com.pangwarta.sjrmui.{ Button, Hidden, IconButton, Menu, MenuItem, Popover, Tooltip, Typography }
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router.RouterCtl
@@ -12,7 +12,7 @@ import org.scalajs.dom.html
 
 import scala.scalajs.js
 
-object Content {
+object AppBarContent {
 
   case class Props(router: RouterCtl[Page], proxy: ModelProxy[Users])
 
@@ -33,7 +33,7 @@ object Content {
             Button(onClick = openLoginDialog(_))()("Sign In")
         ),
         Tooltip(title = if (currentUser.isEmpty) "Not signed in" else s"Signed in as ${currentUser.get.name}")()(
-          IconButton(onClick = handleMenu(_))()(
+          IconButton(onClick = openMenu(_))()(
             AccountBoxIcon()()
           )
         ),
@@ -49,23 +49,23 @@ object Content {
             vertical   = "top"
           ).asInstanceOf[Popover.Origin],
           getContentAnchorEl = null,
-          onClose            = handleClose(_)
+          onClose            = handleCloseMenu(_)
         )()(
             if (p.proxy().currentUser.isEmpty)
               MenuItem()("onClick" -> handleSignInMenuItem)("Sign In")
             else
-              MenuItem()("onClick" -> handleMenuItemClose)("Sign Out")
+              MenuItem()("onClick" -> handleSignOutMenuItem)("Sign Out")
           ),
         LoginDialog(p.proxy, s.dialogOpen, closeLoginDialog(_))
       )
     }
 
-    def handleMenu(e: ReactEvent): Callback = {
+    def openMenu(e: ReactEvent): Callback = {
       val anchorElement = e.currentTarget.domAsHtml
       $.modState(_.copy(anchorEl = anchorElement))
     }
 
-    def handleClose(e: ReactEvent): Callback =
+    def handleCloseMenu(e: ReactEvent): Callback =
       $.modState(_.copy(anchorEl = js.undefined))
 
     def openLoginDialog(e: ReactEvent): Callback =
@@ -74,14 +74,11 @@ object Content {
     def closeLoginDialog(e: ReactEvent): Callback =
       $.modState(_.copy(dialogOpen = false))
 
-    private val handleMenuItemClose =
-      (e: ReactEvent) => handleClose(e).runNow()
+    private val handleSignOutMenuItem =
+      (e: ReactEvent) => (handleCloseMenu(e) >> ($.props >>= (_.proxy.dispatchCB(LogOut)))).runNow()
 
     private val handleSignInMenuItem =
-      (e: ReactEvent) => {
-        handleMenuItemClose(e)
-        openLoginDialog(e).runNow()
-      }
+      (e: ReactEvent) => (handleCloseMenu(e) >> openLoginDialog(e)).runNow()
   }
 
   private val component = ScalaComponent.builder[Props]("ToolbarContent")

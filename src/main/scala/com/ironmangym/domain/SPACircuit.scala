@@ -11,6 +11,8 @@ case class CreateTrainerAccount(trainer: Trainer) extends Action
 
 case class LogIn(user: User) extends Action
 
+case object LogOut extends Action
+
 object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
   override protected def initialModel: RootModel = RootModel(
     Unpickle[Users].fromString(dom.window.localStorage.getItem("users")).getOrElse(Users()),
@@ -31,16 +33,17 @@ class RegistrationHandler[M](modelRW: ModelRW[M, Users]) extends ActionHandler(m
 
   def handle = {
     case CreateTraineeAccount(trainee) =>
-      val newValue = value.copy(trainees = value.trainees :+ trainee)
-      dom.window.localStorage.setItem(s"users", Pickle.intoString(newValue))
-      updated(newValue)
+      changeUsers(value.copy(trainees = value.trainees :+ trainee))
     case CreateTrainerAccount(trainer) =>
-      val newValue = value.copy(trainers = value.trainers :+ trainer)
-      dom.window.localStorage.setItem(s"users", Pickle.intoString(newValue))
-      updated(newValue)
+      changeUsers(value.copy(trainers = value.trainers :+ trainer))
     case LogIn(user) =>
-      val newValue = value.copy(currentUser = Some(user))
-      dom.window.localStorage.setItem(s"users", Pickle.intoString(newValue))
-      updated(newValue)
+      changeUsers(value.copy(currentUser = Some(user)))
+    case LogOut =>
+      changeUsers(value.copy(currentUser = None))
+  }
+
+  private def changeUsers(newUsers: Users) = {
+    dom.window.localStorage.setItem("users", Pickle.intoString(newUsers))
+    updated(newUsers)
   }
 }
