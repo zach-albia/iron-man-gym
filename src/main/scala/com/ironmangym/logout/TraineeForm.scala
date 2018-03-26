@@ -20,30 +20,30 @@ object TraineeForm {
 
   case class State(
       usersWrapper:     ReactConnectProxy[Users],
-      traineeName:      Option[String],
+      name:             Option[String],
       contactNumber:    Option[String],
       birthday:         js.Date,
-      height:           Option[String],
-      traineeUsername:  Option[String],
-      traineePassword:  Option[String],
+      heightInCm:       Option[String],
+      username:         Option[String],
+      password:         Option[String],
       traineeFormValid: Boolean                  = false,
       snackbarOpen:     Boolean                  = false
   ) extends FormState {
     def validate(): State = copy(
       traineeFormValid =
-        traineeName.exists(_.nonEmpty) &&
-          height.exists(_.nonEmpty) &&
-          traineeUsername.exists(_.nonEmpty) &&
-          traineePassword.exists(_.nonEmpty)
+        name.exists(_.nonEmpty) &&
+          heightInCm.exists(_.nonEmpty) &&
+          username.exists(_.nonEmpty) &&
+          password.exists(_.nonEmpty)
     )
 
     def reset(): State = copy(
-      traineeName     = None,
-      contactNumber   = None,
-      birthday        = new js.Date(2000, 0),
-      height          = None,
-      traineeUsername = None,
-      traineePassword = None
+      name          = None,
+      contactNumber = None,
+      birthday      = new js.Date(2000, 0),
+      heightInCm    = None,
+      username      = None,
+      password      = None
     )
   }
 
@@ -60,11 +60,11 @@ object TraineeForm {
             id         = "traineeName",
             label      = "Name",
             required   = true,
-            onChange   = (e: ReactEvent) => traineeNameChanged($, e),
-            value      = s.traineeName.getOrElse("").toString,
-            error      = s.wasMadeEmpty[State](_.traineeName),
+            onChange   = traineeNameChanged($)(_),
+            value      = s.name.getOrElse("").toString,
+            error      = s.wasMadeEmpty[State](_.name),
             autoFocus  = true,
-            helperText = if (s.wasMadeEmpty[State](_.traineeName)) "Your name is required." else js.undefined
+            helperText = if (s.wasMadeEmpty[State](_.name)) "Your name is required." else js.undefined
           )()(),
           TextField(
             id       = "traineePhoneNumber",
@@ -120,33 +120,33 @@ object TraineeForm {
             label      = "Height",
             required   = true,
             InputProps = js.Dynamic.literal(
-              endAdornment = InputAdornment(position = InputAdornment.Position.end)()("meters")
+              endAdornment = InputAdornment(position = InputAdornment.Position.end)()("cm")
                 .rawNode.asInstanceOf[js.Any]
             ).asInstanceOf[Input.Props],
             typ        = "number",
-            value      = s.height.getOrElse("").toString,
+            value      = s.heightInCm.getOrElse("").toString,
             onChange   = (e: ReactEvent) => heightChanged($, e),
-            error      = s.wasMadeEmpty[State](_.height),
-            helperText = if (s.wasMadeEmpty[State](_.height)) "Your heigh in meters is required." else js.undefined
+            error      = s.wasMadeEmpty[State](_.heightInCm),
+            helperText = if (s.wasMadeEmpty[State](_.heightInCm)) "Your heigh in centimeters is required." else js.undefined
           )()(),
           TextField(
             id         = "traineeUsername",
             label      = "Username",
             required   = true,
-            value      = s.traineeUsername.getOrElse("").toString,
+            value      = s.username.getOrElse("").toString,
             onChange   = (e: ReactEvent) => traineeUsernameChanged($, e),
-            error      = s.wasMadeEmpty[State](_.traineeUsername),
-            helperText = if (s.wasMadeEmpty[State](_.traineeUsername)) "A unique username is required." else js.undefined
+            error      = s.wasMadeEmpty[State](_.username),
+            helperText = if (s.wasMadeEmpty[State](_.username)) "A unique username is required." else js.undefined
           )()(),
           TextField(
             id         = "traineePassword",
             label      = "Password",
             required   = true,
             typ        = "password",
-            value      = s.traineePassword.getOrElse("").toString,
+            value      = s.password.getOrElse("").toString,
             onChange   = (e: ReactEvent) => traineePasswordChanged($, e),
-            error      = s.wasMadeEmpty[State](_.traineePassword),
-            helperText = if (s.wasMadeEmpty[State](_.traineePassword)) "A password is required." else js.undefined
+            error      = s.wasMadeEmpty[State](_.password),
+            helperText = if (s.wasMadeEmpty[State](_.password)) "A password is required." else js.undefined
           )()(),
           Button(
             variant   = Button.Variant.raised,
@@ -167,9 +167,9 @@ object TraineeForm {
         )
       )
 
-    def traineeNameChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
+    def traineeNameChanged($: BackendScope[Props, State])(e: ReactEvent): Callback = {
       val traineeName = getValue(e)
-      fieldChanged[Props, State]($, _.copy(traineeName = Some(traineeName)).validate())
+      fieldChanged[Props, State]($, _.copy(name = Some(traineeName)).validate())
     }
 
     def contactNumberChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
@@ -200,28 +200,28 @@ object TraineeForm {
 
     def heightChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
       val height = getValue(e)
-      fieldChanged[Props, State]($, _.copy(height = Some(height)).validate())
+      fieldChanged[Props, State]($, _.copy(heightInCm = Some(height)).validate())
     }
 
     def traineeUsernameChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
       val username = getValue(e)
-      fieldChanged[Props, State]($, _.copy(traineeUsername = Some(username)).validate())
+      fieldChanged[Props, State]($, _.copy(username = Some(username)).validate())
     }
 
     def traineePasswordChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
       val password = getValue(e)
-      fieldChanged[Props, State]($, _.copy(traineePassword = Some(password)).validate())
+      fieldChanged[Props, State]($, _.copy(password = Some(password)).validate())
     }
 
     def createTraineeAccount($: BackendScope[Props, State], e: ReactMouseEvent): Callback =
       ($.props >>= (p => $.state >>= (s =>
         p.proxy.dispatchCB(
           CreateTraineeAccount(Trainee(
-            name            = s.traineeName.get,
+            name            = s.name.get,
             birthday        = Date(s.birthday.getFullYear, s.birthday.getMonth() + 1, s.birthday.getDate),
-            height          = s.height.get.toDouble,
+            heightInCm      = s.heightInCm.get.toDouble,
             phoneNumber     = s.contactNumber,
-            credentials     = Credentials(s.traineeUsername.get, s.traineePassword.get),
+            credentials     = Credentials(s.username.get, s.password.get),
             trainingProgram = None
           ))
         )))) >> $.modState(_.reset())
@@ -236,12 +236,12 @@ object TraineeForm {
     .initialStateFromProps(props =>
       State(
         props.proxy.connect(identity),
-        traineeName     = None,
-        contactNumber   = None,
-        birthday        = new js.Date(2000, 0),
-        height          = None,
-        traineeUsername = None,
-        traineePassword = None
+        name          = None,
+        contactNumber = None,
+        birthday      = new js.Date(2000, 0),
+        heightInCm    = None,
+        username      = None,
+        password      = None
       ))
     .renderBackend[Backend]
     .build

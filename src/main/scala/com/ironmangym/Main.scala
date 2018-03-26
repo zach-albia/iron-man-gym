@@ -10,8 +10,6 @@ import japgolly.scalajs.react.extra.router._
 import japgolly.scalajs.react.vdom.html_<^._
 import org.scalajs.dom
 
-import scala.scalajs.js
-
 object Main {
 
   sealed trait Page
@@ -43,7 +41,7 @@ object Main {
               component = "a",
               variant   = Typography.Variant.headline,
               color     = Typography.Color.inherit,
-              className = Styles.ironManGymTitle,
+              className = Styles.ironManGymTitle
             )("href" -> c.baseUrl.value)(
               "Iron Man Gym"
             ),

@@ -10,7 +10,7 @@ sealed trait User {
 case class Trainee(
     name:            String,
     birthday:        Date,
-    height:          Double,
+    heightInCm:      Double,
     phoneNumber:     Option[String],
     credentials:     Credentials,
     trainingProgram: Option[TrainingProgram] = None
