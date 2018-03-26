@@ -36,6 +36,15 @@ object TraineeForm {
           traineeUsername.exists(_.nonEmpty) &&
           traineePassword.exists(_.nonEmpty)
     )
+
+    def reset(): State = copy(
+      traineeName     = None,
+      contactNumber   = None,
+      birthday        = new js.Date(2000, 0),
+      height          = None,
+      traineeUsername = None,
+      traineePassword = None
+    )
   }
 
   val monthNames = Seq("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
@@ -205,7 +214,7 @@ object TraineeForm {
     }
 
     def createTraineeAccount($: BackendScope[Props, State], e: ReactMouseEvent): Callback =
-      $.props >>= (p => $.state >>= (s =>
+      ($.props >>= (p => $.state >>= (s =>
         p.proxy.dispatchCB(
           CreateTraineeAccount(Trainee(
             name            = s.traineeName.get,
@@ -215,7 +224,7 @@ object TraineeForm {
             credentials     = Credentials(s.traineeUsername.get, s.traineePassword.get),
             trainingProgram = None
           ))
-        )))
+        )))) >> $.modState(_.reset())
 
     def onSnackbarClose($: BackendScope[Props, State]): CallbackTo[Unit] = $.modState(_.copy(snackbarOpen = false))
 

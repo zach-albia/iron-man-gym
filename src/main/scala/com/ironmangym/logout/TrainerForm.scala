@@ -27,6 +27,12 @@ object TrainerForm {
         && trainerUsername.exists(_.nonEmpty)
         && trainerPassword.exists(_.nonEmpty)
     )
+
+    def reset() = copy(
+      trainerName     = None,
+      trainerUsername = None,
+      trainerPassword = None
+    )
   }
 
   private class Backend($: BackendScope[Logout.Props, State]) {
@@ -89,13 +95,13 @@ object TrainerForm {
     }
 
     def createTrainerAccount($: BackendScope[Props, State])(e: ReactMouseEvent): Callback =
-      $.props >>= (p => $.state >>= (s =>
+      ($.props >>= (p => $.state >>= (s =>
         p.proxy.dispatchCB(
           CreateTrainerAccount(Trainer(
             name        = s.trainerName.get,
             credentials = Credentials(s.trainerUsername.get, s.trainerPassword.get)
           ))
-        )))
+        )))) >> $.modState(_.reset())
   }
 
   private val component = ScalaComponent.builder[Logout.Props]("Trainer Form")
