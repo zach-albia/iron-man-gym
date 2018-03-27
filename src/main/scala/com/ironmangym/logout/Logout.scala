@@ -30,7 +30,13 @@ object Logout {
                 className = Styles.logoutCardMedia
               )("title" -> "Iron Man Gym")(),
               CardContent()()(
-                Typography(variant = Typography.Variant.title)()("Get swole here, dude")
+                Typography(variant = Typography.Variant.title)()("Get swole here, dude"),
+                Typography()()(
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus dignissim sodales nulla, id laoreet quam. Sed euismod nisl id massa feugiat congue. Proin quis metus arcu. Sed condimentum efficitur nisi, in maximus libero consectetur at. Donec ornare arcu nec pretium auctor. Curabitur sodales purus sed massa varius, sit amet consectetur neque pulvinar. Suspendisse dapibus hendrerit vestibulum. Maecenas nec sem non diam porttitor feugiat. Nulla facilisi. Quisque blandit leo condimentum, malesuada ligula eu, consectetur ex."
+                ),
+                Typography()()(
+                  "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Pellentesque ac metus a urna ultricies efficitur at sed sapien. Donec vel lacus sed metus venenatis pharetra. Vivamus ornare mattis felis vel scelerisque. Proin ac posuere enim, at ullamcorper mauris. Sed erat odio, ornare tincidunt ullamcorper at, pharetra at enim. In aliquet mi porttitor egestas euismod. Donec laoreet nibh eget ex fermentum porttitor."
+                )
               )
             )
           ),
