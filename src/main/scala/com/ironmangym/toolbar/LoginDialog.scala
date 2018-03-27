@@ -9,12 +9,18 @@ import japgolly.scalajs.react._
 import japgolly.scalajs.react.component.Scala.BackendScope
 import japgolly.scalajs.react.extra.router.RouterCtl
 import japgolly.scalajs.react.vdom.html_<^._
+import org.scalajs.dom
 
 import scala.scalajs.js
 
 object LoginDialog {
 
-  case class Props(router: RouterCtl[Page], proxy: ModelProxy[Users], open: Boolean, onClose: ReactHandler1[ReactEvent])
+  case class Props(
+      router:  RouterCtl[Page],
+      proxy:   ModelProxy[Users],
+      open:    Boolean,
+      onClose: ReactHandler1[ReactEvent]
+  )
 
   case class State(
       usersWrapper: ReactConnectProxy[Users],
@@ -36,7 +42,9 @@ object LoginDialog {
       Dialog(
         open    = p.open,
         onClose = resetAndClose(_)
-      )()(
+      )("onKeyUp" -> { (e: ReactKeyboardEvent) =>
+          if (e.keyCode == 13) dom.document.getElementById("loginDialogSubmit").domAsHtml.click()
+        })(
           DialogTitle()()("Sign In"),
           DialogContent()()(
             DialogContentText()()("Please sign in to access your profile."),
@@ -66,7 +74,7 @@ object LoginDialog {
                 onClick  = handleGoButton(_),
                 variant  = Button.Variant.raised,
                 disabled = !s.formValid
-              )()("Go")
+              )("id" -> "loginDialogSubmit")("Go")
             )
           )
         )
