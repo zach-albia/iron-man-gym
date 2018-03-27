@@ -2,7 +2,7 @@ package com.ironmangym.logout
 
 import com.ironmangym.Main.Page
 import com.ironmangym.domain.Users
-import com.ironmangym.profile.Profile
+import com.ironmangym.profile.{ Profile, TrainerProfile }
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router.RouterCtl

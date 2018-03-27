@@ -9,7 +9,7 @@ import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router.RouterCtl
 import japgolly.scalajs.react.vdom.html_<^._
-import org.scalajs.dom.raw.HTMLInputElement
+import scalacss.ScalaCssReact._
 
 import scala.scalajs.js
 import scala.scalajs.js.UndefOr._
@@ -21,11 +21,7 @@ object Registration {
 
     def render(p: Props): VdomElement =
       <.div(
-        ^.margin := "0 auto",
-        ^.marginTop := 40.px,
-        ^.maxWidth := 960.px,
-        ^.paddingLeft := 24.px,
-        ^.paddingRight := 24.px,
+        Styles.containerDiv,
         Grid(container = true)()(
           Grid(item = true, xs = 12, md = 5)()(TraineeForm(p.router, p.proxy)),
           Grid(item    = true, xs = 12, md = 2, classes = Map())("style" -> js.Dynamic.literal(position = "relative"))(

@@ -60,7 +60,7 @@ object TraineeForm {
             id         = "traineeName",
             label      = "Name",
             required   = true,
-            onChange   = traineeNameChanged($)(_),
+            onChange   = traineeNameChanged(_),
             value      = s.name.getOrElse("").toString,
             error      = s.wasMadeEmpty[State](_.name),
             autoFocus  = true,
@@ -69,7 +69,7 @@ object TraineeForm {
           TextField(
             id       = "traineePhoneNumber",
             label    = "Contact Number (optional)",
-            onChange = (e: ReactEvent) => contactNumberChanged($, e),
+            onChange = contactNumberChanged(_),
             value    = s.contactNumber.getOrElse("").toString
           )()(),
           FormLabel(component = "legend", className = Styles.registrationBirthday)()("Birthday"),
@@ -82,7 +82,7 @@ object TraineeForm {
                 native = true,
                 value  = s.birthday.getFullYear
               ).asInstanceOf[Select.Props],
-              onChange    = (e: ReactEvent) => birthdayYearChanged($, e)
+              onChange    = birthdayYearChanged(_)
             )()(
                 (1900 to new js.Date().getFullYear).map(
                   year => <.option(^.key := s"year-$year", ^.value := year, year).render
@@ -95,7 +95,7 @@ object TraineeForm {
                 native = true,
                 value  = s.birthday.getMonth
               ).asInstanceOf[Select.Props],
-              onChange    = (e: ReactEvent) => birthdayMonthChanged($, e)
+              onChange    = birthdayMonthChanged(_)
             )()(
                 (0 to 11).map(
                   month => <.option(^.key := s"month-$month", ^.value := month, monthNames(month)).render
@@ -108,7 +108,7 @@ object TraineeForm {
                 native = true,
                 value  = s.birthday.getDate
               ).asInstanceOf[Select.Props],
-              onChange    = (e: ReactEvent) => birthdayDateChanged($, e)
+              onChange    = (e: ReactEvent) => birthdayDateChanged(e)
             )()(
                 (1 to daysInMonth(s)).map(
                   date => <.option(^.key := s"date-$date", ^.value := date, date).render
@@ -125,7 +125,7 @@ object TraineeForm {
             ).asInstanceOf[Input.Props],
             typ        = "number",
             value      = s.heightInCm.getOrElse("").toString,
-            onChange   = (e: ReactEvent) => heightChanged($, e),
+            onChange   = heightChanged(_),
             error      = s.wasMadeEmpty[State](_.heightInCm),
             helperText = if (s.wasMadeEmpty[State](_.heightInCm)) "Your heigh in centimeters is required." else js.undefined
           )()(),
@@ -134,7 +134,7 @@ object TraineeForm {
             label      = "Username",
             required   = true,
             value      = s.username.getOrElse("").toString,
-            onChange   = (e: ReactEvent) => traineeUsernameChanged($, e),
+            onChange   = traineeUsernameChanged(_),
             error      = s.wasMadeEmpty[State](_.username),
             helperText = if (s.wasMadeEmpty[State](_.username)) "A unique username is required." else js.undefined
           )()(),
@@ -144,7 +144,7 @@ object TraineeForm {
             required   = true,
             typ        = "password",
             value      = s.password.getOrElse("").toString,
-            onChange   = (e: ReactEvent) => traineePasswordChanged($, e),
+            onChange   = traineePasswordChanged(_),
             error      = s.wasMadeEmpty[State](_.password),
             helperText = if (s.wasMadeEmpty[State](_.password)) "A password is required." else js.undefined
           )()(),
@@ -152,7 +152,7 @@ object TraineeForm {
             variant   = Button.Variant.raised,
             className = Styles.registrationButton,
             disabled  = !s.traineeFormValid,
-            onClick   = (e: ReactMouseEvent) => createTraineeAccount($, e) >> $.modState(_.copy(snackbarOpen = true))
+            onClick   = createTraineeAccount(_)
           )()("Create Account"),
           Snackbar(
             anchorOrigin     = Snackbar.Origin(
@@ -160,60 +160,60 @@ object TraineeForm {
               Left(Snackbar.Vertical.center)
             ),
             open             = s.snackbarOpen,
-            message          = <.span("Your account has been created. You may now log in with it.").rawElement,
+            message          = <.span("Your trainee account has been created. You may now log in with it.").rawElement,
             autoHideDuration = 6000,
-            onClose          = (_: ReactEvent, _: String) => onSnackbarClose($)
+            onClose          = onSnackbarClose(_, _)
           )()()
         )
       )
 
-    def traineeNameChanged($: BackendScope[Props, State])(e: ReactEvent): Callback = {
+    def traineeNameChanged(e: ReactEvent): Callback = {
       val traineeName = getValue(e)
       fieldChanged[Props, State]($, _.copy(name = Some(traineeName)).validate())
     }
 
-    def contactNumberChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
+    def contactNumberChanged(e: ReactEvent): Callback = {
       val contactNumber = getValue(e)
       fieldChanged[Props, State]($, _.copy(contactNumber = Some(contactNumber)).validate())
     }
 
-    def birthdayYearChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
+    def birthdayYearChanged(e: ReactEvent): Callback = {
       val birthdayYear = getValue(e)
       fieldChanged[Props, State]($, s =>
         s.copy(birthday =
           new js.Date(birthdayYear.toInt, s.birthday.getMonth, math.min(s.birthday.getDate(), daysInMonth(s)))).validate())
     }
 
-    def birthdayMonthChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
+    def birthdayMonthChanged(e: ReactEvent): Callback = {
       val birthdayMonth = e.currentTarget.asInstanceOf[HTMLSelectElement].selectedIndex
       fieldChanged[Props, State]($, s =>
         s.copy(birthday =
           new js.Date(s.birthday.getFullYear, birthdayMonth, math.min(s.birthday.getDate(), daysInMonth(s)))).validate())
     }
 
-    def birthdayDateChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
+    def birthdayDateChanged(e: ReactEvent): Callback = {
       val birthdayDate = getValue(e)
       fieldChanged[Props, State]($, s =>
         s.copy(birthday =
           new js.Date(s.birthday.getFullYear, s.birthday.getMonth, birthdayDate.toInt)).validate())
     }
 
-    def heightChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
+    def heightChanged(e: ReactEvent): Callback = {
       val height = getValue(e)
       fieldChanged[Props, State]($, _.copy(heightInCm = Some(height)).validate())
     }
 
-    def traineeUsernameChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
+    def traineeUsernameChanged(e: ReactEvent): Callback = {
       val username = getValue(e)
       fieldChanged[Props, State]($, _.copy(username = Some(username)).validate())
     }
 
-    def traineePasswordChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
+    def traineePasswordChanged(e: ReactEvent): Callback = {
       val password = getValue(e)
       fieldChanged[Props, State]($, _.copy(password = Some(password)).validate())
     }
 
-    def createTraineeAccount($: BackendScope[Props, State], e: ReactMouseEvent): Callback =
+    def createTraineeAccount(e: ReactMouseEvent): Callback =
       ($.props >>= (p => $.state >>= (s =>
         p.proxy.dispatchCB(
           CreateTraineeAccount(Trainee(
@@ -224,9 +224,10 @@ object TraineeForm {
             credentials     = Credentials(s.username.get, s.password.get),
             trainingProgram = None
           ))
-        )))) >> $.modState(_.reset())
+        )))) >> $.modState(_.reset()) >> $.modState(_.copy(snackbarOpen = true))
 
-    def onSnackbarClose($: BackendScope[Props, State]): CallbackTo[Unit] = $.modState(_.copy(snackbarOpen = false))
+    def onSnackbarClose(e: ReactEvent, reason: String): CallbackTo[Unit] =
+      $.modState(_.copy(snackbarOpen = false))
 
     private def daysInMonth(s: State) =
       YearMonth.of(s.birthday.getFullYear, s.birthday.getMonth + 1).lengthOfMonth

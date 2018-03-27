@@ -8,8 +8,11 @@ import scala.scalajs.js
 object Styles extends StyleSheet.Inline {
   import dsl._
 
-  val margins = style(
-    margin :=! "0 auto"
+  val containerDiv = style(
+    margin :=! "40px auto 0 auto",
+    maxWidth(960.px),
+    paddingLeft(24.px),
+    paddingRight(24.px)
   )
 
   val verticalCenter = style(

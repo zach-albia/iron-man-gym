@@ -21,11 +21,10 @@ object Main {
   val routerConfig: RouterConfig[Page] = RouterConfigDsl[Page].buildConfig { dsl =>
     import dsl._
 
+    val usersWrapper = SPACircuit.connect(_.users)
+
     (emptyRule
-      | staticRoute(root, Page.Landing) ~> renderR(ctl => {
-        val usersWrapper = SPACircuit.connect(_.users)
-        usersWrapper(proxy => Landing(ctl, proxy))
-      })
+      | staticRoute(root, Page.Landing) ~> renderR(ctl => { usersWrapper(proxy => Landing(ctl, proxy)) })
       | staticRoute("#about", Page.About) ~> render(About())).notFound(redirectToPage(Page.Landing)(Redirect.Replace))
   }.renderWith(layout)
 
