@@ -21,18 +21,13 @@ object Registration {
 
     def render(p: Props): VdomElement =
       <.div(
-        Styles.containerDiv,
-        Grid(container = true)()(
-          Grid(item = true, xs = 12, md = 5)()(TraineeForm(p.router, p.proxy)),
-          Grid(item    = true, xs = 12, md = 2, classes = Map())("style" -> js.Dynamic.literal(position = "relative"))(
-            Typography(
-              variant   = Typography.Variant.headline,
-              align     = Typography.Alignment.center,
-              className = Styles.verticalCenter
-            )()("or")
-          ),
-          Grid(item = true, xs = 12, md = 5)()(TrainerForm(p.router, p.proxy))
-        )
+        TraineeForm(p.router, p.proxy),
+        Typography(
+          variant   = Typography.Variant.headline,
+          align     = Typography.Alignment.center,
+          className = Styles.or
+        )()("or"),
+        TrainerForm(p.router, p.proxy)
       )
   }
 
