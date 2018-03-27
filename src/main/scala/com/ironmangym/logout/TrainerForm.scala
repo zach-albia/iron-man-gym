@@ -20,7 +20,8 @@ object TrainerForm {
       trainerName:      Option[String],
       trainerUsername:  Option[String],
       trainerPassword:  Option[String],
-      trainerFormValid: Boolean                  = false
+      trainerFormValid: Boolean                  = false,
+      snackbarOpen:     Boolean                  = false
   ) extends FormState {
     def validate(): State = copy(
       trainerFormValid = trainerName.exists(_.nonEmpty)
@@ -28,10 +29,12 @@ object TrainerForm {
         && trainerPassword.exists(_.nonEmpty)
     )
 
-    def reset() = copy(
-      trainerName     = None,
-      trainerUsername = None,
-      trainerPassword = None
+    def reset(): State = copy(
+      trainerName      = None,
+      trainerUsername  = None,
+      trainerPassword  = None,
+      trainerFormValid = false,
+      snackbarOpen     = false
     )
   }
 
@@ -47,7 +50,7 @@ object TrainerForm {
             label      = "Name",
             required   = true,
             value      = s.trainerName.getOrElse("").toString,
-            onChange   = (e: ReactEvent) => trainerNameChanged($, e),
+            onChange   = trainerNameChanged(_),
             error      = s.wasMadeEmpty[State](_.trainerName),
             helperText = if (s.wasMadeEmpty[State](_.trainerName)) "Your name is required." else js.undefined
           )()(),
@@ -56,7 +59,7 @@ object TrainerForm {
             label      = "Username",
             required   = true,
             value      = s.trainerUsername.getOrElse("").toString,
-            onChange   = (e: ReactEvent) => trainerUsernameChanged($, e),
+            onChange   = trainerUsernameChanged(_),
             error      = s.wasMadeEmpty[State](_.trainerUsername),
             helperText = if (s.wasMadeEmpty[State](_.trainerUsername)) "A unique username is required." else js.undefined
           )()(),
@@ -66,7 +69,7 @@ object TrainerForm {
             required   = true,
             typ        = "password",
             value      = s.trainerPassword.getOrElse("").toString,
-            onChange   = (e: ReactEvent) => trainerPasswordChanged($, e),
+            onChange   = trainerPasswordChanged(_),
             error      = s.wasMadeEmpty[State](_.trainerPassword),
             helperText = if (s.wasMadeEmpty[State](_.trainerPassword)) "A password is required." else js.undefined
           )()(),
@@ -74,34 +77,47 @@ object TrainerForm {
             variant   = Button.Variant.raised,
             className = Styles.registrationButton,
             disabled  = !s.trainerFormValid,
-            onClick   = createTrainerAccount($)(_)
-          )()("Create Account")
+            onClick   = createTrainerAccount(_)
+          )()("Create Account"),
+          Snackbar(
+            anchorOrigin     = Snackbar.Origin(
+              Left(Snackbar.Horizontal.center),
+              Left(Snackbar.Vertical.center)
+            ),
+            open             = s.snackbarOpen,
+            message          = <.span("Your trainer account has been created. You may now log in with it.").rawElement,
+            autoHideDuration = 6000,
+            onClose          = onSnackbarClose(_, _)
+          )()()
         )
       )
 
-    def trainerNameChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
+    def trainerNameChanged(e: ReactEvent): Callback = {
       val trainerName = getValue(e)
       fieldChanged[Props, State]($, _.copy(trainerName = Some(trainerName)).validate())
     }
 
-    def trainerUsernameChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
+    def trainerUsernameChanged(e: ReactEvent): Callback = {
       val username = getValue(e)
       fieldChanged[Props, State]($, _.copy(trainerUsername = Some(username)).validate())
     }
 
-    def trainerPasswordChanged($: BackendScope[Props, State], e: ReactEvent): Callback = {
+    def trainerPasswordChanged(e: ReactEvent): Callback = {
       val password = getValue(e)
       fieldChanged[Props, State]($, _.copy(trainerPassword = Some(password)).validate())
     }
 
-    def createTrainerAccount($: BackendScope[Props, State])(e: ReactMouseEvent): Callback =
+    def createTrainerAccount(e: ReactMouseEvent): Callback =
       ($.props >>= (p => $.state >>= (s =>
         p.proxy.dispatchCB(
           CreateTrainerAccount(Trainer(
             name        = s.trainerName.get,
             credentials = Credentials(s.trainerUsername.get, s.trainerPassword.get)
           ))
-        )))) >> $.modState(_.reset())
+        )))) >> $.modState(_.reset()) >> $.modState(_.copy(snackbarOpen = true))
+
+    def onSnackbarClose(e: ReactEvent, reason: String): CallbackTo[Unit] =
+      $.modState(_.copy(snackbarOpen = false))
   }
 
   private val component = ScalaComponent.builder[Logout.Props]("Trainer Form")

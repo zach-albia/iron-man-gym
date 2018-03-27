@@ -10,7 +10,7 @@ sealed trait User {
 case class Trainee(
     name:            String,
     birthday:        Date,
-    height:          Double,
+    heightInCm:      Double,
     phoneNumber:     Option[String],
     credentials:     Credentials,
     trainingProgram: Option[TrainingProgram] = None
@@ -28,12 +28,14 @@ case class Credentials(
 )
 
 case class Trainer(
-    name:        String,
-    credentials: Credentials
+    name:            String,
+    credentials:     Credentials,
+    trainingProgram: Seq[TrainingProgram] = Seq.empty
 ) extends User
 
 case class TrainingProgram(
-    trainer:     String,
+    trainer:     Trainer,
+    trainee:     Trainee,
     workoutDays: Seq[WorkoutDay],
     goal:        Goal
 )
@@ -59,9 +61,15 @@ case class WorkoutDay(
     weight:            Double
 )
 
+sealed trait Difficulty
+case object Beginner
+case object Intermediate
+case object Advanced
+
 case class TrainingModule(
-    name:      String,
-    exercises: List[String]
+    name:       String,
+    exercises:  List[String],
+    difficulty: Difficulty
 )
 
 case class PersistentUser(

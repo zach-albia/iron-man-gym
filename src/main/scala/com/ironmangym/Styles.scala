@@ -8,19 +8,16 @@ import scala.scalajs.js
 object Styles extends StyleSheet.Inline {
   import dsl._
 
-  val margins = style(
-    margin :=! "0 auto"
+  val containerDiv = style(
+    margin :=! "40px auto 0 auto",
+    maxWidth(960.px),
+    paddingLeft(24.px),
+    paddingRight(24.px)
   )
 
-  val verticalCenter = style(
-    media.minWidth(960.px)(
-      position.absolute,
-      top(50.%%),
-      left(50.%%),
-      height(30.%%),
-      width(50.%%),
-      margin :=! "-15% 0 0 -25%"
-    )
+  val or = style(
+    marginTop(24.px),
+    marginBottom(24.px)
   )
 
   val paperPadding = style(
@@ -42,6 +39,10 @@ object Styles extends StyleSheet.Inline {
   val ironManGymTitle = style(
     flex := "1",
     textDecoration := "none"
+  )
+
+  val logoutCardMedia = style(
+    height(500.px)
   )
 
   implicit def styleAToClassName(styleA: StyleA): String =

@@ -10,23 +10,21 @@ import japgolly.scalajs.react.extra.router._
 import japgolly.scalajs.react.vdom.html_<^._
 import org.scalajs.dom
 
-import scala.scalajs.js
-
 object Main {
 
   sealed trait Page
   object Page {
     case object Landing extends Page
-    case object Profile extends Page
     case object About extends Page
   }
 
   val routerConfig: RouterConfig[Page] = RouterConfigDsl[Page].buildConfig { dsl =>
     import dsl._
 
+    val usersWrapper = SPACircuit.connect(_.users)
+
     (emptyRule
-      | staticRoute(root, Page.Landing) ~> renderR(ctl => SPACircuit.wrap(_.users)(proxy => Registration(ctl, proxy)))
-      | staticRoute("#profile", Page.Profile) ~> render(Typography(variant = Typography.Variant.title)()("Profile"))
+      | staticRoute(root, Page.Landing) ~> renderR(ctl => { usersWrapper(proxy => Landing(ctl, proxy)) })
       | staticRoute("#about", Page.About) ~> render(About())).notFound(redirectToPage(Page.Landing)(Redirect.Replace))
   }.renderWith(layout)
 
@@ -43,7 +41,7 @@ object Main {
               component = "a",
               variant   = Typography.Variant.headline,
               color     = Typography.Color.inherit,
-              className = Styles.ironManGymTitle,
+              className = Styles.ironManGymTitle
             )("href" -> c.baseUrl.value)(
               "Iron Man Gym"
             ),
