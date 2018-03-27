@@ -85,7 +85,7 @@ object LoginDialog {
       $.modState(_.reset()) >> closeForm(e)
 
     def handleGoButton(e: ReactEvent): Callback =
-      login(e) >> closeForm(e) >> ($.props >>= { p => p.router.set(Page.Profile) })
+      login(e) >> closeForm(e)
 
     def closeForm(e: ReactEvent): Callback =
       $.props >>= { p => p.onClose.getOrElse((_: ReactEvent) => Callback.empty)(e) }

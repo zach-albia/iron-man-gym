@@ -1,23 +1,21 @@
-package com.ironmangym.logout
+package com.ironmangym.profile
 
 import com.ironmangym.Main.Page
 import com.ironmangym.domain.Users
-import com.ironmangym.profile.Profile
+import com.pangwarta.sjrmui.Typography
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
-import japgolly.scalajs.react.extra.router.RouterCtl
 import japgolly.scalajs.react.vdom.html_<^._
+import japgolly.scalajs.react.extra.router.RouterCtl
+import japgolly.scalajs.react.vdom.VdomElement
 
-object Landing {
+object Profile {
 
   case class Props(router: RouterCtl[Page], proxy: ModelProxy[Users])
 
-  private val component = ScalaComponent.builder[Props]("Logout")
+  private val component = ScalaComponent.builder[Props]("Profile")
     .render_P { p =>
-      if (p.proxy().currentUser.isEmpty)
-        Logout(p.router, p.proxy)
-      else
-        Profile(p.router, p.proxy)
+      Typography(variant = Typography.Variant.title)()("Profile")
     }
     .build
 

@@ -15,7 +15,6 @@ object Main {
   sealed trait Page
   object Page {
     case object Landing extends Page
-    case object Profile extends Page
     case object About extends Page
   }
 
@@ -23,8 +22,10 @@ object Main {
     import dsl._
 
     (emptyRule
-      | staticRoute(root, Page.Landing) ~> renderR(ctl => SPACircuit.wrap(_.users)(proxy => Registration(ctl, proxy)))
-      | staticRoute("#profile", Page.Profile) ~> render(Typography(variant = Typography.Variant.title)()("Profile"))
+      | staticRoute(root, Page.Landing) ~> renderR(ctl => {
+        val usersWrapper = SPACircuit.connect(_.users)
+        usersWrapper(proxy => Landing(ctl, proxy))
+      })
       | staticRoute("#about", Page.About) ~> render(About())).notFound(redirectToPage(Page.Landing)(Redirect.Replace))
   }.renderWith(layout)
 
