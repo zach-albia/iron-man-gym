@@ -38,12 +38,14 @@ object TraineeForm {
     )
 
     def reset(): State = copy(
-      name          = None,
-      contactNumber = None,
-      birthday      = new js.Date(2000, 0),
-      heightInCm    = None,
-      username      = None,
-      password      = None
+      name             = None,
+      contactNumber    = None,
+      birthday         = new js.Date(2000, 0),
+      heightInCm       = None,
+      username         = None,
+      password         = None,
+      traineeFormValid = false,
+      snackbarOpen     = false
     )
   }
 

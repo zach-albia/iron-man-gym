@@ -30,9 +30,11 @@ object TrainerForm {
     )
 
     def reset(): State = copy(
-      trainerName     = None,
-      trainerUsername = None,
-      trainerPassword = None
+      trainerName      = None,
+      trainerUsername  = None,
+      trainerPassword  = None,
+      trainerFormValid = false,
+      snackbarOpen     = false
     )
   }
 
