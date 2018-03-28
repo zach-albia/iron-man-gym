@@ -25,12 +25,11 @@ object AppBarContent {
       <.div(
         ^.style := js.Dynamic.literal(display = "contents"),
         Hidden(xsDown = true)()(
-          if (currentUser.nonEmpty)
-            Typography(variant = Typography.Variant.subheading)("style" -> js.Dynamic.literal(
-            verticalAlign = "center"
-          ))(currentUser.get.name)
-          else
-            Button(onClick = openLoginDialog(_))()("Sign In")
+          if (currentUser.nonEmpty) {
+            Typography(
+              variant = Typography.Variant.subheading
+            )("style" -> js.Dynamic.literal(verticalAlign = "center"))(currentUser.get.name)
+          } else Button(onClick = openLoginDialog(_))()("Sign In")
         ),
         Tooltip(title = if (currentUser.isEmpty) "Not signed in" else s"Signed in as ${currentUser.get.name}")()(
           IconButton(onClick = openMenu(_))()(

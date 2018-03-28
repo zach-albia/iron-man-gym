@@ -10,7 +10,7 @@ object Styles extends StyleSheet.Inline {
 
   val containerDiv = style(
     margin :=! "40px auto 0 auto",
-    maxWidth(960.px),
+    maxWidth(1170.px),
     paddingLeft(24.px),
     paddingRight(24.px)
   )
@@ -24,12 +24,12 @@ object Styles extends StyleSheet.Inline {
     padding :=! "24px"
   )
 
-  val registrationBirthday = style(
+  val marginTop24 = style(
     marginTop(24.px)
   )
 
-  val registrationButton = style(
-    marginTop(24.px)
+  val marginTop12 = style(
+    marginTop(12.px)
   )
 
   val appBarHeight = style(
@@ -42,7 +42,7 @@ object Styles extends StyleSheet.Inline {
   )
 
   val logoutCardMedia = style(
-    height(500.px)
+    height(420.px)
   )
 
   implicit def styleAToClassName(styleA: StyleA): String =

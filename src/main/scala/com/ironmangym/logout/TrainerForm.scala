@@ -75,7 +75,7 @@ object TrainerForm {
           )()(),
           Button(
             variant   = Button.Variant.raised,
-            className = Styles.registrationButton,
+            className = Styles.marginTop24,
             disabled  = !s.trainerFormValid,
             onClick   = createTrainerAccount(_)
           )()("Create Account"),

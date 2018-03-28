@@ -49,8 +49,6 @@ object TraineeForm {
     )
   }
 
-  val monthNames = Seq("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-
   private class Backend($: BackendScope[Logout.Props, State]) {
     import Logout.Props
 
@@ -74,7 +72,7 @@ object TraineeForm {
             onChange = contactNumberChanged(_),
             value    = s.contactNumber.getOrElse("").toString
           )()(),
-          FormLabel(component = "legend", className = Styles.registrationBirthday)()("Birthday"),
+          FormLabel(component = "legend", className = Styles.marginTop24)()("Birthday"),
           <.div(
             ^.overflow.hidden,
             TextField(
@@ -152,7 +150,7 @@ object TraineeForm {
           )()(),
           Button(
             variant   = Button.Variant.raised,
-            className = Styles.registrationButton,
+            className = Styles.marginTop24,
             disabled  = !s.traineeFormValid,
             onClick   = createTraineeAccount(_)
           )()("Create Account"),

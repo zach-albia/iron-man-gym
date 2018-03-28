@@ -11,6 +11,7 @@ import japgolly.scalajs.react.extra.router.RouterCtl
 import japgolly.scalajs.react.vdom.html_<^._
 import scalacss.ScalaCssReact._
 
+import scala.scalajs.js
 import scala.scalajs.js.UndefOr._
 
 object Logout {
@@ -23,7 +24,7 @@ object Logout {
       <.div(
         Styles.containerDiv,
         Grid(container = true)()(
-          Grid(item = true, xs = 12, lg = 8)()(
+          Grid(item = true, xs = 12, md = 8)()(
             Card()()(
               CardMedia(
                 image     = "./target/scala-2.12/classes/ironmangym_inside.jpg",
@@ -40,7 +41,7 @@ object Logout {
               )
             )
           ),
-          Grid(item = true, xs = 12, lg = 4)()(
+          Grid(item = true, xs = 12, md = 4)()(
             Registration(p.router, p.proxy)
           )
         )
