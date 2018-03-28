@@ -40,10 +40,10 @@ object LoginDialog {
 
     def render(p: Props, s: State): VdomElement =
       Dialog(
-        open    = p.open,
+        open    = p.open || s.loginValid.contains(false),
         onClose = resetAndClose(_)
       )("onKeyUp" -> { (e: ReactKeyboardEvent) =>
-          if (e.keyCode == 13) dom.document.getElementById("loginDialogSubmit").domAsHtml.click()
+          if (e.keyCode == 13 & s.formValid) dom.document.getElementById("loginDialogSubmit").domAsHtml.click()
         })(
           DialogTitle()()("Sign In"),
           DialogContent()()(
@@ -65,7 +65,7 @@ object LoginDialog {
                 error      = s.wasMadeEmpty[State](_.password),
                 helperText = if (s.wasMadeEmpty[State](_.password)) "Please enter your password" else js.undefined
               )()(),
-              Hidden(xsUp = s.loginValid.forall(_ == true))()(
+              Hidden(xsUp = s.loginValid.isEmpty || s.loginValid.contains(true))()(
                 FormHelperText(error = true)()("Invalid username and password")
               )
             ),
@@ -104,8 +104,8 @@ object LoginDialog {
         val users = p.proxy()
         val trainer = users.trainers.find(_.credentials == formCredentials)
         val trainee = users.trainees.find(_.credentials == formCredentials)
-        if (trainer.nonEmpty) p.proxy.dispatchCB(LogIn(trainer.get))
-        else if (trainee.nonEmpty) p.proxy.dispatchCB(LogIn(trainee.get))
+        if (trainer.nonEmpty) p.proxy.dispatchCB(LogIn(trainer.get)) >> $.modState(_.copy(loginValid = Some(true)))
+        else if (trainee.nonEmpty) p.proxy.dispatchCB(LogIn(trainee.get)) >> $.modState(_.copy(loginValid = Some(true)))
         else $.modState(_.copy(loginValid = Some(false)))
       }))
     }
