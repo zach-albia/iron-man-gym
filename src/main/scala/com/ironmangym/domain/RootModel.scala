@@ -14,7 +14,16 @@ case class Trainee(
     phoneNumber:     Option[String],
     credentials:     Credentials,
     trainingProgram: Option[TrainingProgram] = None
-) extends User
+) extends User {
+  def latestWeight: Option[Double] =
+    trainingProgram.map(_.workoutDays.last.weight)
+
+  def latestBMI: Option[Double] =
+    trainingProgram.map(_.workoutDays.last.bodyMassIndex)
+
+  def latestBFP: Option[Double] =
+    trainingProgram.map(_.workoutDays.last.bodyFatPercentage)
+}
 
 case class Date(
     year:  Int,
@@ -54,6 +63,7 @@ case class Goal(
 
 case class WorkoutDay(
     date:              Date,
+    name:              String,
     description:       String,
     done:              Boolean,
     bodyFatPercentage: Double,
@@ -68,8 +78,13 @@ case object Advanced
 
 case class TrainingModule(
     name:       String,
-    exercises:  List[String],
+    routines:   List[Routine],
     difficulty: Difficulty
+)
+
+case class Routine(
+    name:      String,
+    exercises: List[String]
 )
 
 case class PersistentUser(
