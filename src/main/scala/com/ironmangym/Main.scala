@@ -8,7 +8,7 @@ import com.ironmangym.about.About
 import com.pangwarta.sjrmui._
 import japgolly.scalajs.react.extra.router._
 import japgolly.scalajs.react.vdom.html_<^._
-import org.scalajs.dom
+import org.scalajs.dom.document
 
 object Main {
 
@@ -54,7 +54,17 @@ object Main {
 
   def main(args: Array[String]): Unit = {
     val router = Router(BaseUrl.until_#, routerConfig)
-    router().renderIntoDOM(dom.document.getElementById("root"))
+    router().renderIntoDOM(document.getElementById("root"))
     Styles.addToDocument()
+    addReactBigCalendarStyles()
+  }
+
+  def addReactBigCalendarStyles() = {
+    val head = document.head
+    val link = document.createElement("link")
+    link.setAttribute("type", "text/css")
+    link.setAttribute("rel", "stylesheet")
+    link.setAttribute("href", "target/scala-2.12/classes/react-big-calendar.css")
+    head.appendChild(link)
   }
 }

@@ -33,4 +33,9 @@ libraryDependencies ++=
   "com.github.benhutchison" %%% "prickle"                   % "1.1.13"         ::
   Nil
 
+npmDependencies in Compile ++=
+  "react-big-calendar" -> "latest" ::
+  "moment"             -> "latest" ::
+  Nil
+
 enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin)

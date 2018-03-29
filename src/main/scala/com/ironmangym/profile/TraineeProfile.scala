@@ -11,7 +11,9 @@ import japgolly.scalajs.react.extra.router.RouterCtl
 import japgolly.scalajs.react.vdom.html_<^._
 import scalacss.ScalaCssReact._
 import Styles._
+import com.ironmangym.wrapper.BigCalendar
 
+import scala.scalajs.js
 import scala.scalajs.js.UndefOr._
 
 object TraineeProfile {
@@ -25,7 +27,7 @@ object TraineeProfile {
       val birthday = p.trainee.birthday
       <.div(
         Styles.containerDiv,
-        Grid(container = true)()(
+        Grid(container = true, spacing = 24)()(
           Grid(item = true, md = 3, sm = 12, xs = 12)()(
             Paper(className = Styles.paperPadding)()(
               Typography(variant = Typography.Variant.title)()(p.trainee.name),
@@ -38,15 +40,26 @@ object TraineeProfile {
               Typography()()(s"BMI: ${p.trainee.latestBMI.map(_.toString).getOrElse("N/A")}"),
               Typography()()(s"Body Fat Percentage: ${p.trainee.latestBFP.map(v => s"$v%").getOrElse("N/A")}"),
               <.div(
-                Typography(variant   = Typography.Variant.subheading, className = Styles.marginTop24)()(
+                Typography(variant   = Typography.Variant.subheading, className = Styles.subheadingMargin)()(
                   "Current Training Program"
-                ),
-                Typography()()()
+                )
               )
             )
           ),
           Grid(item = true, md = 9, sm = 12, xs = 12)()(
-            Paper(className = Styles.paperPadding)()("Bar")
+            Paper(className = Styles.paperPadding)()(
+              <.div(
+                ^.height := 600.px,
+                BigCalendar(
+                  events       = js.Array(
+                    BigCalendar.event("Foo", new js.Date(), new js.Date())
+                  ),
+                  elementProps = js.Dynamic.literal(
+                    style = js.Dynamic.literal(height = "600px")
+                  )
+                )
+              )
+            )
           )
         )
       )
