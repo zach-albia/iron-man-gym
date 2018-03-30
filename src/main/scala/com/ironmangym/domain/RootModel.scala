@@ -76,13 +76,13 @@ case class WorkoutDay(
 )
 
 sealed trait Difficulty
-case object Beginner
-case object Intermediate
-case object Advanced
+case object Beginner extends Difficulty
+case object Intermediate extends Difficulty
+case object Advanced extends Difficulty
 
 case class TrainingModule(
     name:       String,
-    routines:   List[Routine],
+    routines:   List[Routine] = List.empty,
     difficulty: Difficulty
 )
 

@@ -13,11 +13,34 @@ case class LogIn(user: User) extends Action
 
 case object LogOut extends Action
 
+object Picklers {
+  implicit val traineePickler = Pickler.materializePickler[Trainee]
+  implicit val trainingProgramPickler = Pickler.materializePickler[TrainingProgram]
+  implicit val workoutDayPickler = Pickler.materializePickler[WorkoutDay]
+  implicit val userPickler = Pickler.materializePickler[PersistentUser]
+  implicit val usersPickler = Pickler.materializePickler[Users]
+  implicit val difficultyCompPickler = CompositePickler[Difficulty]
+    .concreteType[Beginner.type]
+    .concreteType[Intermediate.type]
+    .concreteType[Advanced.type]
+  implicit val difficultyPickler = difficultyCompPickler.pickler
+  implicit val trainingModulePickler = Pickler.materializePickler[TrainingModule]
+}
+
 object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
+  import Picklers._
+
   protected def initialModel: RootModel = RootModel(
-    Unpickle[Users].fromString(dom.window.localStorage.getItem("users")).getOrElse(Users()),
-    Seq.empty
+    fromLocalStorage[Users]("users", Users()),
+    fromLocalStorage[Seq[TrainingModule]](
+      "trainingModule",
+      Seq(TrainingModule(name       = "Foo", difficulty = Beginner))
+    )
   )
+
+  private def fromLocalStorage[A](key: String, default: A)(implicit unpickler: Unpickler[A]) = {
+    Unpickle[A](unpickler).fromString(dom.window.localStorage.getItem(key)).getOrElse(default)
+  }
 
   protected def actionHandler: SPACircuit.HandlerFunction = composeHandlers(
     new UsersHandler(zoomRW(_.users)((m, v) => m.copy(users = v)))
@@ -25,13 +48,9 @@ object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
 }
 
 class UsersHandler[M](modelRW: ModelRW[M, Users]) extends ActionHandler(modelRW) {
-  val usersKey = "users"
+  import Picklers._
 
-  implicit val traineePickler = Pickler.materializePickler[Trainee]
-  implicit val trainingProgramPickler = Pickler.materializePickler[TrainingProgram]
-  implicit val workoutDayPickler = Pickler.materializePickler[WorkoutDay]
-  implicit val userPickler = Pickler.materializePickler[PersistentUser]
-  implicit val usersPickler = Pickler.materializePickler[Users]
+  val usersKey = "users"
 
   def handle = {
     case CreateTraineeAccount(trainee) =>
