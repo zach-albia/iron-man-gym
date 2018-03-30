@@ -23,7 +23,7 @@ object Logout {
     def render(p: Props): VdomElement =
       <.div(
         Styles.containerDiv,
-        Grid(container = true)()(
+        Grid(container = true, spacing = 24)()(
           Grid(item = true, xs = 12, md = 8)()(
             Card()()(
               CardMedia(

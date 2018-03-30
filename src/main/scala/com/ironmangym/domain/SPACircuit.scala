@@ -27,9 +27,9 @@ object Picklers {
   implicit val trainingModulePickler = Pickler.materializePickler[TrainingModule]
 }
 
-object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
-  import Picklers._
+import Picklers._
 
+object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
   protected def initialModel: RootModel = RootModel(
     fromLocalStorage[Users]("users", Users()),
     fromLocalStorage[Seq[TrainingModule]](
@@ -48,8 +48,6 @@ object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
 }
 
 class UsersHandler[M](modelRW: ModelRW[M, Users]) extends ActionHandler(modelRW) {
-  import Picklers._
-
   val usersKey = "users"
 
   def handle = {
