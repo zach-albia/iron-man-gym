@@ -34,4 +34,9 @@ libraryDependencies ++=
   "com.olvind"              %%% "scalajs-react-components"  % "1.0.0-M2"       ::
   Nil
 
+npmDependencies in Compile ++=
+  "react-big-calendar" -> "latest" ::
+  "moment"             -> "latest" ::
+  Nil
+
 enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin)
