@@ -2,7 +2,7 @@ package com.ironmangym.profile
 
 import com.ironmangym.Main.Page
 import com.ironmangym.Styles
-import com.ironmangym.domain.{ Trainer, Users }
+import com.ironmangym.domain.{ RootModel, Trainer }
 import com.pangwarta.sjrmui.Typography
 import diode.react.ModelProxy
 import japgolly.scalajs.react.ScalaComponent
@@ -13,7 +13,7 @@ import scalacss.ScalaCssReact._
 
 object TrainerProfile {
 
-  case class Props(router: RouterCtl[Page], proxy: ModelProxy[Users], trainer: Trainer)
+  case class Props(router: RouterCtl[Page], proxy: ModelProxy[RootModel], trainer: Trainer)
 
   private val component = ScalaComponent.builder[Props]("TrainerProfile")
     .render_P { p =>
@@ -24,6 +24,6 @@ object TrainerProfile {
     }
     .build
 
-  def apply(router: RouterCtl[Page], proxy: ModelProxy[Users], trainer: Trainer): VdomElement =
+  def apply(router: RouterCtl[Page], proxy: ModelProxy[RootModel], trainer: Trainer): VdomElement =
     component(Props(router, proxy, trainer))
 }

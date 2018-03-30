@@ -5,6 +5,8 @@ import diode.react.ReactConnector
 import org.scalajs.dom
 import prickle._
 
+import scala.scalajs.js
+
 case class CreateTraineeAccount(trainee: Trainee) extends Action
 
 case class CreateTrainerAccount(trainer: Trainer) extends Action
@@ -31,16 +33,36 @@ import Picklers._
 
 object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
   protected def initialModel: RootModel = RootModel(
-    fromLocalStorage[Users]("users", Users()),
-    fromLocalStorage[Seq[TrainingModule]](
-      "trainingModule",
-      Seq(TrainingModule(name       = "Foo", difficulty = Beginner))
-    )
+    fromLocalStorage[Users]("users", Users(
+      Seq(),
+      Seq(
+        Trainee(
+          "Foo Dude",
+          Date(2000, 1, 1),
+          172.0,
+          None,
+          Credentials("foo", "bar"),
+          None
+        )
+      )
+    )),
+    fromLocalStorage[Seq[TrainingModule]]("trainingModule", Seq(
+      TrainingModule(
+        "Leg Day Errday", Beginner, List(
+          Routine("Rest", List.empty),
+          Routine("Leg Day", List(
+            "Curtsy Lunges",
+            "Side Lunges",
+            "Leg Lifts",
+            "Sumo Squats"
+          ))
+        )
+      )
+    ))
   )
 
-  private def fromLocalStorage[A](key: String, default: A)(implicit unpickler: Unpickler[A]) = {
+  private def fromLocalStorage[A](key: String, default: A)(implicit unpickler: Unpickler[A]) =
     Unpickle[A](unpickler).fromString(dom.window.localStorage.getItem(key)).getOrElse(default)
-  }
 
   protected def actionHandler: SPACircuit.HandlerFunction = composeHandlers(
     new UsersHandler(zoomRW(_.users)((m, v) => m.copy(users = v)))

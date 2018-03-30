@@ -123,7 +123,7 @@ object TrainerForm {
   private val component = ScalaComponent.builder[Logout.Props]("Trainer Form")
     .initialStateFromProps(props =>
       State(
-        props.proxy.connect(identity),
+        props.proxy.connect(_.users),
         trainerName     = None,
         trainerUsername = None,
         trainerPassword = None
@@ -131,6 +131,6 @@ object TrainerForm {
     .renderBackend[Backend]
     .build
 
-  def apply(router: RouterCtl[Page], proxy: ModelProxy[Users]): VdomElement =
+  def apply(router: RouterCtl[Page], proxy: ModelProxy[RootModel]): VdomElement =
     component(Logout.Props(router, proxy))
 }

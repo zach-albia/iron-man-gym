@@ -4,9 +4,9 @@ import com.ironmangym.Main.Page
 import com.ironmangym.Styles
 import com.ironmangym.Styles._
 import com.ironmangym.common._
-import com.ironmangym.domain.{ Trainee, Users }
+import com.ironmangym.domain.{ RootModel, Trainee, Users }
 import com.ironmangym.wrapper.BigCalendar
-import com.pangwarta.sjrmui.{ Grid, Paper, Typography }
+import com.pangwarta.sjrmui.{ Grid, MenuItem, Paper, Select, Typography }
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router.RouterCtl
@@ -18,13 +18,14 @@ import scala.scalajs.js.UndefOr._
 
 object TraineeProfile {
 
-  case class Props(router: RouterCtl[Page], proxy: ModelProxy[Users], trainee: Trainee)
+  case class Props(router: RouterCtl[Page], proxy: ModelProxy[RootModel], trainee: Trainee)
 
   case class State()
 
   private class Backend($: BackendScope[Props, State]) {
     def render(p: Props, s: State): VdomElement = {
       val birthday = p.trainee.birthday
+      val trainingModules = p.proxy().trainingModules
       <.div(
         Styles.containerDiv,
         Grid(container = true, spacing = 24)()(
@@ -40,9 +41,16 @@ object TraineeProfile {
               Typography()()(s"BMI: ${p.trainee.latestBMI.map(_.toString).getOrElse("N/A")}"),
               Typography()()(s"Body Fat Percentage: ${p.trainee.latestBFP.map(v => s"$v%").getOrElse("N/A")}"),
               <.div(
-                Typography(variant   = Typography.Variant.subheading, className = Styles.subheadingMargin)()(
+                Typography(
+                  variant   = Typography.Variant.subheading,
+                  className = Styles.subheadingMargin
+                )()(
                   "Current Training Program"
-                )
+                ),
+                Select(
+                  value     = p.trainee.trainingProgram.map(_.name).getOrElse("").toString,
+                  autoWidth = true
+                )()(trainingModules.map(v => MenuItem()("value" -> v.name)(v.name).vdomElement): _*)
               )
             )
           ),
@@ -68,6 +76,6 @@ object TraineeProfile {
     .renderBackend[Backend]
     .build
 
-  def apply(router: RouterCtl[Page], proxy: ModelProxy[Users], trainee: Trainee): VdomElement =
+  def apply(router: RouterCtl[Page], proxy: ModelProxy[RootModel], trainee: Trainee): VdomElement =
     component(Props(router, proxy, trainee))
 }

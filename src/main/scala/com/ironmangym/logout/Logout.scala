@@ -3,20 +3,19 @@ package com.ironmangym.logout
 import com.ironmangym.Main.Page
 import com.ironmangym.Styles
 import com.ironmangym.Styles._
-import com.ironmangym.domain.Users
-import com.pangwarta.sjrmui.{ Card, CardContent, CardMedia, Grid, GridList, Paper, Typography }
+import com.ironmangym.domain.RootModel
+import com.pangwarta.sjrmui.{ Card, CardContent, CardMedia, Grid, Typography }
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router.RouterCtl
 import japgolly.scalajs.react.vdom.html_<^._
 import scalacss.ScalaCssReact._
 
-import scala.scalajs.js
 import scala.scalajs.js.UndefOr._
 
 object Logout {
 
-  case class Props(router: RouterCtl[Page], proxy: ModelProxy[Users])
+  case class Props(router: RouterCtl[Page], proxy: ModelProxy[RootModel])
 
   private class Backend($: BackendScope[Props, Unit]) {
 
@@ -61,6 +60,6 @@ object Logout {
     .renderBackend[Backend]
     .build
 
-  def apply(router: RouterCtl[Page], proxy: ModelProxy[Users]): VdomElement =
+  def apply(router: RouterCtl[Page], proxy: ModelProxy[RootModel]): VdomElement =
     component(Logout.Props(router, proxy))
 }

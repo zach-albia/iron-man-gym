@@ -45,6 +45,7 @@ case class Trainer(
 case class TrainingProgram(
     trainer:     Trainer,
     trainee:     Trainee,
+    name: String,
     workoutDays: Seq[WorkoutDay],
     goal:        Goal
 )
@@ -78,8 +79,8 @@ case object Advanced extends Difficulty
 
 case class TrainingModule(
     name:       String,
-    routines:   List[Routine] = List.empty,
-    difficulty: Difficulty
+    difficulty: Difficulty,
+      routines:   List[Routine] = List.empty,
 )
 
 case class Routine(
