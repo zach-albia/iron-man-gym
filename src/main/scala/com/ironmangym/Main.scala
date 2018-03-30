@@ -28,8 +28,7 @@ object Main {
 
     (emptyRule
       | staticRoute(root, Page.Landing) ~> renderR(ctl => { usersWrapper(proxy => Landing(ctl, proxy)) })
-      | staticRoute("#about", Page.About) ~> render(About())
-      | staticRoute("#IronmanMap", Page.IronmanMap) ~> render(())).notFound(redirectToPage(Page.Landing)(Redirect.Replace))
+      | staticRoute("#about", Page.About) ~> render(About())).notFound(redirectToPage(Page.Landing)(Redirect.Replace))
   }.renderWith(layout)
 
   def layout(c: RouterCtl[Page], r: Resolution[Page]) =
