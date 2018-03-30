@@ -2,16 +2,16 @@ package com.ironmangym.profile
 
 import com.ironmangym.Main.Page
 import com.ironmangym.Styles
+import com.ironmangym.Styles._
 import com.ironmangym.common._
 import com.ironmangym.domain.{ Trainee, Users }
+import com.ironmangym.wrapper.BigCalendar
 import com.pangwarta.sjrmui.{ Grid, Paper, Typography }
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router.RouterCtl
 import japgolly.scalajs.react.vdom.html_<^._
 import scalacss.ScalaCssReact._
-import Styles._
-import com.ironmangym.wrapper.BigCalendar
 
 import scala.scalajs.js
 import scala.scalajs.js.UndefOr._
@@ -51,12 +51,9 @@ object TraineeProfile {
               <.div(
                 ^.height := 600.px,
                 BigCalendar(
-                  events       = js.Array(
-                    BigCalendar.event("Foo", new js.Date(), new js.Date())
-                  ),
-                  elementProps = js.Dynamic.literal(
-                    style = js.Dynamic.literal(height = "600px")
-                  )
+                  events        = js.Array(),
+                  drilldownView = "agenda",
+                  views         = js.Array("month", "agenda")
                 )
               )
             )

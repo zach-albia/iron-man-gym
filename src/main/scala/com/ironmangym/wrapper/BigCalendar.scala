@@ -102,7 +102,7 @@ object BigCalendar {
     var view: js.UndefOr[String] = js.native
     var defaultView: js.UndefOr[String] = js.native
     var events: js.Array[Event] = js.native
-    var titleAccessor: js.UndefOr[js.Function1[Event, String]] = js.native
+    var titleAccessor: js.UndefOr[js.Function1[Event, ReactElement]] = js.native
     var tooltipAccessor: js.UndefOr[js.Function1[Event, String]] = js.native
     var allDayAccessor: js.UndefOr[js.Function1[Event, String]] = js.native
     var startAccessor: js.UndefOr[js.Function1[Event, String]] = js.native
@@ -121,7 +121,7 @@ object BigCalendar {
     var onDoubleClickEvent: js.UndefOr[js.Function2[Event, ReactMouseEvent, Unit]] = js.native
     var onSelecting: js.UndefOr[js.Function1[DateRange, Boolean]] = js.native
     var selected: js.UndefOr[Event] = js.native
-    var views: js.UndefOr[js.Array[String] | Views] = js.native
+    var views: js.UndefOr[js.Array[String]] = js.native
     var drilldownView: js.UndefOr[String] = js.native
     var getDrilldownView: js.UndefOr[js.Function3[js.Date, String, js.Array[String], String | Null]] = js.native
     var length: js.UndefOr[Int] = js.native
@@ -153,7 +153,7 @@ object BigCalendar {
       view:                  js.UndefOr[String],
       defaultView:           js.UndefOr[String],
       events:                js.Array[Event],
-      titleAccessor:         js.UndefOr[js.Function1[Event, String]],
+      titleAccessor:         js.UndefOr[js.Function1[Event, ReactElement]],
       tooltipAccessor:       js.UndefOr[js.Function1[Event, String]],
       allDayAccessor:        js.UndefOr[js.Function1[Event, String]],
       startAccessor:         js.UndefOr[js.Function1[Event, String]],
@@ -172,7 +172,7 @@ object BigCalendar {
       onDoubleClickEvent:    js.UndefOr[js.Function2[Event, ReactMouseEvent, Unit]],
       onSelecting:           js.UndefOr[js.Function1[DateRange, Boolean]],
       selected:              js.UndefOr[Event],
-      views:                 js.UndefOr[js.Array[String] | Views],
+      views:                 js.UndefOr[js.Array[String]],
       drilldownView:         js.UndefOr[String],
       getDrilldownView:      js.UndefOr[js.Function3[js.Date, String, js.Array[String], String | Null]],
       length:                js.UndefOr[Int],
@@ -256,7 +256,7 @@ object BigCalendar {
       view:                  js.UndefOr[String]                                                         = js.undefined,
       defaultView:           js.UndefOr[String]                                                         = js.undefined,
       events:                js.Array[Event],
-      titleAccessor:         js.UndefOr[js.Function1[Event, String]]                                    = js.undefined,
+      titleAccessor:         js.UndefOr[js.Function1[Event, ReactElement]]                              = js.undefined,
       tooltipAccessor:       js.UndefOr[js.Function1[Event, String]]                                    = js.undefined,
       allDayAccessor:        js.UndefOr[js.Function1[Event, String]]                                    = js.undefined,
       startAccessor:         js.UndefOr[js.Function1[Event, String]]                                    = js.undefined,
@@ -275,7 +275,7 @@ object BigCalendar {
       onDoubleClickEvent:    js.UndefOr[js.Function2[Event, ReactMouseEvent, Unit]]                     = js.undefined,
       onSelecting:           js.UndefOr[js.Function1[DateRange, Boolean]]                               = js.undefined,
       selected:              js.UndefOr[Event]                                                          = js.undefined,
-      views:                 js.UndefOr[js.Array[String] | Views]                                       = js.undefined,
+      views:                 js.UndefOr[js.Array[String]]                                               = js.undefined,
       drilldownView:         js.UndefOr[String]                                                         = js.undefined,
       getDrilldownView:      js.UndefOr[js.Function3[js.Date, String, js.Array[String], String | Null]] = js.undefined,
       length:                js.UndefOr[Int]                                                            = js.undefined,
