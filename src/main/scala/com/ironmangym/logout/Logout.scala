@@ -4,7 +4,7 @@ import com.ironmangym.Main.Page
 import com.ironmangym.Styles
 import com.ironmangym.Styles._
 import com.ironmangym.domain.Users
-import com.pangwarta.sjrmui.{ Card, CardContent, CardMedia, Grid, Typography }
+import com.pangwarta.sjrmui.{ Card, CardContent, CardMedia, Grid, GridList, Typography }
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router.RouterCtl
@@ -37,6 +37,31 @@ object Logout {
                 ),
                 Typography()()(
                   "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Pellentesque ac metus a urna ultricies efficitur at sed sapien. Donec vel lacus sed metus venenatis pharetra. Vivamus ornare mattis felis vel scelerisque. Proin ac posuere enim, at ullamcorper mauris. Sed erat odio, ornare tincidunt ullamcorper at, pharetra at enim. In aliquet mi porttitor egestas euismod. Donec laoreet nibh eget ex fermentum porttitor."
+                ),
+                Grid(container = true)()(
+                  Grid(
+                    item       = true, md = 6,
+                    direction  = Grid.Direction.row,
+                    justify    = Grid.Justify.center,
+                    alignItems = Grid.AlignItems.flexStart
+                  )()(
+                    CardMedia(
+                      image     = "./target/scala-2.12/classes/ironmanmap.PNG",
+                      className = Styles.mapCardMedia
+                    )("title" -> "Map")(
+                      Typography(variant = Typography.Variant.title)()("Map")
+                    )
+                  ),
+                  Grid(container  = true, md = 6, justify = Grid.Justify.flexStart, alignItems = Grid.AlignItems.flexStart)()(
+                    CardContent()()(
+
+                      Typography(variant = Typography.Variant.body2)()("Visit us at: "),
+                      Typography(variant = Typography.Variant.body2)()("Sitra, Kingdom of Bahrain"),
+                      Typography(variant = Typography.Variant.body2)()("Call Us: 3989 0780"),
+                      Typography(variant = Typography.Variant.body2)()("Opens: 6 am to 11 pm")
+                    )
+                  )
+
                 )
               )
             )

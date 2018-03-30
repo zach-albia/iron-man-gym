@@ -10,12 +10,15 @@ import japgolly.scalajs.react.extra.router._
 import japgolly.scalajs.react.vdom.html_<^._
 import org.scalajs.dom
 
+import scala.scalajs.js.|
+
 object Main {
 
   sealed trait Page
   object Page {
     case object Landing extends Page
     case object About extends Page
+    case object IronmanMap extends Page
   }
 
   val routerConfig: RouterConfig[Page] = RouterConfigDsl[Page].buildConfig { dsl =>
@@ -25,7 +28,8 @@ object Main {
 
     (emptyRule
       | staticRoute(root, Page.Landing) ~> renderR(ctl => { usersWrapper(proxy => Landing(ctl, proxy)) })
-      | staticRoute("#about", Page.About) ~> render(About())).notFound(redirectToPage(Page.Landing)(Redirect.Replace))
+      | staticRoute("#about", Page.About) ~> render(About())
+      | staticRoute("#IronmanMap", Page.IronmanMap) ~> render(())).notFound(redirectToPage(Page.Landing)(Redirect.Replace))
   }.renderWith(layout)
 
   def layout(c: RouterCtl[Page], r: Resolution[Page]) =

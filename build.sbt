@@ -31,6 +31,7 @@ libraryDependencies ++=
   "io.suzaku"               %%% "diode"                     % "1.1.3"          ::
   "io.suzaku"               %%% "diode-react"               % "1.1.3"          ::
   "com.github.benhutchison" %%% "prickle"                   % "1.1.13"         ::
+  "com.olvind"              %%% "scalajs-react-components"  % "1.0.0-M2"       ::
   Nil
 
 enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin)

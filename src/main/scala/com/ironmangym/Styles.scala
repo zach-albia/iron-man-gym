@@ -45,6 +45,12 @@ object Styles extends StyleSheet.Inline {
     height(420.px)
   )
 
+  val mapCardMedia = style(
+    marginTop(20.px),
+    height(300.px),
+    width(300.px)
+  )
+
   implicit def styleAToClassName(styleA: StyleA): String =
     styleA.className.value
 

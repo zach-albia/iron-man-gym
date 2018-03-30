@@ -42,6 +42,10 @@ case class Trainer(
     trainingProgram: Seq[TrainingProgram] = Seq.empty
 ) extends User
 
+case class IronmanMap(
+    Imap: Int
+)
+
 case class TrainingProgram(
     trainer:     Trainer,
     trainee:     Trainee,
