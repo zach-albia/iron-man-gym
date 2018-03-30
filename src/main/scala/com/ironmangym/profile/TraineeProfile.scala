@@ -59,9 +59,10 @@ object TraineeProfile {
               <.div(
                 ^.height := 600.px,
                 BigCalendar(
-                  events        = js.Array(),
-                  drilldownView = "agenda",
-                  views         = js.Array("month", "agenda")
+                  events        = js.Array(
+                    BigCalendar.event("Foo", new js.Date(), new js.Date())
+                  ),
+                  drilldownView = "agenda"
                 )
               )
             )
