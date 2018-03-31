@@ -2,8 +2,9 @@ package com.ironmangym.profile
 
 import com.ironmangym.Main.Page
 import com.ironmangym.Styles
+import com.ironmangym.Styles._
 import com.ironmangym.domain.{ Trainer, Users }
-import com.pangwarta.sjrmui.Typography
+import com.pangwarta.sjrmui.{ Grid, Paper, Table, TableCell, TableHead, TableRow, Typography }
 import diode.react.ModelProxy
 import japgolly.scalajs.react.ScalaComponent
 import japgolly.scalajs.react.extra.router.RouterCtl
@@ -18,9 +19,30 @@ object TrainerProfile {
   private val component = ScalaComponent.builder[Props]("TrainerProfile")
     .render_P { p =>
       <.div(
-        Styles.containerDiv,
-        Typography(variant = Typography.Variant.title)()("TrainerProfile")
+
+        Grid(container = true, spacing = 24)()(
+          Grid(item = true, md = 3, sm = 12, xs = 12)()(
+            Paper(className = Styles.paperPadding)()(
+              Typography(variant = Typography.Variant.title)()("Trainer name"),
+              Table()()(
+                TableHead()()(
+                  TableRow()()(
+                    TableCell()()(s"Sno"),
+                    TableCell()()(s"Trainee"),
+                    TableCell()()(s"Training Program"),
+                    TableCell()()(s"Workout Progress"),
+                    TableCell()()(s"Weight"),
+                    TableCell()()(s"Body Mass Index"),
+                    TableCell()()(s"Body Fat Percentage")
+                  )
+                )
+              )
+            )
+
+          )
+        )
       )
+
     }
     .build
 

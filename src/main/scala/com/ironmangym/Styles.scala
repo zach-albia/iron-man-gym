@@ -56,6 +56,15 @@ object Styles extends StyleSheet.Inline {
     width(300.px)
   )
 
+  val root = style(
+    width(1000.px),
+    marginTop(50.px)
+  )
+
+  val table = style(
+    minWidth(700.px)
+  )
+
   implicit def styleAToClassName(styleA: StyleA): String =
     styleA.className.value
 
