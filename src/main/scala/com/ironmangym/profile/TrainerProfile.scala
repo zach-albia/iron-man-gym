@@ -3,13 +3,13 @@ package com.ironmangym.profile
 import com.ironmangym.Main.Page
 import com.ironmangym.Styles
 import com.ironmangym.Styles._
+import com.ironmangym.domain._
 import com.pangwarta.sjrmui.{ Grid, Paper, Table, TableCell, TableHead, TableRow, Typography }
 import diode.react.ModelProxy
 import japgolly.scalajs.react.ScalaComponent
 import japgolly.scalajs.react.extra.router.RouterCtl
 import japgolly.scalajs.react.vdom.VdomElement
 import japgolly.scalajs.react.vdom.html_<^._
-import scalacss.ScalaCssReact._
 
 object TrainerProfile {
 

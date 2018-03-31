@@ -16,7 +16,8 @@ import org.scalajs.dom.raw.HTMLSelectElement
 import scalacss.ScalaCssReact._
 
 import scala.scalajs.js
-import scala.scalajs.js.UndefOr._
+import scala.scalajs.js.UndefOr
+import scala.scalajs.js.UndefOr.any2undefOrA
 
 object TraineeProfile {
 
@@ -63,7 +64,7 @@ object TraineeProfile {
                     value     = s.trainingModuleSelection.name,
                     autoWidth = true,
                     native    = true,
-                    onChange  = trainingModuleSelectionChanged(_, _)
+                    onChange  = js.UndefOr.any2undefOrA((a: ReactEventFromHtml, b: ReactElement) => trainingModuleSelectionChanged(a, b)) // wtf?
                   )()(trainingModules.map(v => <.option(^.value := v.name)(v.name).render): _*),
                   Typography(
                     className = Styles.marginTop24,
