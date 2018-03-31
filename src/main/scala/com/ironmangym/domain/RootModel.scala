@@ -2,6 +2,7 @@ package com.ironmangym.domain
 
 import scala.language.implicitConversions
 import scala.scalajs.js
+import scala.util.Random
 
 sealed trait User {
   def credentials: Credentials
@@ -16,6 +17,12 @@ case class Trainee(
     credentials:     Credentials,
     trainingProgram: Option[TrainingProgram] = None
 ) extends User {
+
+  def enrol(trainingModule: TrainingModule, trainer: Trainer, goal: Goal): Trainee = copy(trainingProgram =
+    Some(TrainingProgram(trainer, this, trainingModule.name, generateModule(trainingModule), goal)))
+
+  def generateModule(trainingModule: TrainingModule): Seq[WorkoutDay] = ???
+
   def latestWeight: Option[Double] =
     trainingProgram.map(_.workoutDays.last.weight)
 
@@ -51,7 +58,7 @@ case class Trainer(
 case class TrainingProgram(
     trainer:     Trainer,
     trainee:     Trainee,
-    name: String,
+    name:        String,
     workoutDays: Seq[WorkoutDay],
     goal:        Goal
 )
@@ -86,7 +93,7 @@ case object Advanced extends Difficulty
 case class TrainingModule(
     name:       String,
     difficulty: Difficulty,
-      routines:   List[Routine] = List.empty,
+    routines:   List[Routine] = List.empty
 )
 
 case class Routine(
@@ -107,7 +114,14 @@ case class Users(
     trainers:    Seq[Trainer]           = Seq.empty,
     trainees:    Seq[Trainee]           = Seq.empty,
     currentUser: Option[PersistentUser] = None
-)
+) {
+  def enrol(trainee: Trainee, trainingModule: TrainingModule, goal: Goal): Users = {
+    val idx = trainees.indexOf(trainee)
+    val randomTrainer = trainers(Random.nextInt(trainers.size))
+    copy(trainees = trainees.updated(idx, trainee.enrol(trainingModule, randomTrainer, goal)))
+  }
+
+}
 
 case class RootModel(
     users:           Users,

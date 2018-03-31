@@ -93,17 +93,17 @@ object TrainerForm {
       )
 
     def trainerNameChanged(e: ReactEvent): Callback = {
-      val trainerName = getValue(e)
+      val trainerName = getInputValue(e)
       fieldChanged[Props, State]($, _.copy(trainerName = Some(trainerName)).validate())
     }
 
     def trainerUsernameChanged(e: ReactEvent): Callback = {
-      val username = getValue(e)
+      val username = getInputValue(e)
       fieldChanged[Props, State]($, _.copy(trainerUsername = Some(username)).validate())
     }
 
     def trainerPasswordChanged(e: ReactEvent): Callback = {
-      val password = getValue(e)
+      val password = getInputValue(e)
       fieldChanged[Props, State]($, _.copy(trainerPassword = Some(password)).validate())
     }
 

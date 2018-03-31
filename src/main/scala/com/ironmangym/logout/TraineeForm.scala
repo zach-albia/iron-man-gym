@@ -5,8 +5,8 @@ import java.time.YearMonth
 import com.ironmangym.Main.Page
 import com.ironmangym.Styles
 import com.ironmangym.Styles._
-import com.ironmangym.domain._
 import com.ironmangym.common._
+import com.ironmangym.domain._
 import com.pangwarta.sjrmui._
 import diode.react.{ ModelProxy, ReactConnectProxy }
 import japgolly.scalajs.react._
@@ -57,7 +57,6 @@ object TraineeForm {
         Typography(variant = Typography.Variant.headline)()("Sign up as a Trainee"),
         FormControl()()(
           TextField(
-            id         = "traineeName",
             label      = "Name",
             required   = true,
             onChange   = traineeNameChanged(_),
@@ -67,7 +66,6 @@ object TraineeForm {
             helperText = if (s.wasMadeEmpty[State](_.name)) "Your name is required." else js.undefined
           )()(),
           TextField(
-            id       = "traineePhoneNumber",
             label    = "Contact Number (optional)",
             onChange = contactNumberChanged(_),
             value    = s.contactNumber.getOrElse("").toString
@@ -76,7 +74,6 @@ object TraineeForm {
           <.div(
             ^.overflow.hidden,
             TextField(
-              id          = "birthdayYear",
               select      = true,
               SelectProps = js.Dynamic.literal(
                 native = true,
@@ -168,17 +165,17 @@ object TraineeForm {
       )
 
     def traineeNameChanged(e: ReactEvent): Callback = {
-      val traineeName = getValue(e)
-      fieldChanged[Props, State]($, _.copy(name = Some(traineeName)).validate())
+      val name = getInputValue(e)
+      fieldChanged[Props, State]($, _.copy(name = Some(name)).validate())
     }
 
     def contactNumberChanged(e: ReactEvent): Callback = {
-      val contactNumber = getValue(e)
+      val contactNumber = getInputValue(e)
       fieldChanged[Props, State]($, _.copy(contactNumber = Some(contactNumber)).validate())
     }
 
     def birthdayYearChanged(e: ReactEvent): Callback = {
-      val birthdayYear = getValue(e)
+      val birthdayYear = getInputValue(e)
       fieldChanged[Props, State]($, s =>
         s.copy(birthday =
           new js.Date(birthdayYear.toInt, s.birthday.getMonth, math.min(s.birthday.getDate(), daysInMonth(s)))).validate())
@@ -192,24 +189,24 @@ object TraineeForm {
     }
 
     def birthdayDateChanged(e: ReactEvent): Callback = {
-      val birthdayDate = getValue(e)
+      val birthdayDate = getInputValue(e)
       fieldChanged[Props, State]($, s =>
         s.copy(birthday =
           new js.Date(s.birthday.getFullYear, s.birthday.getMonth, birthdayDate.toInt)).validate())
     }
 
     def heightChanged(e: ReactEvent): Callback = {
-      val height = getValue(e)
+      val height = getInputValue(e)
       fieldChanged[Props, State]($, _.copy(heightInCm = Some(height)).validate())
     }
 
     def traineeUsernameChanged(e: ReactEvent): Callback = {
-      val username = getValue(e)
+      val username = getInputValue(e)
       fieldChanged[Props, State]($, _.copy(username = Some(username)).validate())
     }
 
     def traineePasswordChanged(e: ReactEvent): Callback = {
-      val password = getValue(e)
+      val password = getInputValue(e)
       fieldChanged[Props, State]($, _.copy(password = Some(password)).validate())
     }
 

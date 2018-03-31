@@ -80,12 +80,12 @@ object LoginDialog {
         )
 
     def usernameChanged($: BackendScope[Props, State])(e: ReactEvent): Callback = {
-      val username = getValue(e)
+      val username = getInputValue(e)
       fieldChanged[Props, State]($, _.copy(username = Some(username)).validate())
     }
 
     def passwordChanged($: BackendScope[Props, State])(e: ReactEvent): Callback = {
-      val password = getValue(e)
+      val password = getInputValue(e)
       fieldChanged[Props, State]($, _.copy(password = Some(password)).validate())
     }
 
