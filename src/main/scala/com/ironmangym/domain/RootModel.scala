@@ -38,7 +38,7 @@ case class Trainee(
     val dates = (0 until numDays).map(n => dayAfter(startDate, n))
     trainingModule.routines.zip(dates).map {
       case (routine, date) =>
-        WorkoutDay(date, routine.name, routine.exercises.mkString("\n"), done = false)
+        WorkoutDay(date, routine.name, routine.exercises, done = false)
     }
   }
 
@@ -104,7 +104,7 @@ case class Goal(
 case class WorkoutDay(
     date:              Date,
     name:              String,
-    description:       String,
+    exercises:         List[String],
     done:              Boolean,
     weight:            Option[Double] = None,
     bodyMassIndex:     Option[Double] = None,
