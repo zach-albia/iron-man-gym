@@ -9,7 +9,7 @@ import com.ironmangym.Styles._
 import com.ironmangym.common._
 import com.ironmangym.domain.{ RootModel, Trainee, Users }
 import com.ironmangym.wrapper.BigCalendar
-import com.pangwarta.sjrmui.{ Grid, MenuItem, Paper, Select, Typography }
+import com.pangwarta.sjrmui.{ Button, Grid, MenuItem, Paper, Select, Typography }
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router.RouterCtl
@@ -38,7 +38,7 @@ object TraineeProfile {
               Typography()()(s"Height: ${p.trainee.heightInCm} cm"),
               Typography(
                 variant   = Typography.Variant.subheading,
-                className = Styles.subheadingMargin
+                className = Styles.marginTop24
               )()(
                 "Latest Metrics"
               ),
@@ -49,16 +49,26 @@ object TraineeProfile {
                 Typography(
                   variant   = Typography.Variant.subheading,
                   className = Styles.marginTop24
-                )()("Training Program:"),
+                )()("Current Training Program:"),
+                Typography(
+                  className = Styles.marginBottom12
+                )()(p.trainee.trainingProgram.map(_.name).getOrElse("None").toString),
+                Typography(
+                  className = Styles.marginTop12
+                )()(s"Trainer: ${p.trainee.trainingProgram.map(_.trainer.name).getOrElse("None")}"),
                 Typography(
                   variant   = Typography.Variant.subheading,
-                  className = Styles.marginBottom12
-                )()(p.trainee.trainingProgram.map(_.name).getOrElse("none").toString),
+                  className = Styles.marginTop24
+                )()("Change Training Program"),
                 Select(
                   value     = p.trainee.trainingProgram.map(_.name).getOrElse("").toString,
                   autoWidth = true,
                   native    = true
-                )()(trainingModules.map(v => <.option(^.value := v.name)(v.name).render): _*)
+                )()(trainingModules.map(v => <.option(^.value := v.name)(v.name).render): _*),
+                Button(
+                  variant   = Button.Variant.raised,
+                  className = Styles.marginTop24
+                )()("Enrol")
               )
             )
           ),
