@@ -26,7 +26,6 @@ case class Trainee(
         Some(
           TrainingProgram(
             trainer,
-            this,
             trainingModule.name,
             generateWorkoutDays(trainingModule, startDate),
             goal
@@ -85,7 +84,6 @@ case class Trainer(
 
 case class TrainingProgram(
     trainer:     Trainer,
-    trainee:     Trainee,
     name:        String,
     workoutDays: Seq[WorkoutDay],
     goal:        Goal
