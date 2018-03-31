@@ -43,7 +43,12 @@ object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
 
   protected def initialModel: RootModel = RootModel(
     fromLocalStorage[Users]("users", Users(
-      Seq(),
+      Seq(
+        Trainer(
+          "Trainer Dude",
+          Credentials("abc", "123")
+        )
+      ),
       Seq(
         Trainee(
           "Foo Dude",

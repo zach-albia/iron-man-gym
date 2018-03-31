@@ -79,9 +79,8 @@ case class Credentials(
 )
 
 case class Trainer(
-    name:            String,
-    credentials:     Credentials,
-    trainingProgram: Seq[TrainingProgram] = Seq.empty
+    name:        String,
+    credentials: Credentials
 ) extends User
 
 case class TrainingProgram(
@@ -145,9 +144,11 @@ case class Users(
     currentUser: Option[PersistentUser] = None
 ) {
   def enrol(trainee: Trainee, trainingModule: TrainingModule, goal: Goal, startDate: js.Date): Users = {
-    val idx = trainees.indexOf(trainee)
     val randomTrainer = trainers(Random.nextInt(trainers.size))
-    copy(trainees = trainees.updated(idx, trainee.enrol(trainingModule, randomTrainer, goal, startDate)))
+    val i = trainees.indexOf(trainee)
+    val j = trainers.indexOf(randomTrainer)
+    val enrolledTrainee = trainee.enrol(trainingModule, randomTrainer, goal, startDate)
+    copy(trainees = trainees.updated(i, enrolledTrainee))
   }
 
 }
