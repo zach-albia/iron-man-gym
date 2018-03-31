@@ -13,6 +13,8 @@ case class LogIn(user: User) extends Action
 
 case object LogOut extends Action
 
+case class EnrolTrainingProgram(trainee: Trainee, trainingModule: TrainingModule, goal: Goal) extends Action
+
 object Picklers {
   implicit val traineePickler = Pickler.materializePickler[Trainee]
   implicit val trainingProgramPickler = Pickler.materializePickler[TrainingProgram]
@@ -27,30 +29,71 @@ object Picklers {
   implicit val trainingModulePickler = Pickler.materializePickler[TrainingModule]
 }
 
+import com.ironmangym.domain.Picklers._
+
 object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
-  import Picklers._
+  val usersKey = "users"
 
   protected def initialModel: RootModel = RootModel(
-    fromLocalStorage[Users]("users", Users()),
-    fromLocalStorage[Seq[TrainingModule]](
-      "trainingModule",
-      Seq(TrainingModule(name       = "Foo", difficulty = Beginner))
-    )
+    fromLocalStorage[Users]("users", Users(
+      Seq(),
+      Seq(
+        Trainee(
+          "Foo Dude",
+          Date(2000, 1, 1),
+          172.0,
+          None,
+          Credentials("foo", "bar"),
+          None
+        )
+      )
+    )),
+    fromLocalStorage[Seq[TrainingModule]]("trainingModule", Seq(
+      TrainingModule(
+        "Leg Day Errday", Beginner, List(
+          Routine("Rest", List.empty),
+          Routine("Leg Day", List(
+            "Curtsy Lunges",
+            "Side Lunges",
+            "Leg Lifts",
+            "Sumo Squats"
+          ))
+        )
+      ),
+      TrainingModule(
+        "Upper Fix ErrDay", Intermediate, List(
+          Routine("Rest", List.empty),
+          Routine("Upper Fix", List(
+            "Push-ups",
+            "Transverse Twists",
+            "Bench Press",
+            "Long Plank"
+          ))
+        )
+      )
+    ))
   )
 
-  private def fromLocalStorage[A](key: String, default: A)(implicit unpickler: Unpickler[A]) = {
+  private def fromLocalStorage[A](key: String, default: A)(implicit unpickler: Unpickler[A]) =
     Unpickle[A](unpickler).fromString(dom.window.localStorage.getItem(key)).getOrElse(default)
-  }
 
   protected def actionHandler: SPACircuit.HandlerFunction = composeHandlers(
-    new UsersHandler(zoomRW(_.users)((m, v) => m.copy(users = v)))
+    new AuthHandler(zoomRW(_.users)((m, v) => m.copy(users = v)))
   )
 }
 
-class UsersHandler[M](modelRW: ModelRW[M, Users]) extends ActionHandler(modelRW) {
-  import Picklers._
+import com.ironmangym.domain.SPACircuit.usersKey
 
-  val usersKey = "users"
+class TrainingProfileHandler[M](modelRW: ModelRW[M, RootModel]) extends ActionHandler(modelRW) {
+  def handle = {
+    case EnrolTrainingProgram(trainee, trainingModule, goal) =>
+      val updatedUsers = value.users.enrol(trainee, trainingModule, goal)
+      dom.window.localStorage.setItem(usersKey, Pickle.intoString(updatedUsers))
+      updated(RootModel(updatedUsers, value.trainingModules))
+  }
+}
+
+class AuthHandler[M](modelRW: ModelRW[M, Users]) extends ActionHandler(modelRW) {
 
   def handle = {
     case CreateTraineeAccount(trainee) =>

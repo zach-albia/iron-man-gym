@@ -9,9 +9,7 @@ import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router.RouterCtl
 import japgolly.scalajs.react.vdom.html_<^._
-import scalacss.ScalaCssReact._
 
-import scala.scalajs.js
 import scala.scalajs.js.UndefOr._
 
 object Registration {
@@ -35,5 +33,5 @@ object Registration {
     .renderBackend[Backend]
     .build
 
-  def apply(router: RouterCtl[Page], proxy: ModelProxy[Users]): VdomElement = component(Props(router, proxy))
+  def apply(router: RouterCtl[Page], proxy: ModelProxy[RootModel]): VdomElement = component(Props(router, proxy))
 }

@@ -2,15 +2,15 @@ package com.ironmangym
 
 import com.ironmangym.CssSettings._
 import com.ironmangym.Styles._
-import com.ironmangym.domain.SPACircuit
-import com.ironmangym.logout._
 import com.ironmangym.about.About
+import com.ironmangym.domain.SPACircuit
+import com.ironmangym.domain.RootModel
+import com.ironmangym.logout._
 import com.pangwarta.sjrmui._
+import diode.react.ModelProxy
 import japgolly.scalajs.react.extra.router._
 import japgolly.scalajs.react.vdom.html_<^._
 import org.scalajs.dom.document
-
-import scala.scalajs.js.|
 
 object Main {
 
@@ -24,10 +24,10 @@ object Main {
   val routerConfig: RouterConfig[Page] = RouterConfigDsl[Page].buildConfig { dsl =>
     import dsl._
 
-    val usersWrapper = SPACircuit.connect(_.users)
+    val modelWrapper = SPACircuit.connect(identity[RootModel] _)
 
     (emptyRule
-      | staticRoute(root, Page.Landing) ~> renderR(ctl => { usersWrapper(proxy => Landing(ctl, proxy)) })
+      | staticRoute(root, Page.Landing) ~> renderR(ctl => { modelWrapper((proxy: ModelProxy[RootModel]) => Landing(ctl, proxy)) })
       | staticRoute("#about", Page.About) ~> render(About())).notFound(redirectToPage(Page.Landing)(Redirect.Replace))
   }.renderWith(layout)
 

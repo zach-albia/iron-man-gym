@@ -19,8 +19,7 @@ object About {
           Typography(variant = Typography.Variant.headline)()(" IRON MAN GYM"),
           CardMedia(
             className = "classes.media",
-            image     = "target/scala-2.12/classes/workoutChalk.jpg",
-
+            image     = "target/scala-2.12/classes/workoutChalk.jpg"
           )()(
             Typography(variant = Typography.Variant.caption)()("Lemme check if this is working")
           )

@@ -5,29 +5,27 @@ import java.time.YearMonth
 import com.ironmangym.Main.Page
 import com.ironmangym.Styles
 import com.ironmangym.Styles._
-import com.ironmangym.domain._
 import com.ironmangym.common._
+import com.ironmangym.domain._
 import com.pangwarta.sjrmui._
-import diode.react.{ ModelProxy, ReactConnectProxy }
+import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router.RouterCtl
 import japgolly.scalajs.react.vdom.html_<^._
-import org.scalajs.dom.raw.HTMLSelectElement
 
 import scala.scalajs.js
 
 object TraineeForm {
 
   case class State(
-      usersWrapper:     ReactConnectProxy[Users],
-      name:             Option[String],
-      contactNumber:    Option[String],
+      name:             Option[String] = None,
+      contactNumber:    Option[String] = None,
       birthday:         js.Date,
-      heightInCm:       Option[String],
-      username:         Option[String],
-      password:         Option[String],
-      traineeFormValid: Boolean                  = false,
-      snackbarOpen:     Boolean                  = false
+      heightInCm:       Option[String] = None,
+      username:         Option[String] = None,
+      password:         Option[String] = None,
+      traineeFormValid: Boolean        = false,
+      snackbarOpen:     Boolean        = false
   ) extends FormState {
     def validate(): State = copy(
       traineeFormValid =
@@ -57,7 +55,6 @@ object TraineeForm {
         Typography(variant = Typography.Variant.headline)()("Sign up as a Trainee"),
         FormControl()()(
           TextField(
-            id         = "traineeName",
             label      = "Name",
             required   = true,
             onChange   = traineeNameChanged(_),
@@ -67,54 +64,12 @@ object TraineeForm {
             helperText = if (s.wasMadeEmpty[State](_.name)) "Your name is required." else js.undefined
           )()(),
           TextField(
-            id       = "traineePhoneNumber",
             label    = "Contact Number (optional)",
             onChange = contactNumberChanged(_),
             value    = s.contactNumber.getOrElse("").toString
           )()(),
           FormLabel(component = "legend", className = Styles.marginTop24)()("Birthday"),
-          <.div(
-            ^.overflow.hidden,
-            TextField(
-              id          = "birthdayYear",
-              select      = true,
-              SelectProps = js.Dynamic.literal(
-                native = true,
-                value  = s.birthday.getFullYear
-              ).asInstanceOf[Select.Props],
-              onChange    = birthdayYearChanged(_)
-            )()(
-                (1900 to new js.Date().getFullYear).map(
-                  year => <.option(^.key := s"year-$year", ^.value := year, year).render
-                ): _*
-              ),
-            TextField(
-              id          = "birthdayMonth",
-              select      = true,
-              SelectProps = js.Dynamic.literal(
-                native = true,
-                value  = s.birthday.getMonth
-              ).asInstanceOf[Select.Props],
-              onChange    = birthdayMonthChanged(_)
-            )()(
-                (0 to 11).map(
-                  month => <.option(^.key := s"month-$month", ^.value := month, monthNames(month)).render
-                ): _*
-              ),
-            TextField(
-              id          = "birthdayDate",
-              select      = true,
-              SelectProps = js.Dynamic.literal(
-                native = true,
-                value  = s.birthday.getDate
-              ).asInstanceOf[Select.Props],
-              onChange    = (e: ReactEvent) => birthdayDateChanged(e)
-            )()(
-                (1 to daysInMonth(s)).map(
-                  date => <.option(^.key := s"date-$date", ^.value := date, date).render
-                ): _*
-              )
-          ),
+          DatePicker(s.birthday, onDateChange(_)),
           TextField(
             id         = "height",
             label      = "Height",
@@ -168,48 +123,29 @@ object TraineeForm {
       )
 
     def traineeNameChanged(e: ReactEvent): Callback = {
-      val traineeName = getValue(e)
-      fieldChanged[Props, State]($, _.copy(name = Some(traineeName)).validate())
+      val name = getInputValue(e)
+      fieldChanged[Props, State]($, _.copy(name = Some(name)).validate())
     }
 
     def contactNumberChanged(e: ReactEvent): Callback = {
-      val contactNumber = getValue(e)
+      val contactNumber = getInputValue(e)
       fieldChanged[Props, State]($, _.copy(contactNumber = Some(contactNumber)).validate())
     }
 
-    def birthdayYearChanged(e: ReactEvent): Callback = {
-      val birthdayYear = getValue(e)
-      fieldChanged[Props, State]($, s =>
-        s.copy(birthday =
-          new js.Date(birthdayYear.toInt, s.birthday.getMonth, math.min(s.birthday.getDate(), daysInMonth(s)))).validate())
-    }
-
-    def birthdayMonthChanged(e: ReactEvent): Callback = {
-      val birthdayMonth = e.currentTarget.asInstanceOf[HTMLSelectElement].selectedIndex
-      fieldChanged[Props, State]($, s =>
-        s.copy(birthday =
-          new js.Date(s.birthday.getFullYear, birthdayMonth, math.min(s.birthday.getDate(), daysInMonth(s)))).validate())
-    }
-
-    def birthdayDateChanged(e: ReactEvent): Callback = {
-      val birthdayDate = getValue(e)
-      fieldChanged[Props, State]($, s =>
-        s.copy(birthday =
-          new js.Date(s.birthday.getFullYear, s.birthday.getMonth, birthdayDate.toInt)).validate())
-    }
+    def onDateChange(date: js.Date): Callback = $.modState(_.copy(birthday = date).validate())
 
     def heightChanged(e: ReactEvent): Callback = {
-      val height = getValue(e)
+      val height = getInputValue(e)
       fieldChanged[Props, State]($, _.copy(heightInCm = Some(height)).validate())
     }
 
     def traineeUsernameChanged(e: ReactEvent): Callback = {
-      val username = getValue(e)
+      val username = getInputValue(e)
       fieldChanged[Props, State]($, _.copy(username = Some(username)).validate())
     }
 
     def traineePasswordChanged(e: ReactEvent): Callback = {
-      val password = getValue(e)
+      val password = getInputValue(e)
       fieldChanged[Props, State]($, _.copy(password = Some(password)).validate())
     }
 
@@ -234,19 +170,10 @@ object TraineeForm {
   }
 
   private val component = ScalaComponent.builder[Logout.Props]("Trainee Form")
-    .initialStateFromProps(props =>
-      State(
-        props.proxy.connect(identity),
-        name          = None,
-        contactNumber = None,
-        birthday      = new js.Date(2000, 0),
-        heightInCm    = None,
-        username      = None,
-        password      = None
-      ))
+    .initialState(State(birthday = new js.Date(2000, 0)))
     .renderBackend[Backend]
     .build
 
-  def apply(router: RouterCtl[Page], proxy: ModelProxy[Users]): VdomElement =
+  def apply(router: RouterCtl[Page], proxy: ModelProxy[RootModel]): VdomElement =
     component(Logout.Props(router, proxy))
 }
