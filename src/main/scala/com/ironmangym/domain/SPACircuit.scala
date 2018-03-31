@@ -5,6 +5,8 @@ import diode.react.ReactConnector
 import org.scalajs.dom
 import prickle._
 
+import scala.scalajs.js
+
 case class CreateTraineeAccount(trainee: Trainee) extends Action
 
 case class CreateTrainerAccount(trainer: Trainer) extends Action
@@ -13,7 +15,12 @@ case class LogIn(user: User) extends Action
 
 case object LogOut extends Action
 
-case class EnrolTrainingProgram(trainee: Trainee, trainingModule: TrainingModule, goal: Goal) extends Action
+case class EnrolTrainingProgram(
+    trainee:        Trainee,
+    trainingModule: TrainingModule,
+    goal:           Goal,
+    startDate:      js.Date
+) extends Action
 
 object Picklers {
   implicit val traineePickler = Pickler.materializePickler[Trainee]
@@ -78,7 +85,8 @@ object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
     Unpickle[A](unpickler).fromString(dom.window.localStorage.getItem(key)).getOrElse(default)
 
   protected def actionHandler: SPACircuit.HandlerFunction = composeHandlers(
-    new AuthHandler(zoomRW(_.users)((m, v) => m.copy(users = v)))
+    new AuthHandler(zoomRW(_.users)((m, v) => m.copy(users = v))),
+    new TrainingProfileHandler(zoomRW(identity)((_, v) => v))
   )
 }
 
@@ -86,8 +94,8 @@ import com.ironmangym.domain.SPACircuit.usersKey
 
 class TrainingProfileHandler[M](modelRW: ModelRW[M, RootModel]) extends ActionHandler(modelRW) {
   def handle = {
-    case EnrolTrainingProgram(trainee, trainingModule, goal) =>
-      val updatedUsers = value.users.enrol(trainee, trainingModule, goal)
+    case EnrolTrainingProgram(trainee, trainingModule, goal, date) =>
+      val updatedUsers = value.users.enrol(trainee, trainingModule, goal, date)
       dom.window.localStorage.setItem(usersKey, Pickle.intoString(updatedUsers))
       updated(RootModel(updatedUsers, value.trainingModules))
   }

@@ -4,6 +4,8 @@ import scala.language.implicitConversions
 import scala.scalajs.js
 import scala.util.Random
 
+import com.ironmangym.common._
+
 sealed trait User {
   def credentials: Credentials
   def name: String
@@ -18,19 +20,46 @@ case class Trainee(
     trainingProgram: Option[TrainingProgram] = None
 ) extends User {
 
-  def enrol(trainingModule: TrainingModule, trainer: Trainer, goal: Goal): Trainee = copy(trainingProgram =
-    Some(TrainingProgram(trainer, this, trainingModule.name, generateModule(trainingModule), goal)))
+  def enrol(trainingModule: TrainingModule, trainer: Trainer, goal: Goal, startDate: js.Date): Trainee =
+    copy(
+      trainingProgram =
+        Some(
+          TrainingProgram(
+            trainer,
+            this,
+            trainingModule.name,
+            generateWorkoutDays(trainingModule, startDate),
+            goal
+          )
+        )
+    )
 
-  def generateModule(trainingModule: TrainingModule): Seq[WorkoutDay] = ???
+  def generateWorkoutDays(trainingModule: TrainingModule, startDate: js.Date): Seq[WorkoutDay] = {
+    val numDays = trainingModule.routines.length
+    val dates = (0 until numDays).map(n => dayAfter(startDate, n))
+    trainingModule.routines.zip(dates).map {
+      case (routine, date) =>
+        WorkoutDay(date, routine.name, routine.exercises.mkString("\n"), done = false)
+    }
+  }
 
-  def latestWeight: Option[Double] =
-    trainingProgram.map(_.workoutDays.last.weight)
+  def latestWeight: Option[Double] = for {
+    tp <- trainingProgram
+    ld <- tp.workoutDays.filter(_.weight.isDefined).lastOption
+    wt <- ld.weight
+  } yield wt
 
-  def latestBMI: Option[Double] =
-    trainingProgram.map(_.workoutDays.last.bodyMassIndex)
+  def latestBMI: Option[Double] = for {
+    tp <- trainingProgram
+    ld <- tp.workoutDays.filter(_.bodyMassIndex.isDefined).lastOption
+    bmi <- ld.bodyMassIndex
+  } yield bmi
 
-  def latestBFP: Option[Double] =
-    trainingProgram.map(_.workoutDays.last.bodyFatPercentage)
+  def latestBFP: Option[Double] = for {
+    tp <- trainingProgram
+    ld <- tp.workoutDays.filter(_.bodyFatPercentage.isDefined).lastOption
+    bfp <- ld.bodyFatPercentage
+  } yield bfp
 }
 
 case class Date(
@@ -80,9 +109,9 @@ case class WorkoutDay(
     name:              String,
     description:       String,
     done:              Boolean,
-    bodyFatPercentage: Double,
-    bodyMassIndex:     Double,
-    weight:            Double
+    weight:            Option[Double] = None,
+    bodyMassIndex:     Option[Double] = None,
+    bodyFatPercentage: Option[Double] = None
 )
 
 sealed trait Difficulty
@@ -115,10 +144,10 @@ case class Users(
     trainees:    Seq[Trainee]           = Seq.empty,
     currentUser: Option[PersistentUser] = None
 ) {
-  def enrol(trainee: Trainee, trainingModule: TrainingModule, goal: Goal): Users = {
+  def enrol(trainee: Trainee, trainingModule: TrainingModule, goal: Goal, startDate: js.Date): Users = {
     val idx = trainees.indexOf(trainee)
     val randomTrainer = trainers(Random.nextInt(trainers.size))
-    copy(trainees = trainees.updated(idx, trainee.enrol(trainingModule, randomTrainer, goal)))
+    copy(trainees = trainees.updated(idx, trainee.enrol(trainingModule, randomTrainer, goal, startDate)))
   }
 
 }

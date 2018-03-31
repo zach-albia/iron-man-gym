@@ -100,6 +100,8 @@ object DatePicker {
     .renderBackend[Backend]
     .build
 
-  def apply(date: js.Date, onDateChange: Handler1[js.Date]): VdomElement =
-    component(Props(date, onDateChange))
+  def apply(
+      date:         js.UndefOr[js.Date] = js.undefined,
+      onDateChange: Handler1[js.Date]   = js.undefined
+  ): VdomElement = component(Props(date, onDateChange))
 }

@@ -100,6 +100,7 @@ object BigCalendar {
     var elementProps: js.UndefOr[js.Object] = js.native
     var date: js.UndefOr[js.Date] = js.native
     var view: js.UndefOr[String] = js.native
+    var defaultDate: js.UndefOr[js.Date] = js.native
     var defaultView: js.UndefOr[String] = js.native
     var events: js.Array[Event] = js.native
     var titleAccessor: js.UndefOr[js.Function1[Event, ReactElement]] = js.native
@@ -151,6 +152,7 @@ object BigCalendar {
       elementProps:          js.UndefOr[js.Object],
       date:                  js.UndefOr[js.Date],
       view:                  js.UndefOr[String],
+      defaultDate:           js.UndefOr[js.Date],
       defaultView:           js.UndefOr[String],
       events:                js.Array[Event],
       titleAccessor:         js.UndefOr[js.Function1[Event, ReactElement]],
@@ -201,6 +203,7 @@ object BigCalendar {
     elementProps.foreach(p.updateDynamic("elementProps")(_))
     date.foreach(p.updateDynamic("date")(_))
     view.foreach(p.updateDynamic("view")(_))
+    defaultDate.foreach(p.updateDynamic("defaultDate")(_))
     defaultView.foreach(p.updateDynamic("defaultView")(_))
     titleAccessor.foreach(p.updateDynamic("titleAccessor")(_))
     tooltipAccessor.foreach(p.updateDynamic("tooltipAccessor")(_))
@@ -254,6 +257,7 @@ object BigCalendar {
       elementProps:          js.UndefOr[js.Object]                                                      = js.undefined,
       date:                  js.UndefOr[js.Date]                                                        = js.undefined,
       view:                  js.UndefOr[String]                                                         = js.undefined,
+      defaultDate:           js.UndefOr[js.Date]                                                        = js.undefined,
       defaultView:           js.UndefOr[String]                                                         = js.undefined,
       events:                js.Array[Event],
       titleAccessor:         js.UndefOr[js.Function1[Event, ReactElement]]                              = js.undefined,
@@ -306,6 +310,7 @@ object BigCalendar {
       elementProps,
       date,
       view,
+      defaultDate,
       defaultView,
       events,
       titleAccessor,

@@ -22,7 +22,7 @@ object TraineeProfile {
 
   case class Props(router: RouterCtl[Page], proxy: ModelProxy[RootModel], trainee: Trainee)
 
-  case class State(trainingModuleSelection: TrainingModule, goal: Goal = Goal())
+  case class State(trainingModuleSelection: TrainingModule, goal: Goal = Goal(), date: js.Date = new js.Date())
 
   private class Backend($: BackendScope[Props, State]) {
     def render(p: Props, s: State): VdomElement = {
@@ -68,6 +68,11 @@ object TraineeProfile {
                   Typography(
                     className = Styles.marginTop24,
                     variant   = Typography.Variant.subheading
+                  )()("Select start date"),
+                  DatePicker(onDateChange = dateChanged(_)),
+                  Typography(
+                    className = Styles.marginTop24,
+                    variant   = Typography.Variant.subheading
                   )()("Goal"),
                   TextField(
                     label      = "Weight (in kg)",
@@ -109,9 +114,13 @@ object TraineeProfile {
               <.div(
                 ^.height := 600.px,
                 BigCalendar(
-                  events = js.Array(
-                    BigCalendar.event("Foo", new js.Date(), new js.Date())
-                  )
+                  defaultDate = new js.Date(),
+                  events      = currentTrainingProgram.map(
+                    _.workoutDays.foldLeft(js.Array[BigCalendar.Event]())((arr, wd) => {
+                      arr.push(BigCalendar.event(wd.name, wd.date, wd.date))
+                      arr
+                    })
+                  ).getOrElse(js.Array[BigCalendar.Event]())
                 )
               )
             )
@@ -158,10 +167,13 @@ object TraineeProfile {
       })
     }
 
+    def dateChanged(date: js.Date): Callback =
+      $.modState(_.copy(date = date))
+
     def enrolSelection(e: ReactMouseEvent): Callback =
       $.props >>= { p =>
         $.state >>= { s =>
-          p.proxy.dispatchCB(EnrolTrainingProgram(p.trainee, s.trainingModuleSelection, s.goal))
+          p.proxy.dispatchCB(EnrolTrainingProgram(p.trainee, s.trainingModuleSelection, s.goal, s.date))
         }
       }
 
