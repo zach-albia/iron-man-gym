@@ -32,6 +32,10 @@ object Styles extends StyleSheet.Inline {
     marginTop(12.px)
   )
 
+  val marginBottom12 = style(
+    marginBottom(12.px)
+  )
+
   val subheadingMargin = style(
     marginTop(24.px),
     marginBottom(12.px)

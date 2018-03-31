@@ -1,5 +1,8 @@
 package com.ironmangym.profile
 
+import java.time.temporal.ChronoUnit
+import java.time.{ Duration, LocalDate, Year }
+
 import com.ironmangym.Main.Page
 import com.ironmangym.Styles
 import com.ironmangym.Styles._
@@ -24,7 +27,6 @@ object TraineeProfile {
 
   private class Backend($: BackendScope[Props, State]) {
     def render(p: Props, s: State): VdomElement = {
-      val birthday = p.trainee.birthday
       val trainingModules = p.proxy().trainingModules
       <.div(
         Styles.containerDiv,
@@ -32,25 +34,31 @@ object TraineeProfile {
           Grid(item = true, md = 3, sm = 12, xs = 12)()(
             Paper(className = Styles.paperPadding)()(
               Typography(variant = Typography.Variant.title)()(p.trainee.name),
-              Typography(className = Styles.marginTop12)()(
-                s"Contact Number: ${p.trainee.phoneNumber.getOrElse("None")}"
-              ),
-              Typography()()(s"Birthday: ${monthNames(birthday.month - 1)} ${birthday.date}, ${birthday.year}"),
+              Typography()()(s"Age: ${age(p.trainee.birthday)}"),
               Typography()()(s"Height: ${p.trainee.heightInCm} cm"),
+              Typography(
+                variant   = Typography.Variant.subheading,
+                className = Styles.subheadingMargin
+              )()(
+                "Latest Metrics"
+              ),
               Typography()()(s"Weight: ${p.trainee.latestWeight.map(w => s"$w kg").getOrElse("N/A")}"),
               Typography()()(s"BMI: ${p.trainee.latestBMI.map(_.toString).getOrElse("N/A")}"),
               Typography()()(s"Body Fat Percentage: ${p.trainee.latestBFP.map(v => s"$v%").getOrElse("N/A")}"),
               <.div(
                 Typography(
                   variant   = Typography.Variant.subheading,
-                  className = Styles.subheadingMargin
-                )()(
-                  "Current Training Program"
-                ),
+                  className = Styles.marginTop24
+                )()("Training Program:"),
+                Typography(
+                  variant   = Typography.Variant.subheading,
+                  className = Styles.marginBottom12
+                )()(p.trainee.trainingProgram.map(_.name).getOrElse("none").toString),
                 Select(
                   value     = p.trainee.trainingProgram.map(_.name).getOrElse("").toString,
-                  autoWidth = true
-                )()(trainingModules.map(v => MenuItem()("value" -> v.name)(v.name).vdomElement): _*)
+                  autoWidth = true,
+                  native    = true
+                )()(trainingModules.map(v => <.option(^.value := v.name)(v.name).render): _*)
               )
             )
           ),
@@ -69,6 +77,14 @@ object TraineeProfile {
           )
         )
       )
+    }
+
+    def age(birthday: js.Date) = {
+      val today = new js.Date()
+      var age = today.getFullYear - birthday.getFullYear
+      val m = today.getMonth - birthday.getMonth
+      if (m < 0 || (m == 0 && today.getDate < birthday.getDate)) age -= 1
+      age
     }
   }
 

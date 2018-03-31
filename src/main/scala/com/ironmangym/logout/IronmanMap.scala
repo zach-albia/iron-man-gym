@@ -2,6 +2,8 @@ package com.ironmangym.logout
 
 import chandu0101.scalajs.react.components.GoogleMap
 import chandu0101.scalajs.react.components.fascades.{ LatLng, Marker }
+import com.ironmangym.Styles
+import com.ironmangym.Styles._
 import com.ironmangym.GMapKeys
 import com.pangwarta.sjrmui.Typography
 import japgolly.scalajs.react._
@@ -16,7 +18,7 @@ object IronmanMap {
     .builder[Unit]("BasicMap")
     .renderStatic(
       <.div(
-        Typography(variant = Typography.Variant.headline)()("Location"),
+        Typography(variant   = Typography.Variant.headline, className = Styles.marginBottom12)()("Location"),
         GoogleMap(
           width   = "600px",
           height  = "500px",

@@ -1,6 +1,7 @@
 package com.ironmangym.domain
 
 import scala.language.implicitConversions
+import scala.scalajs.js
 
 sealed trait User {
   def credentials: Credentials
@@ -30,6 +31,11 @@ case class Date(
     month: Int,
     date:  Int
 )
+
+object Date {
+  implicit def toJsDate(date: Date): js.Date =
+    new js.Date(date.year, date.month, date.date)
+}
 
 case class Credentials(
     username: String,
