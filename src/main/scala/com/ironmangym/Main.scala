@@ -24,7 +24,7 @@ object Main {
   val routerConfig: RouterConfig[Page] = RouterConfigDsl[Page].buildConfig { dsl =>
     import dsl._
 
-    val modelWrapper = SPACircuit.connect(identity[RootModel] _)
+    val modelWrapper = SPACircuit.connect(m => m)
 
     (emptyRule
       | staticRoute(root, Page.Landing) ~> renderR(ctl => { modelWrapper((proxy: ModelProxy[RootModel]) => Landing(ctl, proxy)) })
@@ -35,7 +35,7 @@ object Main {
     CssBaseline(
       <.div(
         AppBar(position  = AppBar.static, color = AppBar.default, className = Styles.appBarHeight)()(
-          Toolbar(className = Styles.appBarHeight)()(
+          Toolbar(className = Styles.toolbar)()(
             <.img(
               ^.src := "./target/scala-2.12/classes/ironmangym_logo.png",
               ^.height := 48.px, ^.width := 48.px, ^.marginRight := 12.px

@@ -1,6 +1,7 @@
 package com.ironmangym
 
 import scalacss.DevDefaults._
+import scalacss.internal.ValueT
 
 import scala.language.implicitConversions
 import scala.scalajs.js
@@ -8,9 +9,11 @@ import scala.scalajs.js
 object Styles extends StyleSheet.Inline {
   import dsl._
 
+  private val maxWidthPx = 1170.px
+
   val containerDiv = style(
     margin :=! "40px auto 0 auto",
-    maxWidth(1170.px),
+    maxWidth(maxWidthPx),
     paddingLeft(24.px),
     paddingRight(24.px)
   )
@@ -43,6 +46,15 @@ object Styles extends StyleSheet.Inline {
 
   val appBarHeight = style(
     height(72.px)
+  )
+
+  val toolbar = style(
+    media.minWidth(maxWidthPx)(
+      height(72.px),
+      marginLeft.auto,
+      marginRight.auto,
+      width(maxWidthPx)
+    )
   )
 
   val ironManGymTitle = style(
