@@ -24,7 +24,7 @@ object TraineeProfile {
 
   case class State(
       trainingModuleSelection: TrainingModule,
-      goal:                    Stats                  = Stats(),
+      goal:                    FitnessStats           = FitnessStats(),
       date:                    js.Date                = new js.Date(),
       workoutDayDialogOpen:    Boolean                = false,
       selectedWorkoutDay:      js.UndefOr[WorkoutDay] = js.undefined
@@ -46,7 +46,7 @@ object TraineeProfile {
               Typography(
                 variant   = Typography.Variant.subheading,
                 className = Styles.marginTop24
-              )()("Latest Metrics"),
+              )()("Latest Stats"),
               Typography()()(s"Weight: ${p.trainee.latestWeight.map(w => s"$w kg").getOrElse("N/A")}"),
               Typography()()(s"BMI: ${p.trainee.latestBMI.map(_.toString).getOrElse("N/A")}"),
               Typography()()(s"Body Fat Percentage: ${p.trainee.latestBFP.map(v => s"$v%").getOrElse("N/A")}"),

@@ -20,7 +20,7 @@ case class Trainee(
     trainingProgram: Option[TrainingProgram] = None
 ) extends User {
 
-  def enrol(trainingModule: TrainingModule, trainer: Trainer, goal: Stats, startDate: js.Date): Trainee =
+  def enrol(trainingModule: TrainingModule, trainer: Trainer, goal: FitnessStats, startDate: js.Date): Trainee =
     copy(
       trainingProgram =
         Some(
@@ -90,7 +90,7 @@ case class TrainingProgram(
     workoutDays: Seq[WorkoutDay],
     startDate:   Date,
     endDate:     Date,
-    goal:        Stats
+    goal:        FitnessStats
 )
 
 case class Progress(
@@ -99,7 +99,7 @@ case class Progress(
     weight:            Double
 )
 
-case class Stats(
+case class FitnessStats(
     bodyFatPercentage: Option[Double] = None,
     bodyMassIndex:     Option[Double] = None,
     weight:            Option[Double] = None
@@ -110,7 +110,7 @@ case class WorkoutDay(
     name:      String       = "",
     exercises: List[String] = List.empty,
     done:      Boolean      = false,
-    stats:     Stats        = Stats()
+    stats:     FitnessStats = FitnessStats()
 )
 
 sealed trait Difficulty
@@ -143,7 +143,7 @@ case class Users(
     trainees:    Seq[Trainee]           = Seq.empty,
     currentUser: Option[PersistentUser] = None
 ) {
-  def enrol(trainee: Trainee, trainingModule: TrainingModule, goal: Stats, startDate: js.Date): Users = {
+  def enrol(trainee: Trainee, trainingModule: TrainingModule, goal: FitnessStats, startDate: js.Date): Users = {
     val randomTrainer = trainers(Random.nextInt(trainers.size))
     val i = trainees.indexOf(trainee)
     val j = trainers.indexOf(randomTrainer)
