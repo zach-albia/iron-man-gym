@@ -28,6 +28,8 @@ case class Trainee(
             trainer,
             trainingModule.name,
             generateWorkoutDays(trainingModule, startDate),
+            startDate,
+            daysAfter(startDate, trainingModule.routines.size),
             goal
           )
         )
@@ -35,7 +37,7 @@ case class Trainee(
 
   def generateWorkoutDays(trainingModule: TrainingModule, startDate: js.Date): Seq[WorkoutDay] = {
     val numDays = trainingModule.routines.length
-    val dates = (0 until numDays).map(n => dayAfter(startDate, n))
+    val dates = (0 until numDays).map(n => daysAfter(startDate, n))
     trainingModule.routines.zip(dates).map {
       case (routine, date) =>
         WorkoutDay(date, routine.name, routine.exercises, done = false)
@@ -86,6 +88,8 @@ case class TrainingProgram(
     trainer:     Trainer,
     name:        String,
     workoutDays: Seq[WorkoutDay],
+    startDate:   Date,
+    endDate:     Date,
     goal:        Goal
 )
 

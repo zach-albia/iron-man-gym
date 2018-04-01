@@ -116,18 +116,24 @@ object TraineeProfile {
                 ^.height := 600.px,
                 BigCalendar(
                   defaultDate = new js.Date(),
-                  events      = currentTrainingProgram.map(
-                    _.workoutDays.foldLeft(js.Array[BigCalendar.Event]())((arr, wd) => {
-                      arr.push(BigCalendar.event(wd.name, wd.date, wd.date))
-                      arr
-                    })
-                  ).getOrElse(js.Array[BigCalendar.Event]())
+                  events      = toEvents(currentTrainingProgram)
                 )
               )
             )
           )
         )
       )
+    }
+
+    private def toEvents(currentTrainingProgram: Option[TrainingProgram]) = {
+      currentTrainingProgram.map(v => {
+        val events = v.workoutDays.foldLeft(js.Array[BigCalendar.Event]())((arr, wd) => {
+          arr.push(BigCalendar.event(wd.name, wd.date, wd.date))
+          arr
+        })
+        events.push(BigCalendar.event(v.name, v.startDate, v.endDate))
+        events
+      }).getOrElse(js.Array[BigCalendar.Event]())
     }
 
     def trainingModuleSelectionChanged(e: ReactEventFromHtml, elem: ReactElement): Callback = {

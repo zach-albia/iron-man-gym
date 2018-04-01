@@ -1,7 +1,6 @@
 package com.ironmangym
 
 import scalacss.DevDefaults._
-import scalacss.internal.ValueT
 
 import scala.language.implicitConversions
 import scala.scalajs.js

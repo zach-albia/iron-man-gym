@@ -23,7 +23,7 @@ package object common {
     age
   }
 
-  def dayAfter(date: js.Date, n: Int): js.Date = {
+  def daysAfter(date: js.Date, n: Int): js.Date = {
     val d = new js.Date(date.getTime)
     d.setDate(d.getDate + n)
     d
