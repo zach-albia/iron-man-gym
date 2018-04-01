@@ -1,9 +1,10 @@
 package com.ironmangym.domain
 
+import com.ironmangym.common
+
 import scala.language.implicitConversions
 import scala.scalajs.js
 import scala.util.Random
-
 import com.ironmangym.common._
 
 sealed trait User {
@@ -19,6 +20,11 @@ case class Trainee(
     credentials:     Credentials,
     trainingProgram: Option[TrainingProgram] = None
 ) extends User {
+  def updateWorkoutDay(updatedWorkoutDay: WorkoutDay): Trainee = {
+    val tp = trainingProgram.get
+    val i = tp.workoutDays.indexWhere(_.date == updatedWorkoutDay.date)
+    copy(trainingProgram = Some(tp.copy(workoutDays = tp.workoutDays.updated(i, updatedWorkoutDay))))
+  }
 
   def enrol(trainingModule: TrainingModule, trainer: Trainer, goal: FitnessStats, startDate: js.Date): Trainee =
     copy(
@@ -61,6 +67,8 @@ case class Trainee(
     ld <- tp.workoutDays.filter(_.stats.bodyFatPercentage.isDefined).lastOption
     bfp <- ld.stats.bodyFatPercentage
   } yield bfp
+
+  val age = common.age(birthday)
 }
 
 case class Date(
@@ -151,6 +159,11 @@ case class Users(
     copy(trainees = trainees.updated(i, enrolledTrainee))
   }
 
+  def updateWorkoutDay(trainee: Trainee, updatedWorkoutDay: WorkoutDay): Users = {
+    val i = trainees.indexOf(trainee)
+    val updatedTrainee = trainee.updateWorkoutDay(updatedWorkoutDay)
+    copy(trainees = trainees.updated(i, updatedTrainee))
+  }
 }
 
 case class RootModel(

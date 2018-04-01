@@ -1,34 +1,61 @@
 package com.ironmangym.profile
 
-import com.ironmangym.domain.{ Users, WorkoutDay }
-import com.pangwarta.sjrmui.{ Dialog, DialogTitle, ReactHandler1 }
+import com.ironmangym.common.FitnessStatsEditor
+import com.ironmangym.domain._
+import com.pangwarta.sjrmui.{ Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, ReactHandler1, Typography }
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.component.Scala.BackendScope
 import japgolly.scalajs.react.vdom.VdomElement
 import japgolly.scalajs.react.vdom.html_<^._
-import moment.Moment
 
 import scala.scalajs.js
 
 object WorkoutDayDialog {
 
   case class Props(
-      workoutDay: WorkoutDay,
-      proxy:      ModelProxy[Users],
+      trainee:    Trainee,
+      proxy:      ModelProxy[RootModel],
       open:       Boolean,
+      workoutDay: WorkoutDay,
       onClose:    ReactHandler1[ReactEvent]
   )
 
-  case class State()
+  private val componentName = "WorkoutDayDialog"
 
-  private class Backend($: BackendScope[Props, State]) {
-    def render(p: Props, s: State): VdomElement =
+  private class Backend($: BackendScope[Props, Unit]) {
+    def render(p: Props): VdomElement =
       Dialog(
         open    = p.open,
         onClose = p.onClose
-      )()(
-        DialogTitle()()(format(p.workoutDay.date))
+      )("key" -> componentName)(
+        DialogTitle()()(s"${format(p.workoutDay.date)} - ${p.workoutDay.name}"),
+        DialogContent()()(Typography(variant = Typography.Variant.subheading)()(
+          s"Exercises: ${if (p.workoutDay.exercises.isEmpty) "None" else ""}"
+        )),
+        DialogContent()()(
+          p.workoutDay.exercises.map(v => Typography()()(v).vdomElement): _*
+        ),
+        DialogContent()()(
+          DialogContentText()()("You can record today's stats."),
+          FormControl()()(
+            FitnessStatsEditor(
+              p.trainee.heightInCm,
+              p.trainee.age,
+              s"dialog-fitness-stats-editor-${p.workoutDay.date.getTime}",
+              p.workoutDay.stats,
+              fitnessStatsChanged(p.workoutDay)(_)
+            ),
+            FormControlLabel(
+              control = Checkbox(
+                checked  = p.workoutDay.done,
+                value    = "done",
+                onChange = doneChanged(p.workoutDay)(_, _)
+              )().rawElement,
+              label   = "Done".rawNode
+            )()
+          )
+        )
       )
 
     def format(date: js.Date): String = {
@@ -38,19 +65,31 @@ object WorkoutDayDialog {
         "August", "September", "October",
         "November", "December"
       )
-
       val day = date.getDate()
       val monthIndex = date.getMonth()
-
       s"${monthNames(monthIndex)} $day"
     }
+
+    def fitnessStatsChanged(workoutDay: WorkoutDay)(stats: FitnessStats): Callback =
+      changeWorkoutDay(workoutDay.copy(stats = stats))
+
+    def doneChanged(workoutDay: WorkoutDay)(e: ReactEvent, done: Boolean): Callback =
+      changeWorkoutDay(workoutDay.copy(done = !done))
+
+    def changeWorkoutDay(updatedWorkoutDay: WorkoutDay): Callback =
+      $.props >>= { p => p.proxy.dispatchCB(WorkoutDayChanged(p.trainee, updatedWorkoutDay)) }
   }
 
-  private val component = ScalaComponent.builder[Props]("Workout Day Dialog")
-    .initialState(State())
-    .renderBackend[Backend]
+  private val component = ScalaComponent.builder[Props](componentName)
+    .backend(new Backend(_))
+    .renderBackend
     .build
 
-  def apply(workoutDay: WorkoutDay, proxy: ModelProxy[Users], open: Boolean = false, onClose: ReactHandler1[ReactEvent] = js.undefined): VdomElement =
-    component(Props(workoutDay, proxy, open, onClose))
+  def apply(
+      trainee:    Trainee,
+      proxy:      ModelProxy[RootModel],
+      open:       Boolean                   = false,
+      workoutDay: WorkoutDay                = WorkoutDay(),
+      onClose:    ReactHandler1[ReactEvent] = js.undefined
+  ): VdomElement = component(Props(trainee, proxy, open, workoutDay, onClose))
 }

@@ -27,7 +27,6 @@ object TraineeProfile {
       trainingModuleSelection: TrainingModule,
       goal:                    FitnessStats           = FitnessStats(),
       date:                    js.Date                = new js.Date(),
-      workoutDayDialogOpen:    Boolean                = false,
       selectedWorkoutDay:      js.UndefOr[WorkoutDay] = js.undefined
   )
 
@@ -35,7 +34,6 @@ object TraineeProfile {
     def render(p: Props, s: State): VdomElement = {
       val trainingModules = p.proxy().trainingModules
       val currentTrainingProgram = p.trainee.trainingProgram
-      val usersWrapper = SPACircuit.connect(_.users)
       <.div(
         Styles.containerDiv,
         Grid(container = true, spacing = 24)()(
@@ -48,9 +46,9 @@ object TraineeProfile {
                 variant   = Typography.Variant.subheading,
                 className = Styles.marginTop24
               )()("Latest Stats"),
-              Typography()()(s"Weight: ${p.trainee.latestWeight.map(w => s"$w kg").getOrElse("N/A")}"),
-              Typography()()(s"BMI: ${p.trainee.latestBMI.map(_.toString).getOrElse("N/A")}"),
-              Typography()()(s"Body Fat Percentage: ${p.trainee.latestBFP.map(v => s"$v%").getOrElse("N/A")}"),
+              Typography()()(s"Weight: ${p.trainee.latestWeight.map(w => s"${round2f(w)} kg").getOrElse("N/A")}"),
+              Typography()()(s"BMI: ${p.trainee.latestBMI.map(v => round2f(v).toString).getOrElse("N/A")}"),
+              Typography()()(s"Body Fat Percentage: ${p.trainee.latestBFP.map(v => s"${round2f(v)}%").getOrElse("N/A")}"),
               <.div(
                 Typography(
                   variant   = Typography.Variant.subheading,
@@ -85,6 +83,7 @@ object TraineeProfile {
                   FitnessStatsEditor(
                     heightInCm          = p.trainee.heightInCm,
                     age                 = age(p.trainee.birthday),
+                    key                 = "trainee-profile-goal-fitness-stats-editor",
                     initialFitnessStats = s.goal,
                     onChange            = fitnessStatsChanged(_)
                   ),
@@ -107,7 +106,7 @@ object TraineeProfile {
                 ^.height := 600.px,
                 BigCalendar(
                   defaultDate   = new js.Date(),
-                  events        = toEvents(currentTrainingProgram),
+                  events        = workoutDaysToEvents(currentTrainingProgram),
                   selectable    = true,
                   views         = js.Array("month", "agenda"),
                   resizable     = true,
@@ -117,17 +116,17 @@ object TraineeProfile {
             )
           )
         ),
-        usersWrapper(usersProxy =>
-          WorkoutDayDialog(
-            s.selectedWorkoutDay.getOrElse(WorkoutDay()),
-            usersProxy,
-            s.workoutDayDialogOpen,
-            (e: ReactEvent) => $.modState(_.copy(workoutDayDialogOpen = false))
-          ))
+        WorkoutDayDialog(
+          trainee    = p.trainee,
+          proxy      = p.proxy,
+          open       = s.selectedWorkoutDay.isDefined,
+          workoutDay = s.selectedWorkoutDay.getOrElse(WorkoutDay()),
+          onClose    = (e: ReactEvent) => $.modState(_.copy(selectedWorkoutDay = js.undefined))
+        )
       )
     }
 
-    private def toEvents(currentTrainingProgram: Option[TrainingProgram]) = {
+    private def workoutDaysToEvents(currentTrainingProgram: Option[TrainingProgram]) = {
       currentTrainingProgram.map(v => {
         val events = v.workoutDays.foldLeft(js.Array[BigCalendar.Event]())((arr, wd) => {
           arr.push(BigCalendar.event(wd.name, wd.date, wd.date))
@@ -164,7 +163,7 @@ object TraineeProfile {
       ($.props >>= { p =>
         val day = p.trainee.trainingProgram.flatMap(_.workoutDays.find(v => v.date == toPersistentDate(e.start))).get
         if (e.start.getTime() == e.end.getTime())
-          $.modState(_.copy(workoutDayDialogOpen = true, selectedWorkoutDay = day))
+          $.modState(_.copy(selectedWorkoutDay = day))
         else Callback.empty
       }).runNow()
       e
@@ -178,8 +177,8 @@ object TraineeProfile {
   private val component = ScalaComponent.builder[Props]("TraineeProfile")
     .initialStateFromProps(p =>
       State(
-        p.proxy().trainingModules.head,
-        p.trainee.trainingProgram.map(_.goal).getOrElse(FitnessStats())
+        trainingModuleSelection = p.proxy().trainingModules.head,
+        goal                    = p.trainee.trainingProgram.map(_.goal).getOrElse(FitnessStats())
       ))
     .renderBackend[Backend]
     .build

@@ -22,6 +22,8 @@ case class EnrolTrainingProgram(
     startDate:      js.Date
 ) extends Action
 
+case class WorkoutDayChanged(trainee: Trainee, updatedWorkoutDay: WorkoutDay) extends Action
+
 object Picklers {
   implicit val traineePickler = Pickler.materializePickler[Trainee]
   implicit val trainingProgramPickler = Pickler.materializePickler[TrainingProgram]
@@ -101,6 +103,10 @@ class TrainingProfileHandler[M](modelRW: ModelRW[M, RootModel]) extends ActionHa
   def handle = {
     case EnrolTrainingProgram(trainee, trainingModule, goal, date) =>
       val updatedUsers = value.users.enrol(trainee, trainingModule, goal, date)
+      dom.window.localStorage.setItem(usersKey, Pickle.intoString(updatedUsers))
+      updated(RootModel(updatedUsers, value.trainingModules))
+    case WorkoutDayChanged(trainee, updatedWorkoutDay) =>
+      val updatedUsers = value.users.updateWorkoutDay(trainee, updatedWorkoutDay)
       dom.window.localStorage.setItem(usersKey, Pickle.intoString(updatedUsers))
       updated(RootModel(updatedUsers, value.trainingModules))
   }
