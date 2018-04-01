@@ -16,25 +16,31 @@ import org.scalajs.dom.raw.HTMLSelectElement
 import scalacss.ScalaCssReact._
 
 import scala.scalajs.js
-import scala.scalajs.js.UndefOr
-import scala.scalajs.js.UndefOr.any2undefOrA
+import scala.scalajs.js.UndefOr._
 
 object TraineeProfile {
 
   case class Props(router: RouterCtl[Page], proxy: ModelProxy[RootModel], trainee: Trainee)
 
-  case class State(trainingModuleSelection: TrainingModule, goal: Goal = Goal(), date: js.Date = new js.Date())
+  case class State(
+      trainingModuleSelection: TrainingModule,
+      goal:                    Stats                  = Stats(),
+      date:                    js.Date                = new js.Date(),
+      workoutDayDialogOpen:    Boolean                = false,
+      selectedWorkoutDay:      js.UndefOr[WorkoutDay] = js.undefined
+  )
 
   private class Backend($: BackendScope[Props, State]) {
     def render(p: Props, s: State): VdomElement = {
       val trainingModules = p.proxy().trainingModules
       val currentTrainingProgram = p.trainee.trainingProgram
+      val usersWrapper = SPACircuit.connect(_.users)
       <.div(
         Styles.containerDiv,
         Grid(container = true, spacing = 24)()(
           Grid(item = true, md = 3, sm = 12, xs = 12)()(
             Paper(className = Styles.paperPadding)()(
-              Typography(variant = Typography.Variant.title)()(p.trainee.name),
+              Typography(variant   = Typography.Variant.title, className = Styles.marginBottom12)()(p.trainee.name),
               Typography()()(s"Age: ${age(p.trainee.birthday)}"),
               Typography()()(s"Height: ${p.trainee.heightInCm} cm"),
               Typography(
@@ -115,13 +121,24 @@ object TraineeProfile {
               <.div(
                 ^.height := 600.px,
                 BigCalendar(
-                  defaultDate = new js.Date(),
-                  events      = toEvents(currentTrainingProgram)
+                  defaultDate   = new js.Date(),
+                  events        = toEvents(currentTrainingProgram),
+                  selectable    = true,
+                  views         = js.Array("month", "agenda"),
+                  resizable     = true,
+                  onSelectEvent = any2undefOrA(openWorkoutDayDialog(_, _))
                 )
               )
             )
           )
-        )
+        ),
+        usersWrapper(usersProxy =>
+          WorkoutDayDialog(
+            s.selectedWorkoutDay.getOrElse(WorkoutDay()),
+            usersProxy,
+            s.workoutDayDialogOpen,
+            (e: ReactEvent) => $.modState(_.copy(workoutDayDialogOpen = false))
+          ))
       )
     }
 
@@ -183,6 +200,16 @@ object TraineeProfile {
           p.proxy.dispatchCB(EnrolTrainingProgram(p.trainee, s.trainingModuleSelection, s.goal, s.date))
         }
       }
+
+    def openWorkoutDayDialog(e: BigCalendar.Event, re: ReactEvent): js.Any = {
+      ($.props >>= { p =>
+        val day = p.trainee.trainingProgram.flatMap(_.workoutDays.find(v => v.date == toPersistentDate(e.start))).get
+        if (e.start.getTime() == e.end.getTime())
+          $.modState(_.copy(workoutDayDialogOpen = true, selectedWorkoutDay = day))
+        else Callback.empty
+      }).runNow()
+      e
+    }
 
     private def findTrainingModule(p: Props, selection: String) = {
       p.proxy().trainingModules.find(_.name == selection)

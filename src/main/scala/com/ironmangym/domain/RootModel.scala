@@ -20,7 +20,7 @@ case class Trainee(
     trainingProgram: Option[TrainingProgram] = None
 ) extends User {
 
-  def enrol(trainingModule: TrainingModule, trainer: Trainer, goal: Goal, startDate: js.Date): Trainee =
+  def enrol(trainingModule: TrainingModule, trainer: Trainer, goal: Stats, startDate: js.Date): Trainee =
     copy(
       trainingProgram =
         Some(
@@ -40,26 +40,26 @@ case class Trainee(
     val dates = (0 until numDays).map(n => daysAfter(startDate, n))
     trainingModule.routines.zip(dates).map {
       case (routine, date) =>
-        WorkoutDay(date, routine.name, routine.exercises, done = false)
+        WorkoutDay(date, routine.name, routine.exercises)
     }
   }
 
   def latestWeight: Option[Double] = for {
     tp <- trainingProgram
-    ld <- tp.workoutDays.filter(_.weight.isDefined).lastOption
-    wt <- ld.weight
+    ld <- tp.workoutDays.filter(_.stats.weight.isDefined).lastOption
+    wt <- ld.stats.weight
   } yield wt
 
   def latestBMI: Option[Double] = for {
     tp <- trainingProgram
-    ld <- tp.workoutDays.filter(_.bodyMassIndex.isDefined).lastOption
-    bmi <- ld.bodyMassIndex
+    ld <- tp.workoutDays.filter(_.stats.bodyMassIndex.isDefined).lastOption
+    bmi <- ld.stats.bodyMassIndex
   } yield bmi
 
   def latestBFP: Option[Double] = for {
     tp <- trainingProgram
-    ld <- tp.workoutDays.filter(_.bodyFatPercentage.isDefined).lastOption
-    bfp <- ld.bodyFatPercentage
+    ld <- tp.workoutDays.filter(_.stats.bodyFatPercentage.isDefined).lastOption
+    bfp <- ld.stats.bodyFatPercentage
   } yield bfp
 }
 
@@ -90,7 +90,7 @@ case class TrainingProgram(
     workoutDays: Seq[WorkoutDay],
     startDate:   Date,
     endDate:     Date,
-    goal:        Goal
+    goal:        Stats
 )
 
 case class Progress(
@@ -99,20 +99,18 @@ case class Progress(
     weight:            Double
 )
 
-case class Goal(
+case class Stats(
     bodyFatPercentage: Option[Double] = None,
     bodyMassIndex:     Option[Double] = None,
     weight:            Option[Double] = None
 )
 
 case class WorkoutDay(
-    date:              Date,
-    name:              String,
-    exercises:         List[String],
-    done:              Boolean,
-    weight:            Option[Double] = None,
-    bodyMassIndex:     Option[Double] = None,
-    bodyFatPercentage: Option[Double] = None
+    date:      Date         = new js.Date,
+    name:      String       = "",
+    exercises: List[String] = List.empty,
+    done:      Boolean      = false,
+    stats:     Stats        = Stats()
 )
 
 sealed trait Difficulty
@@ -145,7 +143,7 @@ case class Users(
     trainees:    Seq[Trainee]           = Seq.empty,
     currentUser: Option[PersistentUser] = None
 ) {
-  def enrol(trainee: Trainee, trainingModule: TrainingModule, goal: Goal, startDate: js.Date): Users = {
+  def enrol(trainee: Trainee, trainingModule: TrainingModule, goal: Stats, startDate: js.Date): Users = {
     val randomTrainer = trainers(Random.nextInt(trainers.size))
     val i = trainees.indexOf(trainee)
     val j = trainers.indexOf(randomTrainer)

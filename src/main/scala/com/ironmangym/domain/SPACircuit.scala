@@ -18,7 +18,7 @@ case object LogOut extends Action
 case class EnrolTrainingProgram(
     trainee:        Trainee,
     trainingModule: TrainingModule,
-    goal:           Goal,
+    goal:           Stats,
     startDate:      js.Date
 ) extends Action
 

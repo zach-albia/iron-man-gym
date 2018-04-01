@@ -43,7 +43,8 @@ object LoginDialog {
         open    = p.open || s.loginValid.contains(false),
         onClose = resetAndClose(_)
       )("onKeyUp" -> { (e: ReactKeyboardEvent) =>
-          if (e.keyCode == 13 & s.formValid) dom.document.getElementById("loginDialogSubmit").domAsHtml.click()
+          if (e.keyCode == 13 & s.formValid)
+            dom.document.getElementById("loginDialogSubmit").domAsHtml.click()
         })(
           DialogTitle()()("Sign In"),
           DialogContent()()(
