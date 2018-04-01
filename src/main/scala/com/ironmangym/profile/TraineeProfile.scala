@@ -6,12 +6,13 @@ import com.ironmangym.Styles._
 import com.ironmangym.common._
 import com.ironmangym.domain._
 import com.ironmangym.wrapper.BigCalendar
-import com.pangwarta.sjrmui.{ Button, FormControl, Grid, Input, InputAdornment, Paper, Select, TextField, Typography }
+import com.pangwarta.sjrmui.{ Button, FormControl, Grid, Paper, Select, Typography }
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router.RouterCtl
 import japgolly.scalajs.react.raw.ReactElement
 import japgolly.scalajs.react.vdom.html_<^._
+import org.scalajs.dom
 import org.scalajs.dom.raw.HTMLSelectElement
 import scalacss.ScalaCssReact._
 
@@ -80,29 +81,13 @@ object TraineeProfile {
                   Typography(
                     className = Styles.marginTop24,
                     variant   = Typography.Variant.subheading
-                  )()("Goal"),
-                  TextField(
-                    label      = "Weight (in kg)",
-                    InputProps = js.Dynamic.literal(
-                      endAdornment = InputAdornment(position = InputAdornment.Position.end)()("kg")
-                        .rawNode.asInstanceOf[js.Any]
-                    ).asInstanceOf[Input.Props],
-                    typ        = "number",
-                    value      = if (s.goal.weight.isDefined) s.goal.weight.get else "",
-                    onChange   = weightChanged(p.trainee.heightInCm, age(p.trainee.birthday))(_)
-                  )()(),
-                  TextField(
-                    label    = "Body Mass Index",
-                    typ      = "number",
-                    value    = if (s.goal.bodyMassIndex.isDefined) round2f(s.goal.bodyMassIndex.get) else "",
-                    onChange = bmiChanged(age(p.trainee.birthday))(_)
-                  )()(),
-                  TextField(
-                    label    = "Body Fat Percentage",
-                    typ      = "number",
-                    value    = if (s.goal.bodyFatPercentage.isDefined) round2f(s.goal.bodyFatPercentage.get) else "",
-                    onChange = bfpChanged(_)
-                  )()(),
+                  )()("Fitness Goal"),
+                  FitnessStatsEditor(
+                    heightInCm          = p.trainee.heightInCm,
+                    age                 = age(p.trainee.birthday),
+                    initialFitnessStats = s.goal,
+                    onChange            = fitnessStatsChanged(_)
+                  ),
                   Button(
                     variant   = Button.Variant.raised,
                     className = Styles.marginTop24,
@@ -161,35 +146,8 @@ object TraineeProfile {
       }
     }
 
-    def weightChanged(height: Double, age: Int)(e: ReactEvent): Callback = {
-      val weight = try { Some(getInputValue(e).toDouble) } catch { case _: Exception => None }
-      val bmi = weight.map(adultBMI(_, height))
-      fieldChanged[Props, State]($, v => {
-        v.copy(goal = v.goal.copy(
-          weight            = weight,
-          bodyMassIndex     = bmi,
-          bodyFatPercentage = bmi.map(adultBFP(_, age))
-        ))
-      })
-    }
-
-    def bmiChanged(age: Int)(e: ReactEvent): Callback = {
-      val bmi = try { Some(getInputValue(e).toDouble) } catch { case _: Exception => None }
-      fieldChanged[Props, State]($, v => {
-        v.copy(goal = v.goal.copy(
-          bodyMassIndex     = bmi,
-          bodyFatPercentage = bmi.map(adultBFP(_, age))
-        ))
-      })
-    }
-
-    def bfpChanged(e: ReactEvent): Callback = {
-      fieldChanged[Props, State]($, v => {
-        v.copy(goal = v.goal.copy(
-          bodyFatPercentage = try { Some(getInputValue(e).toDouble) } catch { case _: Exception => None }
-        ))
-      })
-    }
+    def fitnessStatsChanged(fs: FitnessStats): Callback =
+      $.modState(_.copy(goal = fs))
 
     def dateChanged(date: js.Date): Callback =
       $.modState(_.copy(date = date))
@@ -197,7 +155,8 @@ object TraineeProfile {
     def enrolSelection(e: ReactMouseEvent): Callback =
       $.props >>= { p =>
         $.state >>= { s =>
-          p.proxy.dispatchCB(EnrolTrainingProgram(p.trainee, s.trainingModuleSelection, s.goal, s.date))
+          val program = EnrolTrainingProgram(p.trainee, s.trainingModuleSelection, s.goal, s.date)
+          p.proxy.dispatchCB(program)
         }
       }
 
@@ -217,7 +176,11 @@ object TraineeProfile {
   }
 
   private val component = ScalaComponent.builder[Props]("TraineeProfile")
-    .initialStateFromProps(p => State(p.proxy().trainingModules.head))
+    .initialStateFromProps(p =>
+      State(
+        p.proxy().trainingModules.head,
+        p.trainee.trainingProgram.map(_.goal).getOrElse(FitnessStats())
+      ))
     .renderBackend[Backend]
     .build
 
