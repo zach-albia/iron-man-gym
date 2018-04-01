@@ -24,7 +24,12 @@ object Styles extends StyleSheet.Inline {
   )
 
   val paperPadding = style(
-    padding :=! "24px"
+    media.minWidth(600.px)(
+      padding(24.px)
+    ),
+    media.maxWidth(599.px)(
+      padding(12.px)
+    )
   )
 
   val marginTop24 = style(

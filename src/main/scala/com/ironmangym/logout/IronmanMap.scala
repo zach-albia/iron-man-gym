@@ -20,7 +20,7 @@ object IronmanMap {
       <.div(
         Typography(variant   = Typography.Variant.headline, className = Styles.marginBottom12)()("Location"),
         GoogleMap(
-          width   = "600px",
+          width   = "inherit",
           height  = "500px",
           center  = latlng,
           url     = s"https://maps.googleapis.com/maps/api/js?key=${GMapKeys.key}",
