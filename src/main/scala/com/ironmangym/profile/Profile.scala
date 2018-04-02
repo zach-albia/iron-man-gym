@@ -19,9 +19,9 @@ object Profile {
       val trainer = users.trainers.find(_.credentials.username == currentUser.credentials.username)
       val trainee = users.trainees.find(_.credentials.username == currentUser.credentials.username)
       if (trainer.isDefined)
-        TrainerProfile(p.router, p.proxy, trainer.get)
+        TrainerProfile(p.router, p.proxy, trainer.get.credentials.username)
       else
-        TraineeProfile(p.router, p.proxy, trainee.get)
+        TraineeProfile(p.router, p.proxy, trainee.get.credentials.username)
     }
     .build
 

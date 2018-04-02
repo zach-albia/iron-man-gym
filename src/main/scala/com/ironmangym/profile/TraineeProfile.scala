@@ -21,7 +21,10 @@ import scala.scalajs.js.UndefOr._
 
 object TraineeProfile {
 
-  case class Props(router: RouterCtl[Page], proxy: ModelProxy[RootModel], trainee: Trainee)
+  case class Props(router: RouterCtl[Page], proxy: ModelProxy[RootModel], traineeUsername: String) {
+    def trainee: Trainee =
+      proxy().users.trainees.find(_.credentials.username == traineeUsername).get
+  }
 
   case class State(
       trainingModuleSelection: TrainingModule,
@@ -183,6 +186,6 @@ object TraineeProfile {
     .renderBackend[Backend]
     .build
 
-  def apply(router: RouterCtl[Page], proxy: ModelProxy[RootModel], trainee: Trainee): VdomElement =
-    component(Props(router, proxy, trainee))
+  def apply(router: RouterCtl[Page], proxy: ModelProxy[RootModel], traineeUsername: String): VdomElement =
+    component(Props(router, proxy, traineeUsername))
 }

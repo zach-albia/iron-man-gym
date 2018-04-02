@@ -10,15 +10,19 @@ import japgolly.scalajs.react.ScalaComponent
 import japgolly.scalajs.react.extra.router.RouterCtl
 import japgolly.scalajs.react.vdom.VdomElement
 import japgolly.scalajs.react.vdom.html_<^._
+import scalacss.ScalaCssReact._
 
 object TrainerProfile {
 
-  case class Props(router: RouterCtl[Page], proxy: ModelProxy[RootModel], trainer: Trainer)
+  case class Props(router: RouterCtl[Page], proxy: ModelProxy[RootModel], trainerUsername: String) {
+    def trainer: Trainer =
+      proxy().users.trainers.find(_.credentials.username == trainerUsername).get
+  }
 
   private val component = ScalaComponent.builder[Props]("TrainerProfile")
     .render_P { p =>
       <.div(
-
+        Styles.containerDiv,
         Grid(container = true, spacing = 24)()(
           Grid(item = true, md = 3, sm = 12, xs = 12)()(
             Paper(className = Styles.paperPadding)()(
@@ -45,6 +49,6 @@ object TrainerProfile {
     }
     .build
 
-  def apply(router: RouterCtl[Page], proxy: ModelProxy[RootModel], trainer: Trainer): VdomElement =
-    component(Props(router, proxy, trainer))
+  def apply(router: RouterCtl[Page], proxy: ModelProxy[RootModel], trainerUsername: String): VdomElement =
+    component(Props(router, proxy, trainerUsername))
 }
