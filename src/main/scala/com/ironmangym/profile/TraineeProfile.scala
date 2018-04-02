@@ -117,11 +117,11 @@ object TraineeProfile {
           )
         ),
         WorkoutDayDialog(
-          trainee    = p.trainee,
-          proxy      = p.proxy,
-          open       = s.selectedWorkoutDay.isDefined,
-          workoutDay = s.selectedWorkoutDay.getOrElse(WorkoutDay()),
-          onClose    = (e: ReactEvent) => $.modState(_.copy(selectedWorkoutDay = js.undefined))
+          traineeUsername = p.trainee.credentials.username,
+          proxy           = p.proxy,
+          open            = s.selectedWorkoutDay.isDefined,
+          workoutDate     = s.selectedWorkoutDay.map(_.date).map(toJsDate).toOption,
+          onClose         = (_: ReactEvent) => $.modState(_.copy(selectedWorkoutDay = js.undefined))
         )
       )
     }

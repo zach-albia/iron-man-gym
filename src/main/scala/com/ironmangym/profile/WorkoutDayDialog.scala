@@ -1,8 +1,8 @@
 package com.ironmangym.profile
 
-import com.ironmangym.common.FitnessStatsEditor
+import com.ironmangym.common._
 import com.ironmangym.domain._
-import com.pangwarta.sjrmui.{ Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, ReactHandler1, Typography }
+import com.pangwarta.sjrmui.{ Checkbox, Dialog, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, ReactHandler1, Typography }
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.component.Scala.BackendScope
@@ -14,12 +14,21 @@ import scala.scalajs.js
 object WorkoutDayDialog {
 
   case class Props(
-      trainee:    Trainee,
-      proxy:      ModelProxy[RootModel],
-      open:       Boolean,
-      workoutDay: WorkoutDay,
-      onClose:    ReactHandler1[ReactEvent]
-  )
+      proxy:           ModelProxy[RootModel],
+      traineeUsername: js.UndefOr[String],
+      open:            Boolean,
+      workoutDate:     Option[js.Date],
+      onClose:         ReactHandler1[ReactEvent]
+  ) {
+    def trainee: Trainee =
+      proxy().users.trainees.find(_.credentials.username == traineeUsername).get
+
+    def workoutDay: WorkoutDay = (for {
+      tp <- trainee.trainingProgram
+      wd <- workoutDate
+      cwd <- tp.workoutDays.find(v => v.date == toPersistentDate(wd))
+    } yield cwd).getOrElse(WorkoutDay())
+  }
 
   private val componentName = "WorkoutDayDialog"
 
@@ -73,8 +82,9 @@ object WorkoutDayDialog {
     def fitnessStatsChanged(workoutDay: WorkoutDay)(stats: FitnessStats): Callback =
       changeWorkoutDay(workoutDay.copy(stats = stats))
 
-    def doneChanged(workoutDay: WorkoutDay)(e: ReactEvent, done: Boolean): Callback =
-      changeWorkoutDay(workoutDay.copy(done = !done))
+    def doneChanged(workoutDay: WorkoutDay)(e: ReactEvent, done: Boolean): Callback = {
+      Callback.log(done.toString) >> changeWorkoutDay(workoutDay.copy(done = done))
+    }
 
     def changeWorkoutDay(updatedWorkoutDay: WorkoutDay): Callback =
       $.props >>= { p => p.proxy.dispatchCB(WorkoutDayChanged(p.trainee, updatedWorkoutDay)) }
@@ -83,13 +93,14 @@ object WorkoutDayDialog {
   private val component = ScalaComponent.builder[Props](componentName)
     .backend(new Backend(_))
     .renderBackend
+    .componentDidUpdate($ => Callback.log(s"Current workout day: ${$.currentProps.workoutDay.toString}"))
     .build
 
   def apply(
-      trainee:    Trainee,
-      proxy:      ModelProxy[RootModel],
-      open:       Boolean                   = false,
-      workoutDay: WorkoutDay                = WorkoutDay(),
-      onClose:    ReactHandler1[ReactEvent] = js.undefined
-  ): VdomElement = component(Props(trainee, proxy, open, workoutDay, onClose))
+      proxy:           ModelProxy[RootModel],
+      traineeUsername: js.UndefOr[String]        = js.undefined,
+      open:            Boolean                   = false,
+      workoutDate:     Option[js.Date]           = None,
+      onClose:         ReactHandler1[ReactEvent] = js.undefined
+  ): VdomElement = component(Props(proxy, traineeUsername, open, workoutDate, onClose))
 }
