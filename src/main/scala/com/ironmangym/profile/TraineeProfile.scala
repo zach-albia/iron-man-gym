@@ -73,7 +73,7 @@ object TraineeProfile {
                     autoWidth = true,
                     native    = true,
                     onChange  = js.UndefOr.any2undefOrA((a: ReactEventFromHtml, b: ReactElement) => trainingModuleSelectionChanged(a, b)) // wtf?
-                  )()(trainingModules.map(v => <.option(^.value := v.name)(v.name).render): _*),
+                  )()(trainingModules.map(v => <.option(^.value := v.name)(s"${v.name} (${v.difficulty})").render): _*),
                   Typography(
                     className = Styles.marginTop24,
                     variant   = Typography.Variant.subheading
