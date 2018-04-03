@@ -50,7 +50,7 @@ object TrainerProfile {
       <.div(
         Styles.containerDiv,
         Grid(container = true, spacing = 24)()(
-          Grid(item = true)()(
+          Grid(item = true, xs = 12)()(
             Paper(className = Styles.paperPadding)()(
               Typography(variant = Typography.Variant.title)()("Trainer name"),
               Table()()(
@@ -63,20 +63,20 @@ object TrainerProfile {
                     TableCell()()("Body Mass Index"),
                     TableCell()()("Body Fat Percentage")
                   )
+                ),
+                TableBody()()(
+                  p.trainingData.map(td => {
+                    val progress = td.workoutProgress
+                    TableRow()()(
+                      TableCell()()(td.traineeName),
+                      TableCell()()(td.trainingProgramName),
+                      TableCell()()(s"${progress.done} of ${progress.all}"),
+                      TableCell()()(td.weight.map(v => s"${round2f(v)} kg").getOrElse("N/A").toString),
+                      TableCell()()(s"Body Mass Index"),
+                      TableCell()()(s"Body Fat Percentage")
+                    ).vdomElement
+                  }): _*
                 )
-              ),
-              TableBody()()(
-                p.trainingData.map(td => {
-                  val progress = td.workoutProgress
-                  TableRow()()(
-                    TableCell()()(td.traineeName),
-                    TableCell()()(td.trainingProgramName),
-                    TableCell()()(s"${progress.done} of ${progress.all}"),
-                    TableCell()()(td.weight.map(v => s"${round2f(v)} kg").getOrElse("N/A").toString),
-                    TableCell()()(s"Body Mass Index"),
-                    TableCell()()(s"Body Fat Percentage")
-                  ).vdomElement
-                }): _*
               )
             )
           )

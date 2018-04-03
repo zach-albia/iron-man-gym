@@ -2,10 +2,9 @@ package com.ironmangym
 
 import com.ironmangym.CssSettings._
 import com.ironmangym.Styles._
-import com.ironmangym.about.About
-import com.ironmangym.domain.SPACircuit
-import com.ironmangym.domain.RootModel
+import com.ironmangym.domain.{ RootModel, SPACircuit }
 import com.ironmangym.logout._
+import com.ironmangym.trainingmodule.TrainingModules
 import com.pangwarta.sjrmui._
 import diode.react.ModelProxy
 import japgolly.scalajs.react.extra.router._
@@ -17,18 +16,17 @@ object Main {
   sealed trait Page
   object Page {
     case object Landing extends Page
-    case object About extends Page
-    case object IronmanMap extends Page
+    case object TrainingModules extends Page
   }
 
   val routerConfig: RouterConfig[Page] = RouterConfigDsl[Page].buildConfig { dsl =>
     import dsl._
 
     val modelWrapper = SPACircuit.connect(m => m)
-
+    val trainingModulesWrapper = SPACircuit.connect(_.trainingModules)
     (emptyRule
       | staticRoute(root, Page.Landing) ~> renderR(ctl => { modelWrapper((proxy: ModelProxy[RootModel]) => Landing(ctl, proxy)) })
-      | staticRoute("#about", Page.About) ~> render(About())).notFound(redirectToPage(Page.Landing)(Redirect.Replace))
+      | staticRoute("#training-modules", Page.TrainingModules) ~> renderR(ctl => modelWrapper(TrainingModules(ctl, _)))).notFound(redirectToPage(Page.Landing)(Redirect.Replace))
   }.renderWith(layout)
 
   def layout(c: RouterCtl[Page], r: Resolution[Page]) =

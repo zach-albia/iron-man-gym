@@ -6,10 +6,13 @@ import scala.language.implicitConversions
 import scala.scalajs.js
 import scala.util.Random
 import com.ironmangym.common._
+import japgolly.scalajs.react.Callback
 
 sealed trait User {
   def credentials: Credentials
   def name: String
+  def isTrainer: Boolean
+  def isTrainee: Boolean
 }
 
 case class Trainee(
@@ -69,6 +72,10 @@ case class Trainee(
   } yield bfp
 
   val age = common.age(birthday)
+
+  override def isTrainer: Boolean = false
+
+  override def isTrainee: Boolean = true
 }
 
 case class Date(
@@ -90,7 +97,11 @@ case class Credentials(
 case class Trainer(
     name:        String,
     credentials: Credentials
-) extends User
+) extends User {
+  override def isTrainer: Boolean = true
+
+  override def isTrainee: Boolean = false
+}
 
 case class TrainingProgram(
     trainer:     Trainer,
@@ -144,6 +155,11 @@ case class PersistentUser(
 
 object PersistentUser {
   implicit def fromUser(user: User): PersistentUser = PersistentUser(user.credentials, user.name)
+  def toUser(users: Users, persistentUser: PersistentUser): User = {
+    val trainer = users.findTrainer(persistentUser.credentials.username)
+    val trainee = users.findTrainee(persistentUser.credentials.username)
+    if (trainer.isDefined) trainer.get else trainee.get
+  }
 }
 
 case class Users(
@@ -151,6 +167,7 @@ case class Users(
     trainees:    Seq[Trainee]           = Seq.empty,
     currentUser: Option[PersistentUser] = None
 ) {
+
   def trainerWithCredentials(formCredentials: Credentials): Option[Trainer] =
     trainers.find(_.credentials == formCredentials)
 
