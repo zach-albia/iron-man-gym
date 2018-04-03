@@ -16,8 +16,8 @@ object Profile {
     .render_P { p =>
       val users = p.proxy().users
       val currentUser = users.currentUser.get
-      val trainer = users.trainers.find(_.credentials.username == currentUser.credentials.username)
-      val trainee = users.trainees.find(_.credentials.username == currentUser.credentials.username)
+      val trainer = users.findTrainer(currentUser.credentials.username)
+      val trainee = users.findTrainee(currentUser.credentials.username)
       if (trainer.isDefined)
         TrainerProfile(p.router, p.proxy, trainer.get.credentials.username)
       else

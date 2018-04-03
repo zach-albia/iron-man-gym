@@ -18,7 +18,7 @@ object TrainerProfile {
 
   case class Props(router: RouterCtl[Page], proxy: ModelProxy[RootModel], trainerUsername: String) {
     def trainer: Trainer =
-      proxy().users.trainers.find(_.credentials.username == trainerUsername).get
+      proxy().users.findTrainer(trainerUsername).get
 
     def trainingData: Seq[TrainingData] =
       proxy().users.trainees

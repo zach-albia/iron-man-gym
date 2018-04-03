@@ -103,8 +103,8 @@ object LoginDialog {
       $.props >>= (p => $.state >>= (s => {
         val formCredentials = Credentials(s.username.get, s.password.get)
         val users = p.proxy()
-        val trainer = users.trainers.find(_.credentials == formCredentials)
-        val trainee = users.trainees.find(_.credentials == formCredentials)
+        val trainer = users.trainerWithCredentials(formCredentials)
+        val trainee = users.traineeWithCredentials(formCredentials)
         if (trainer.nonEmpty) p.proxy.dispatchCB(LogIn(trainer.get)) >> $.modState(_.copy(loginValid = Some(true)))
         else if (trainee.nonEmpty) p.proxy.dispatchCB(LogIn(trainee.get)) >> $.modState(_.copy(loginValid = Some(true)))
         else $.modState(_.copy(loginValid = Some(false)))

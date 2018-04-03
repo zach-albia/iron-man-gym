@@ -15,13 +15,13 @@ object WorkoutDayDialog {
 
   case class Props(
       proxy:           ModelProxy[RootModel],
-      traineeUsername: js.UndefOr[String],
+      traineeUsername: String,
       open:            Boolean,
       workoutDate:     Option[js.Date],
       onClose:         ReactHandler1[ReactEvent]
   ) {
     def trainee: Trainee =
-      proxy().users.trainees.find(_.credentials.username == traineeUsername).get
+      proxy().users.findTrainee(traineeUsername).get
 
     def workoutDay: WorkoutDay = (for {
       tp <- trainee.trainingProgram
@@ -98,7 +98,7 @@ object WorkoutDayDialog {
 
   def apply(
       proxy:           ModelProxy[RootModel],
-      traineeUsername: js.UndefOr[String]        = js.undefined,
+      traineeUsername: String,
       open:            Boolean                   = false,
       workoutDate:     Option[js.Date]           = None,
       onClose:         ReactHandler1[ReactEvent] = js.undefined

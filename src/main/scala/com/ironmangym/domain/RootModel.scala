@@ -151,6 +151,12 @@ case class Users(
     trainees:    Seq[Trainee]           = Seq.empty,
     currentUser: Option[PersistentUser] = None
 ) {
+  def trainerWithCredentials(formCredentials: Credentials): Option[Trainer] =
+    trainers.find(_.credentials == formCredentials)
+
+  def traineeWithCredentials(formCredentials: Credentials): Option[Trainee] =
+    trainees.find(_.credentials == formCredentials)
+
   def enrol(trainee: Trainee, trainingModule: TrainingModule, goal: FitnessStats, startDate: js.Date): Users = {
     val randomTrainer = trainers(Random.nextInt(trainers.size))
     val i = trainees.indexOf(trainee)
@@ -164,6 +170,12 @@ case class Users(
     val updatedTrainee = trainee.updateWorkoutDay(updatedWorkoutDay)
     copy(trainees = trainees.updated(i, updatedTrainee))
   }
+
+  def findTrainer(username: String): Option[Trainer] =
+    trainers.find(_.credentials.username == username)
+
+  def findTrainee(username: String): Option[Trainee] =
+    trainees.find(_.credentials.username == username)
 }
 
 case class RootModel(

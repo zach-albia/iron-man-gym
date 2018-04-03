@@ -23,7 +23,7 @@ object TraineeProfile {
 
   case class Props(router: RouterCtl[Page], proxy: ModelProxy[RootModel], traineeUsername: String) {
     def trainee: Trainee =
-      proxy().users.trainees.find(_.credentials.username == traineeUsername).get
+      proxy().users.findTrainee(traineeUsername).get
   }
 
   case class State(
