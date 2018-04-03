@@ -50,6 +50,9 @@ object AppBarContent {
           getContentAnchorEl = null,
           onClose            = handleCloseMenu(_)
         )()(
+            if (p.proxy().currentUserIsTrainer)
+              MenuItem()("onClick" -> handleTrainingModulesMenuItem)("Training Modules")
+            else "",
             if (p.proxy().currentUser.isEmpty)
               MenuItem()("onClick" -> handleSignInMenuItem)("Sign In")
             else
@@ -73,11 +76,17 @@ object AppBarContent {
     def closeLoginDialog(e: ReactEvent): Callback =
       $.modState(_.copy(dialogOpen = false))
 
+    val goToTrainingModules: Callback =
+      $.props.flatMap(_.router.set(Page.TrainingModules))
+
     private val handleSignOutMenuItem =
       (e: ReactEvent) => (handleCloseMenu(e) >> ($.props >>= (_.proxy.dispatchCB(LogOut)))).runNow()
 
     private val handleSignInMenuItem =
       (e: ReactEvent) => (handleCloseMenu(e) >> openLoginDialog(e)).runNow()
+
+    private val handleTrainingModulesMenuItem =
+      (e: ReactEvent) => (handleCloseMenu(e) >> goToTrainingModules).runNow()
   }
 
   private val component = ScalaComponent.builder[Props]("ToolbarContent")

@@ -167,6 +167,11 @@ case class Users(
     trainees:    Seq[Trainee]           = Seq.empty,
     currentUser: Option[PersistentUser] = None
 ) {
+  def currentUserIsTrainer: Boolean =
+    (for {
+      cu <- currentUser
+      tr <- findTrainer(cu.credentials.username)
+    } yield tr).isDefined
 
   def trainerWithCredentials(formCredentials: Credentials): Option[Trainer] =
     trainers.find(_.credentials == formCredentials)
