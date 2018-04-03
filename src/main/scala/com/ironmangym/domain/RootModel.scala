@@ -99,13 +99,13 @@ case class TrainingProgram(
     startDate:   Date,
     endDate:     Date,
     goal:        FitnessStats
-)
+) {
 
-case class Progress(
-    bodyFatPercentage: Double,
-    bodyMassIndex:     Double,
-    weight:            Double
-)
+  def progress: Progress =
+    Progress(workoutDays.count(_.done), workoutDays.length)
+}
+
+case class Progress(done: Int, all: Int)
 
 case class FitnessStats(
     bodyFatPercentage: Option[Double] = None,

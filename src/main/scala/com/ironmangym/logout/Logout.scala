@@ -23,7 +23,7 @@ object Logout {
       <.div(
         Styles.containerDiv,
         Grid(container = true, spacing = 24)()(
-          Grid(item = true, xs = 12, md = 8)()(
+          Grid(item = true, xs = 12, sm = 3, md = 8)()(
             Card()()(
               CardMedia(
                 image     = "./target/scala-2.12/classes/ironmangym_inside.jpg",

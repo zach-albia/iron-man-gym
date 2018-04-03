@@ -42,7 +42,7 @@ object DatePicker {
         )()(
             (0 to 11).map(
               month => <.option(^.key := s"month-$month", ^.value := month, monthNames(month)).render
-            ): _*
+            ): _* // Seq[VdomNode] => VdomNode*
           ),
         TextField(
           select      = true,
