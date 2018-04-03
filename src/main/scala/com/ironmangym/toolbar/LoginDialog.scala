@@ -45,7 +45,7 @@ object LoginDialog {
       )("onKeyUp" -> { (e: ReactKeyboardEvent) =>
           if (e.keyCode == 13 & s.formValid)
             dom.document.getElementById("loginDialogSubmit").domAsHtml.click()
-        })(
+        }, "transitionDuration" -> 0)(
           DialogTitle()()("Sign In"),
           DialogContent()()(
             DialogContentText()()("Please sign in to access your profile."),

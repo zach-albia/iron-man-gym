@@ -37,7 +37,7 @@ object WorkoutDayDialog {
       Dialog(
         open    = p.open,
         onClose = p.onClose
-      )("key" -> componentName)(
+      )("key" -> componentName, "transitionDuration" -> 0)(
         DialogTitle()()(s"${format(p.workoutDay.date)} - ${p.workoutDay.name}"),
         DialogContent()()(Typography(variant = Typography.Variant.subheading)()(
           s"Exercises: ${if (p.workoutDay.exercises.isEmpty) "None" else ""}"

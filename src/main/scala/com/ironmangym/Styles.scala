@@ -1,5 +1,7 @@
 package com.ironmangym
 
+import com.pangwarta.sjrmui.Colors
+import com.pangwarta.sjrmui.Colors._
 import scalacss.DevDefaults._
 
 import scala.language.implicitConversions
@@ -83,6 +85,10 @@ object Styles extends StyleSheet.Inline {
 
   val table = style(
     minWidth(700.px)
+  )
+
+  val dangerButton = style(
+    backgroundColor(Color(s"${Colors(Colors.red, _A700)}"))
   )
 
   implicit def styleAToClassName(styleA: StyleA): String =
