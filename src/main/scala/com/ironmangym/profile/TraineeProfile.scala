@@ -12,7 +12,6 @@ import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router.RouterCtl
 import japgolly.scalajs.react.raw.ReactElement
 import japgolly.scalajs.react.vdom.html_<^._
-import org.scalajs.dom
 import org.scalajs.dom.raw.HTMLSelectElement
 import scalacss.ScalaCssReact._
 

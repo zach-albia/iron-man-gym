@@ -1,12 +1,11 @@
 package com.ironmangym.domain
 
 import com.ironmangym.common
+import com.ironmangym.common._
 
 import scala.language.implicitConversions
 import scala.scalajs.js
 import scala.util.Random
-import com.ironmangym.common._
-import com.pangwarta.sjrmui.icons.MuiSvgIcons.AssessmentIcon
 
 sealed trait User {
   def credentials: Credentials

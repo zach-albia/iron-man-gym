@@ -2,7 +2,7 @@ package com.ironmangym
 
 import com.ironmangym.CssSettings._
 import com.ironmangym.Styles._
-import com.ironmangym.domain.{RootModel, SPACircuit, TrainingModule}
+import com.ironmangym.domain.{RootModel, SPACircuit}
 import com.ironmangym.logout._
 import com.ironmangym.trainingmodule._
 import com.pangwarta.sjrmui._

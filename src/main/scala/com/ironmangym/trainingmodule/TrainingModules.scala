@@ -3,9 +3,10 @@ package com.ironmangym.trainingmodule
 import com.ironmangym.Main.Page
 import com.ironmangym.Styles
 import com.ironmangym.Styles._
+import com.ironmangym.common._
 import com.ironmangym.domain._
-import com.pangwarta.sjrmui.icons.MuiSvgIcons._
-import com.pangwarta.sjrmui.{ Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, FormControl, FormHelperText, Grid, IconButton, Paper, Select, Table, TableBody, TableCell, TableHead, TableRow, TextField, Tooltip, Typography }
+import com.pangwarta.sjrmui._
+import icons.MuiSvgIcons._
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.component.Scala.BackendScope
@@ -28,38 +29,44 @@ object TrainingModules {
   private class Backend($: BackendScope[Props, State]) {
     def render(p: Props, s: State): VdomElement = {
       val tmName = s.selectedTrainingModule.map(_.name).getOrElse("N/A")
+      val marginRight = js.Dynamic.literal(marginRight = 6.px)
       <.div(
         Styles.containerDiv,
         Paper(className = Styles.paperPadding)()(
           Typography(variant   = Typography.Variant.title, className = Styles.marginBottom12)()("Training Modules"),
           <.div(
-            p.proxy().trainingModules.map(tm =>
+            p.proxy().trainingModules.map(tm => {
               ExpansionPanel()()(
                 ExpansionPanelSummary(expandIcon = ExpandMoreIcon()().rawElement)()(
                   Typography(variant = Typography.Variant.subheading)()(tm.name)
                 ),
                 ExpansionPanelDetails()()(
                   FormControl(className = Styles.width100)()(
-                    <.div(
-                      TextField(
-                        label     = "Name",
-                        value     = tm.name,
-                        className = marginRight16
-                      )()(),
-                      TextField(
-                        label       = "Difficulty",
-                        select      = true,
-                        SelectProps = js.Dynamic.literal(
-                          native = true,
-                          value  = tm.difficulty.toString
-                        ).asInstanceOf[Select.Props]
-                      )()(
-                          scala.List[Difficulty](Beginner, Intermediate, Advanced).map(d =>
-                            <.option(
-                              ^.key := s"difficulty-${d.toString}",
-                              ^.value := d.toString, d.toString
-                            ).render): _*
-                        )
+                    Grid(container = true, spacing = 16)()(
+                      Grid(item = true, xs = 12, sm = true)()(
+                        TextField(
+                          label     = "Name",
+                          value     = tm.name,
+                          className = marginRight16,
+                          fullWidth = true
+                        )()()
+                      ),
+                      Grid(item = true, xs = 12, sm = true)()(
+                        TextField(
+                          label       = "Difficulty",
+                          select      = true,
+                          SelectProps = js.Dynamic.literal(
+                            native = true,
+                            value  = tm.difficulty.toString
+                          ).asInstanceOf[Select.Props]
+                        )()(
+                            difficulties.map(d =>
+                              <.option(
+                                ^.key := s"difficulty-${d.toString}",
+                                ^.value := d.toString, d.toString
+                              ).render): _*
+                          )
+                      )
                     ),
                     Grid(container = true)()(
                       Grid(item = true, xs = 12)()(
@@ -71,23 +78,40 @@ object TrainingModules {
                         <.div(
                           tm.routines.zipWithIndex.map {
                             case (r: Routine, i: Int) =>
+                              val width = 120.px
                               ExpansionPanel()()(
                                 ExpansionPanelSummary(expandIcon = ExpandMoreIcon()().rawElement)()(
                                   Typography()()(s"Day ${i + 1}: ${r.name}")
                                 ),
                                 ExpansionPanelDetails()()(
-                                  FormControl()()(
-                                    TextField(label = "Name", value = r.name)()(),
+                                  FormControl(className = Styles.width100)()(
+                                    TextField(
+                                      label     = "Name",
+                                      value     = r.name,
+                                      fullWidth = true
+                                    )()(),
                                     TextField(
                                       label     = "Exercises (one per line)",
                                       multiline = true,
                                       value     = r.exercises.mkString("\n"),
-                                      className = Styles.marginTop12
+                                      className = Styles.marginTop12,
+                                      fullWidth = true
                                     )()(),
-                                    Button(
-                                      variant   = Button.Variant.raised,
-                                      className = Styles.marginTop12
-                                    )()(SaveIcon()(), "Save")
+                                    <.div(
+                                      Button(
+                                        variant = Button.Variant.raised
+                                      )("style" -> js.Dynamic.literal(
+                                        marginTop   = 12.px,
+                                        marginRight = 12.px,
+                                        width       = width
+                                      ))(SaveIcon(style = marginRight)(), "Save"),
+                                      Button(
+                                        variant = Button.Variant.raised
+                                      )("style" -> js.Dynamic.literal(
+                                        marginTop = 12.px,
+                                        width     = width
+                                      ))(DeleteIcon(style = marginRight)(), "Delete")
+                                    )
                                   )
                                 )
                               ).vdomElement
@@ -103,14 +127,15 @@ object TrainingModules {
                             Button(
                               variant   = Button.Variant.raised,
                               className = Styles.marginTop12
-                            )()(AddBoxIcon()(), "Add Routine")
+                            )()(AddBoxIcon(style = marginRight)(), "Add Routine")
                           )
                         )
                       )
                     )
                   )
                 )
-              ).vdomElement): _*
+              ).vdomElement
+            }): _*
           ),
           FormControl()()(
             TextField(
@@ -120,7 +145,7 @@ object TrainingModules {
             Button(
               variant   = Button.Variant.raised,
               className = Styles.marginTop12
-            )()(AddBoxIcon()(), "Add Training Module")
+            )()(AddBoxIcon(style = marginRight)(), "Add Training Module")
           )
         ),
         Dialog(

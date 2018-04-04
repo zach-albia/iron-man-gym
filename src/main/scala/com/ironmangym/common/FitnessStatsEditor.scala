@@ -2,9 +2,9 @@ package com.ironmangym.common
 
 import com.ironmangym.domain.FitnessStats
 import com.pangwarta.sjrmui.{ FormControl, Handler1, Input, InputAdornment, TextField }
+import japgolly.scalajs.react._
 import japgolly.scalajs.react.component.Scala.BackendScope
 import japgolly.scalajs.react.vdom.VdomElement
-import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._
 
 import scala.scalajs.js

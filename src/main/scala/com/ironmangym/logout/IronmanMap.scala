@@ -2,9 +2,8 @@ package com.ironmangym.logout
 
 import chandu0101.scalajs.react.components.GoogleMap
 import chandu0101.scalajs.react.components.fascades.{ LatLng, Marker }
-import com.ironmangym.Styles
+import com.ironmangym.{ GMapKeys, Styles }
 import com.ironmangym.Styles._
-import com.ironmangym.GMapKeys
 import com.pangwarta.sjrmui.Typography
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.html_<^._

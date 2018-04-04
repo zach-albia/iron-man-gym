@@ -1,6 +1,6 @@
 package com.ironmangym
 
-import com.ironmangym.domain.Date
+import com.ironmangym.domain._
 import japgolly.scalajs.react.{ BackendScope, CallbackTo, ReactEvent }
 import org.scalajs.dom.raw.HTMLInputElement
 
@@ -9,6 +9,8 @@ import scala.scalajs.js
 
 package object common {
   val monthNames = Seq("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+  val difficulties = List[Difficulty](Beginner, Intermediate, Advanced)
 
   def getInputValue(e: ReactEvent): String = e.currentTarget.asInstanceOf[HTMLInputElement].value
 

@@ -3,8 +3,8 @@ package com.ironmangym.profile
 import com.ironmangym.Main.Page
 import com.ironmangym.Styles
 import com.ironmangym.Styles._
-import com.ironmangym.domain._
 import com.ironmangym.common._
+import com.ironmangym.domain._
 import com.pangwarta.sjrmui.{ Grid, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography }
 import diode.react.ModelProxy
 import japgolly.scalajs.react.ScalaComponent
