@@ -2,15 +2,18 @@ package com.ironmangym.trainingmodule
 
 import com.ironmangym.Main.Page
 import com.ironmangym.Styles
-import japgolly.scalajs.react.vdom.VdomElement
-import japgolly.scalajs.react._
-import japgolly.scalajs.react.vdom.html_<^._
 import com.ironmangym.Styles._
-import com.ironmangym.domain.TrainingModule
-import com.pangwarta.sjrmui.Typography
+import com.ironmangym.domain._
+import com.pangwarta.sjrmui.icons.MuiSvgIcons.ExpandMoreIcon
+import com.pangwarta.sjrmui.{ ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, FormControl, Grid, Paper, Select, TextField, Typography }
 import diode.react.ModelProxy
+import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router.RouterCtl
+import japgolly.scalajs.react.vdom.VdomElement
+import japgolly.scalajs.react.vdom.html_<^._
 import scalacss.ScalaCssReact._
+
+import scala.scalajs.js
 
 object TrainingModuleEditor {
 
@@ -24,7 +27,53 @@ object TrainingModuleEditor {
       val tm = p.proxy().applyOrElse(index, (_: Int) => TrainingModule())
       <.div(
         Styles.containerDiv,
-        Typography(variant = Typography.Variant.title)()("Training Module")
+        Paper(className = Styles.paperPadding)()(
+          Typography(
+            variant   = Typography.Variant.title,
+            className = Styles.marginBottom12
+          )()("Training Module"),
+          Grid(container = true)()(
+            Grid(item = true, xs = 12)()(
+              FormControl()()(
+                TextField(label = "Name", value = tm.name)()(),
+                TextField(
+                  label       = "Difficulty",
+                  select      = true,
+                  SelectProps = js.Dynamic.literal(
+                    native = true,
+                    value  = tm.difficulty.toString
+                  ).asInstanceOf[Select.Props]
+                )()(
+                    scala.List[Difficulty](Beginner, Intermediate, Advanced).map(d =>
+                      <.option(
+                        ^.key := s"difficulty-${d.toString}",
+                        ^.value := d.toString, d.toString
+                      ).render): _*
+                  ),
+                Typography(
+                  variant   = Typography.Variant.subheading,
+                  className = Styles.subheadingMargin
+                )()("Routines:"),
+                <.div(
+                  tm.routines.map(r =>
+                    ExpansionPanel()()(
+                      ExpansionPanelSummary(expandIcon = ExpandMoreIcon()().rawElement)()(Typography()()(r.name)),
+                      ExpansionPanelDetails()()(
+                        FormControl()()(
+                          TextField(label = "Name", value = r.name)()(),
+                          TextField(
+                            label     = "Exercises",
+                            multiline = true,
+                            value     = r.exercises.mkString("\n")
+                          )()()
+                        )
+                      )
+                    ).vdomElement): _*
+                )
+              )
+            )
+          )
+        )
       )
     }
   }
