@@ -110,7 +110,7 @@ object TraineeProfile {
                   defaultDate   = new js.Date(),
                   events        = workoutDaysToEvents(currentTrainingProgram),
                   selectable    = true,
-                  views         = js.Array("month", "agenda"),
+                  views         = js.Array("month"),
                   resizable     = true,
                   onSelectEvent = any2undefOrA(openWorkoutDayDialog(_, _))
                 )
