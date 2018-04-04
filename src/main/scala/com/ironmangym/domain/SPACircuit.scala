@@ -74,7 +74,7 @@ object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
             "Rope Pressdown - 3 Sets (8, 10, 12 Reps)",
             "Barbell Biceps Curl - 3 Sets (8, 10, 12 Reps)",
             "Standing Calf Raise - 3 Sets (8, 10, 12 Reps)",
-            "Crunch - 3 Sets (8, 10, 12 Reps)",
+            "Crunch - 3 Sets (8, 10, 12 Reps)"
           )),
           Routine("Day 2 - Rest", List.empty),
           Routine("Day 3 - Full Body", List(
@@ -86,7 +86,7 @@ object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
             "Rope Pressdown - 3 Sets (8, 10, 12 Reps)",
             "Barbell Biceps Curl - 3 Sets (8, 10, 12 Reps)",
             "Standing Calf Raise - 3 Sets (8, 10, 12 Reps)",
-            "Crunch - 3 Sets (8, 10, 12 Reps)",
+            "Crunch - 3 Sets (8, 10, 12 Reps)"
           )),
           Routine("Day 4 - Rest", List.empty),
           Routine("Day 5 - Full Body", List(
@@ -151,7 +151,7 @@ object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
             "Overhead Dumbbell Press - 3 Sets (10, 10, 12, 15 Reps)",
             "Smith Machine Upright Row - 3 Sets (8, 8, 10, 12 Reps)",
             "Lying Ez-Bar Triceps Extension - 3 Sets (10, 10, 12, 15 Reps)",
-            "Dumbbell Kickback - 3 Sets (10, 10, 12, 15 Reps)",
+            "Dumbbell Kickback - 3 Sets (10, 10, 12, 15 Reps)"
           )),
           Routine("Day 16 - Pull", List(
             "Barbell Upright Row - 4 Sets (8, 8, 10, 12 Reps)",
@@ -159,8 +159,7 @@ object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
             "Incline Dumbbell Biceps Curl - 4 Sets (8, 8, 10, 12 Reps)",
             "Preacher Curl With Cable - 4 Sets (8, 8, 10, 12 Reps)",
             "Reverse Crunch - 3 Sets (15 - 20 Reps)",
-            "Crunch - 3 Sets (15 - 20 Reps)",
-
+            "Crunch - 3 Sets (15 - 20 Reps)"
           )),
           Routine("Day 17 - Legs", List(
             "Back Squat - 4 Sets (8, 8, 10, 12 Reps)",
@@ -176,7 +175,7 @@ object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
             "Overhead Dumbbell Press - 3 Sets (10, 10, 12, 15 Reps)",
             "Smith Machine Upright Row - 3 Sets (8, 8, 10, 12 Reps)",
             "Lying Ez-Bar Triceps Extension - 3 Sets (10, 10, 12, 15 Reps)",
-            "Dumbbell Kickback - 3 Sets (10, 10, 12, 15 Reps)",
+            "Dumbbell Kickback - 3 Sets (10, 10, 12, 15 Reps)"
           )),
           Routine("Day 19 - Pull", List(
             "Barbell Upright Row - 4 Sets (8, 8, 10, 12 Reps)",
@@ -184,8 +183,7 @@ object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
             "Incline Dumbbell Biceps Curl - 4 Sets (8, 8, 10, 12 Reps)",
             "Preacher Curl With Cable - 4 Sets (8, 8, 10, 12 Reps)",
             "Reverse Crunch - 3 Sets (15 - 20 Reps)",
-            "Crunch - 3 Sets (15 - 20 Reps)",
-
+            "Crunch - 3 Sets (15 - 20 Reps)"
           )),
           Routine("Day 20 - Legs", List(
             "Back Squat - 4 Sets (8, 8, 10, 12 Reps)",
@@ -204,7 +202,7 @@ object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
             "Dumbbell Kickback - 3 Sets ( 10 Reps)",
             "Lying Ez-Bar Triceps Extension - 3 Sets ( 10 Reps)",
             "Standing Calf Raise - 3 Sets ( 10 Reps)",
-            "Seated Calf Raise - 3 Sets ( 225 Reps)",
+            "Seated Calf Raise - 3 Sets ( 225 Reps)"
           )),
           Routine("Day 23 - Legs & Abs ", List(
             "Back Squat - 5 Sets (10 Reps)",
@@ -213,7 +211,7 @@ object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
             "Romanian Deadlift - 3 Sets ( 8, 10, 12 Reps)",
             "Seated Legs Curl - 3 Sets ( 8, 10, 12 Reps)",
             "Reverse Crunch - 2 Sets ( 20 Reps)",
-            "Crunch - 2 Sets ( 20 Reps)",
+            "Crunch - 2 Sets ( 20 Reps)"
           )),
           Routine("Day 24 - Rest", List.empty),
           Routine("Day 25 - Shoulder & Calves ", List(
@@ -229,11 +227,12 @@ object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
             "Barbell Biceps Curl - 4 Sets ( 10 Reps)",
             "Incline Dumbbell Biceps Curl - 3 Sets ( 10 Reps)",
             "Preacher Curl With Cable - 3 Sets ( 10 Reps)",
-            "Crunch - 3 Sets ( 20 Reps)",
+            "Crunch - 3 Sets ( 20 Reps)"
           )),
           Routine("Day 27 - Rest", List.empty),
-          Routine("Day 28 - Rest", List.empty),
-       )),
+          Routine("Day 28 - Rest", List.empty)
+        )
+      ),
       TrainingModule(
         "Upper Fix ErrDay", Intermediate, List(
           Routine("Rest", List.empty),
