@@ -67,6 +67,7 @@ case class Trainee(
     bfp <- ld.stats.bodyFatPercentage
   } yield bfp
 
+
   val age = common.age(birthday)
 
   override def isTrainer: Boolean = false

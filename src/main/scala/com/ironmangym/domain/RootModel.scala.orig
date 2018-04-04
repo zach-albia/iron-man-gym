@@ -6,10 +6,6 @@ import com.ironmangym.common._
 import scala.language.implicitConversions
 import scala.scalajs.js
 import scala.util.Random
-<<<<<<< Updated upstream
-=======
-import com.ironmangym.common._
->>>>>>> Stashed changes
 
 sealed trait User {
   def credentials: Credentials
@@ -70,6 +66,7 @@ case class Trainee(
     ld <- tp.workoutDays.filter(_.stats.bodyFatPercentage.isDefined).lastOption
     bfp <- ld.stats.bodyFatPercentage
   } yield bfp
+
 
   val age = common.age(birthday)
 
