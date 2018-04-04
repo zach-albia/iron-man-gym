@@ -5,7 +5,7 @@ import com.ironmangym.Styles
 import com.ironmangym.Styles._
 import com.ironmangym.common._
 import com.ironmangym.domain._
-import com.pangwarta.sjrmui.{ Grid, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography }
+import com.pangwarta.sjrmui._
 import diode.react.ModelProxy
 import japgolly.scalajs.react.ScalaComponent
 import japgolly.scalajs.react.component.Scala.BackendScope
@@ -52,7 +52,7 @@ object TrainerProfile {
         Grid(container = true, spacing = 24)()(
           Grid(item = true, xs = 12)()(
             Paper(className = Styles.paperPadding)()(
-              Typography(variant = Typography.Variant.title)()("Trainer name"),
+              Typography(variant = Typography.Variant.title)()("Training Assignments"),
               Table()()(
                 TableHead()()(
                   TableRow()()(
