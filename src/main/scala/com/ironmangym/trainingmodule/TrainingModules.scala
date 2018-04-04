@@ -5,13 +5,11 @@ import com.ironmangym.Styles
 import com.ironmangym.Styles._
 import com.ironmangym.domain._
 import com.pangwarta.sjrmui.icons.MuiSvgIcons.{ DeleteIcon, EditIcon }
-import com.pangwarta.sjrmui.{ Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormHelperText, Grid, Paper, Select, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography }
-import com.sun.javafx.webkit.theme.RenderThemeImpl.FormControl
+import com.pangwarta.sjrmui.{ Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormHelperText, Grid, IconButton, Paper, Select, Table, TableBody, TableCell, TableHead, TableRow, TextField, Tooltip, Typography }
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.component.Scala.BackendScope
 import japgolly.scalajs.react.extra.router.RouterCtl
-import japgolly.scalajs.react.raw.ReactNode
 import japgolly.scalajs.react.vdom.VdomElement
 import japgolly.scalajs.react.vdom.html_<^._
 import scalacss.ScalaCssReact._
@@ -23,7 +21,6 @@ object TrainingModules {
   case class Props(router: RouterCtl[Page], proxy: ModelProxy[RootModel])
 
   case class State(
-      editDialogOpen:         Boolean                = false,
       deleteDialogOpen:       Boolean                = false,
       selectedTrainingModule: Option[TrainingModule] = None
   )
@@ -53,43 +50,13 @@ object TrainingModules {
                       TableCell()()(tm.routines.length),
                       TableCell()()(tm.difficulty.toString),
                       TableCell()()(
-                        Button(onClick = openEditDialog(tm)(_))()(EditIcon()(), "Edit"),
-                        Button(onClick = openDeleteDialog(tm)(_))()(DeleteIcon()(), "Delete")
+                        Tooltip(title = "Edit")()(IconButton(onClick = openEditPage(tm)(_))()(EditIcon()())),
+                        Tooltip(title = "Delete")()(IconButton(onClick = openDeleteDialog(tm)(_))()(DeleteIcon()()))
                       )
                     ).vdomElement): _*
                 )
               )
             ),
-            Dialog(
-              open    = s.editDialogOpen,
-              onClose = closeEditDialog(_)
-            )("transitionDuration" -> 0)(
-                DialogTitle()()("Edit Training Module"),
-                s.selectedTrainingModule.map(tm =>
-                  DialogContent()()(
-                    FormControl()()(
-                      TextField(label = "Name", value = tm.name)()(),
-                      TextField(
-                        label       = "Difficulty",
-                        select      = true,
-                        SelectProps = js.Dynamic.literal(
-                          native = true,
-                          value  = tm.difficulty.toString
-                        ).asInstanceOf[Select.Props]
-                      )()(
-                          List[Difficulty](Beginner, Intermediate, Advanced).map(d =>
-                            <.option(
-                              ^.key := s"difficulty-${d.toString}",
-                              ^.value := d.toString, d.toString
-                            ).render): _*
-                        ),
-                      Typography(
-                        variant   = Typography.Variant.subheading,
-                        className = Styles.marginTop24
-                      )()("Routines (one per line)")
-                    )
-                  ).rawNode).getOrElse("".rawNode).asInstanceOf[ReactNode]
-              ),
             Dialog(
               open    = s.deleteDialogOpen,
               onClose = closeDeleteDialog(_)
@@ -117,23 +84,20 @@ object TrainingModules {
       )
     }
 
-    private def closeEditDialog(e: ReactEvent) =
-      $.modState(_.copy(
-        editDialogOpen         = false,
-        selectedTrainingModule = None
-      ))
-
     private def closeDeleteDialog(e: ReactEvent) =
       $.modState(_.copy(
         deleteDialogOpen       = false,
         selectedTrainingModule = None
       ))
 
-    private def openEditDialog(tm: TrainingModule)(e: ReactEvent) =
-      $.modState(_.copy(
-        editDialogOpen         = true,
-        selectedTrainingModule = Some(tm)
-      ))
+    private def openEditPage(tm: TrainingModule)(e: ReactEvent) =
+      $.props >>= { p =>
+        {
+          p.router.set(
+            Page.TrainingModule(p.proxy().trainingModules.indexWhere(_.name == tm.name).toString)
+          )
+        }
+      }
 
     private def openDeleteDialog(tm: TrainingModule)(e: ReactEvent) =
       $.modState(_.copy(

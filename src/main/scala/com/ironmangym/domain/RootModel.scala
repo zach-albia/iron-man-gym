@@ -6,7 +6,6 @@ import scala.language.implicitConversions
 import scala.scalajs.js
 import scala.util.Random
 import com.ironmangym.common._
-import japgolly.scalajs.react.Callback
 
 sealed trait User {
   def credentials: Credentials
@@ -30,19 +29,16 @@ case class Trainee(
   }
 
   def enrol(trainingModule: TrainingModule, trainer: Trainer, goal: FitnessStats, startDate: js.Date): Trainee =
-    copy(
-      trainingProgram =
-        Some(
-          TrainingProgram(
-            trainer,
-            trainingModule.name,
-            generateWorkoutDays(trainingModule, startDate),
-            startDate,
-            daysAfter(startDate, trainingModule.routines.size),
-            goal
-          )
-        )
-    )
+    copy(trainingProgram = Some(
+      TrainingProgram(
+        trainer,
+        trainingModule.name,
+        generateWorkoutDays(trainingModule, startDate),
+        startDate,
+        daysAfter(startDate, trainingModule.routines.size),
+        goal
+      )
+    ))
 
   def generateWorkoutDays(trainingModule: TrainingModule, startDate: js.Date): Seq[WorkoutDay] = {
     val numDays = trainingModule.routines.length
@@ -138,8 +134,8 @@ case object Intermediate extends Difficulty
 case object Advanced extends Difficulty
 
 case class TrainingModule(
-    name:       String,
-    difficulty: Difficulty,
+    name:       String        = "",
+    difficulty: Difficulty    = Beginner,
     routines:   List[Routine] = List.empty
 )
 

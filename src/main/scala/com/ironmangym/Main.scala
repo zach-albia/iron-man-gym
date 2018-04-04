@@ -2,9 +2,9 @@ package com.ironmangym
 
 import com.ironmangym.CssSettings._
 import com.ironmangym.Styles._
-import com.ironmangym.domain.{ RootModel, SPACircuit }
+import com.ironmangym.domain.{RootModel, SPACircuit, TrainingModule}
 import com.ironmangym.logout._
-import com.ironmangym.trainingmodule.TrainingModules
+import com.ironmangym.trainingmodule._
 import com.pangwarta.sjrmui._
 import diode.react.ModelProxy
 import japgolly.scalajs.react.extra.router._
@@ -17,6 +17,7 @@ object Main {
   object Page {
     case object Landing extends Page
     case object TrainingModules extends Page
+    case class TrainingModule(index: String) extends Page
   }
 
   val routerConfig: RouterConfig[Page] = RouterConfigDsl[Page].buildConfig { dsl =>
@@ -25,8 +26,19 @@ object Main {
     val modelWrapper = SPACircuit.connect(m => m)
     val trainingModulesWrapper = SPACircuit.connect(_.trainingModules)
     (emptyRule
-      | staticRoute(root, Page.Landing) ~> renderR(ctl => { modelWrapper((proxy: ModelProxy[RootModel]) => Landing(ctl, proxy)) })
-      | staticRoute("#training-modules", Page.TrainingModules) ~> renderR(ctl => modelWrapper(TrainingModules(ctl, _)))).notFound(redirectToPage(Page.Landing)(Redirect.Replace))
+      | staticRoute(root, Page.Landing) ~>
+          renderR(ctl => { modelWrapper((proxy: ModelProxy[RootModel]) => Landing(ctl, proxy)) })
+      | staticRoute("#training-modules", Page.TrainingModules) ~>
+          renderR(ctl => modelWrapper(TrainingModules(ctl, _)))
+      | staticRoute("#training-modules/new", Page.TrainingModule("new")) ~>
+          renderR(ctl =>
+            trainingModulesWrapper((proxy: ModelProxy[Seq[TrainingModule]]) =>
+              TrainingModuleEditor("new", proxy, ctl)))
+      | dynamicRouteCT("#training-modules" / string("\\d+").caseClass[Page.TrainingModule]) ~>
+          dynRenderR[Page.TrainingModule, VdomElement]((p, ctl) =>
+            trainingModulesWrapper((proxy: ModelProxy[Seq[TrainingModule]]) =>
+              TrainingModuleEditor(p.index, proxy, ctl)))
+    ).notFound(redirectToPage(Page.Landing)(Redirect.Replace))
   }.renderWith(layout)
 
   def layout(c: RouterCtl[Page], r: Resolution[Page]) =
@@ -42,7 +54,7 @@ object Main {
               component = "a",
               variant   = Typography.Variant.headline,
               color     = Typography.Color.inherit,
-              className = Styles.ironManGymTitle
+              className = Styles.ironManGymTitle, // remove comma to re-enable scalariform
             )("href" -> c.baseUrl.value)(
               "Iron Man Gym"
             ),
