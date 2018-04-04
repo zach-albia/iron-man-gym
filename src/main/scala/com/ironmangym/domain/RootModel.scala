@@ -6,6 +6,7 @@ import scala.language.implicitConversions
 import scala.scalajs.js
 import scala.util.Random
 import com.ironmangym.common._
+import com.pangwarta.sjrmui.icons.MuiSvgIcons.AssessmentIcon
 
 sealed trait User {
   def credentials: Credentials
@@ -67,6 +68,7 @@ case class Trainee(
     bfp <- ld.stats.bodyFatPercentage
   } yield bfp
 
+
   val age = common.age(birthday)
 
   override def isTrainer: Boolean = false
@@ -117,7 +119,8 @@ case class Progress(done: Int, all: Int)
 case class FitnessStats(
     bodyFatPercentage: Option[Double] = None,
     bodyMassIndex:     Option[Double] = None,
-    weight:            Option[Double] = None
+    weight:            Option[Double] = None,
+    assessmentBMI:     Option[String]= None,
 )
 
 case class WorkoutDay(
@@ -189,6 +192,8 @@ case class Users(
     copy(trainees = trainees.updated(i, updatedTrainee))
   }
 
+
+
   def findTrainer(username: String): Option[Trainer] =
     trainers.find(_.credentials.username == username)
 
@@ -200,3 +205,4 @@ case class RootModel(
     users:           Users,
     trainingModules: Seq[TrainingModule] = Seq.empty
 )
+

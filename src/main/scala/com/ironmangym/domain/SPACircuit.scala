@@ -64,16 +64,176 @@ object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
     )),
     fromLocalStorage[Seq[TrainingModule]]("trainingModule", Seq(
       TrainingModule(
-        "Leg Day Errday", Beginner, List(
-          Routine("Rest", List.empty),
-          Routine("Leg Day", List(
-            "Curtsy Lunges",
-            "Side Lunges",
-            "Leg Lifts",
-            "Sumo Squats"
-          ))
-        )
-      ),
+        "4-Week Beginner's Workout", Beginner, List(
+          Routine("Day 1 - Full Body", List(
+            "Dumbbell Bench Press - 3 Sets (8, 10, 12 Reps)",
+            "Lat Pulldown - 3 Sets (8, 10, 12 Reps)",
+            "Overhead Dumbbell Press - 3 Sets (8, 10, 12 Reps)",
+            "Leg Press - 3 Sets (8, 10, 12 Reps)",
+            "Lying Leg Curl - 3 Sets (8, 10, 12 Reps)",
+            "Rope Pressdown - 3 Sets (8, 10, 12 Reps)",
+            "Barbell Biceps Curl - 3 Sets (8, 10, 12 Reps)",
+            "Standing Calf Raise - 3 Sets (8, 10, 12 Reps)",
+            "Crunch - 3 Sets (8, 10, 12 Reps)",
+          )),
+          Routine("Day 2 - Rest", List.empty),
+          Routine("Day 3 - Full Body", List(
+            "Dumbbell Bench Press - 3 Sets (8, 10, 12 Reps)",
+            "Lat Pulldown - 3 Sets (8, 10, 12 Reps)",
+            "Overhead Dumbbell Press - 3 Sets (8, 10, 12 Reps)",
+            "Leg Press - 3 Sets (8, 10, 12 Reps)",
+            "Lying Leg Curl - 3 Sets (8, 10, 12 Reps)",
+            "Rope Pressdown - 3 Sets (8, 10, 12 Reps)",
+            "Barbell Biceps Curl - 3 Sets (8, 10, 12 Reps)",
+            "Standing Calf Raise - 3 Sets (8, 10, 12 Reps)",
+            "Crunch - 3 Sets (8, 10, 12 Reps)",
+          )),
+          Routine("Day 4 - Rest", List.empty),
+          Routine("Day 5 - Full Body", List(
+            "Dumbbell Bench Press - 3 Sets (8, 10, 12 Reps)",
+            "Lat Pulldown - 3 Sets (8, 10, 12 Reps)",
+            "Overhead Dumbbell Press - 3 Sets (8, 10, 12 Reps)",
+            "Leg Press - 3 Sets (8, 10, 12 Reps)",
+            "Lying Leg Curl - 3 Sets (8, 10, 12 Reps)",
+            "Rope Pressdown - 3 Sets (8, 10, 12 Reps)",
+            "Barbell Biceps Curl - 3 Sets (8, 10, 12 Reps)",
+            "Standing Calf Raise - 3 Sets (8, 10, 12 Reps)",
+            "Crunch - 3 Sets (8, 10, 12 Reps)"
+          )),
+          Routine("Day 6 - Rest", List.empty),
+          Routine("Day 7 - Rest", List.empty),
+          Routine("Day 8 - Upper Body", List(
+            "Barbell Bench Press - 3 Sets (10, 12, 15 Reps)",
+            "Dumbbell Flye - 3 Sets (10, 12, 15 Reps)",
+            "Barbell Bent - 3 Sets (10, 12, 15 Reps)",
+            "Lat Pulldown - 3 Sets (10, 12, 15 Reps)",
+            "Overhead Dumbbell Press - 3 Sets (10, 12, 15 Reps)",
+            "Dumbbell Lateral Raise - 3 Sets (10, 12, 15 Reps)",
+            "Barbell Biceps Curl - 3 Sets (10, 12, 15 Reps)",
+            "Preacher Curl With Cable - 3 Sets (10, 12, 15 Reps)",
+            "Lying Ez-Bar Triceps Extension - 3 Sets (10, 12, 15 Reps)",
+            "Rope Pressdown - 3 Sets (10, 12, 15 Reps)",
+            "Crunch - 3 Sets (8, 10, 12 Reps)"
+          )),
+          Routine("Day 9 - Lower Body", List(
+            "Leg Press - 3 Sets (10, 12, 15 Reps)",
+            "Lying Leg Curl - 3 Sets (10, 12, 15 Reps)",
+            "Seated Legs Curl - 3 Sets (10, 12, 15 Reps)",
+            "Standing Calf Raise - 3 Sets (15 - 20 Reps)",
+            "Seated Calf Raise - 3 Sets (15 - 20 Reps)"
+          )),
+          Routine("Day 10 - Rest", List.empty),
+          Routine("Day 11 - Upper Body", List(
+            "Barbell Bench Press - 3 Sets (10, 12, 15 Reps)",
+            "Dumbbell Flye - 3 Sets (10, 12, 15 Reps)",
+            "Barbell Bent - 3 Sets (10, 12, 15 Reps)",
+            "Lat Pulldown - 3 Sets (10, 12, 15 Reps)",
+            "Overhead Dumbbell Press - 3 Sets (10, 12, 15 Reps)",
+            "Dumbbell Lateral Raise - 3 Sets (10, 12, 15 Reps)",
+            "Barbell Biceps Curl - 3 Sets (10, 12, 15 Reps)",
+            "Preacher Curl With Cable - 3 Sets (10, 12, 15 Reps)",
+            "Lying Ez-Bar Triceps Extension - 3 Sets (10, 12, 15 Reps)",
+            "Rope Pressdown - 3 Sets (10, 12, 15 Reps)",
+            "Crunch - 3 Sets (8, 10, 12 Reps)"
+          )),
+          Routine("Day 12 - Lower Body", List(
+            "Leg Press - 3 Sets (10, 12, 15 Reps)",
+            "Lying Leg Curl - 3 Sets (10, 12, 15 Reps)",
+            "Seated Legs Curl - 3 Sets (10, 12, 15 Reps)",
+            "Standing Calf Raise - 3 Sets (15 - 20 Reps)",
+            "Seated Calf Raise - 3 Sets (15 - 20 Reps)"
+          )),
+          Routine("Day 13 - Rest", List.empty),
+          Routine("Day 14 - Rest", List.empty),
+          Routine("Day 15 - Push", List(
+            "Incline Barbell Bench Press - 4 Sets (10, 10, 12, 15 Reps)",
+            "Dumbbell Flye - 3 Sets (10, 10, 12, 15 Reps)",
+            "Overhead Dumbbell Press - 3 Sets (10, 10, 12, 15 Reps)",
+            "Smith Machine Upright Row - 3 Sets (8, 8, 10, 12 Reps)",
+            "Lying Ez-Bar Triceps Extension - 3 Sets (10, 10, 12, 15 Reps)",
+            "Dumbbell Kickback - 3 Sets (10, 10, 12, 15 Reps)",
+          )),
+          Routine("Day 16 - Pull", List(
+            "Barbell Upright Row - 4 Sets (8, 8, 10, 12 Reps)",
+            "Single-Arm Neutral-Grip Dumbbell Row - 4 Sets (8, 8, 10, 12 Reps)",
+            "Incline Dumbbell Biceps Curl - 4 Sets (8, 8, 10, 12 Reps)",
+            "Preacher Curl With Cable - 4 Sets (8, 8, 10, 12 Reps)",
+            "Reverse Crunch - 3 Sets (15 - 20 Reps)",
+            "Crunch - 3 Sets (15 - 20 Reps)",
+
+          )),
+          Routine("Day 17 - Legs", List(
+            "Back Squat - 4 Sets (8, 8, 10, 12 Reps)",
+            "Leg Press - 4 Sets (8, 8, 10, 12 Reps)",
+            "Seated Legs Curl - 4 Sets (8, 8, 10, 12 Reps)",
+            "Romanian Deadlift - 4 Sets (8, 8, 10, 12 Reps)",
+            "Standing Calf Raise - 3 Sets ( 25 Reps)",
+            "Seated Calf Raise - 3 Sets (25 Reps)"
+          )),
+          Routine("Day 18 - Push", List(
+            "Incline Barbell Bench Press - 4 Sets (10, 10, 12, 15 Reps)",
+            "Dumbbell Flye - 3 Sets (10, 10, 12, 15 Reps)",
+            "Overhead Dumbbell Press - 3 Sets (10, 10, 12, 15 Reps)",
+            "Smith Machine Upright Row - 3 Sets (8, 8, 10, 12 Reps)",
+            "Lying Ez-Bar Triceps Extension - 3 Sets (10, 10, 12, 15 Reps)",
+            "Dumbbell Kickback - 3 Sets (10, 10, 12, 15 Reps)",
+          )),
+          Routine("Day 19 - Pull", List(
+            "Barbell Upright Row - 4 Sets (8, 8, 10, 12 Reps)",
+            "Single-Arm Neutral-Grip Dumbbell Row - 4 Sets (8, 8, 10, 12 Reps)",
+            "Incline Dumbbell Biceps Curl - 4 Sets (8, 8, 10, 12 Reps)",
+            "Preacher Curl With Cable - 4 Sets (8, 8, 10, 12 Reps)",
+            "Reverse Crunch - 3 Sets (15 - 20 Reps)",
+            "Crunch - 3 Sets (15 - 20 Reps)",
+
+          )),
+          Routine("Day 20 - Legs", List(
+            "Back Squat - 4 Sets (8, 8, 10, 12 Reps)",
+            "Leg Press - 4 Sets (8, 8, 10, 12 Reps)",
+            "Seated Legs Curl - 4 Sets (8, 8, 10, 12 Reps)",
+            "Romanian Deadlift - 4 Sets (8, 8, 10, 12 Reps)",
+            "Standing Calf Raise - 3 Sets ( 25 Reps)",
+            "Seated Calf Raise - 3 Sets (25 Reps)"
+          )),
+          Routine("Day 21 - Rest", List.empty),
+          Routine("Day 22 - Chest, Triceps, Calves ", List(
+            "Incline Barbell Bench Press - 5 Sets (10 Reps)",
+            "Dumbbell Bench Press - 5 Sets (8, 8, 10, 12 Reps)",
+            "Dumbbell Flye - 5 Sets (8, 8, 10, 12 Reps)",
+            "Rope Pressdown - 4 Sets (10, 10, 12, 12 Reps)",
+            "Dumbbell Kickback - 3 Sets ( 10 Reps)",
+            "Lying Ez-Bar Triceps Extension - 3 Sets ( 10 Reps)",
+            "Standing Calf Raise - 3 Sets ( 10 Reps)",
+            "Seated Calf Raise - 3 Sets ( 225 Reps)",
+          )),
+          Routine("Day 23 - Legs & Abs ", List(
+            "Back Squat - 5 Sets (10 Reps)",
+            "Leg Pressh - 5 Sets (8, 8, 10, 12 Reps)",
+            "Lying Leg Curl - 3 Sets (8, 8, 10, 12 Reps)",
+            "Romanian Deadlift - 3 Sets ( 8, 10, 12 Reps)",
+            "Seated Legs Curl - 3 Sets ( 8, 10, 12 Reps)",
+            "Reverse Crunch - 2 Sets ( 20 Reps)",
+            "Crunch - 2 Sets ( 20 Reps)",
+          )),
+          Routine("Day 24 - Rest", List.empty),
+          Routine("Day 25 - Shoulder & Calves ", List(
+            "Overhead Dumbbell Press - 4 Sets (12 Reps)",
+            "Smith Machine Upright Row - 3 Sets (8, 10, 12 Reps)",
+            "Dumbbell Lateral Raise - 3 Sets (10 Reps)",
+            "Seated Calf Raise - 10 Sets ( 10 Reps)"
+          )),
+          Routine("Day 26 - Back, Biceps & Abs ", List(
+            "Barbell Bent-Over Row - 5 Sets (12 Reps)",
+            "Lat Pulldown - 5 Sets (8, 10, 12 Reps)",
+            "Single-Arm Neutral-Grip Dumbbell Row - 5 Sets (8, 10, 12 Reps)",
+            "Barbell Biceps Curl - 4 Sets ( 10 Reps)",
+            "Incline Dumbbell Biceps Curl - 3 Sets ( 10 Reps)",
+            "Preacher Curl With Cable - 3 Sets ( 10 Reps)",
+            "Crunch - 3 Sets ( 20 Reps)",
+          )),
+          Routine("Day 27 - Rest", List.empty),
+          Routine("Day 28 - Rest", List.empty),
+       )),
       TrainingModule(
         "Upper Fix ErrDay", Intermediate, List(
           Routine("Rest", List.empty),

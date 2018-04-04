@@ -61,7 +61,8 @@ object TrainerProfile {
                     TableCell()()("Workout Progress"),
                     TableCell()()("Weight"),
                     TableCell()()("Body Mass Index"),
-                    TableCell()()("Body Fat Percentage")
+                    TableCell()()("Body Fat Percentage"),
+                    TableCell()()("Assessment")
                   )
                 ),
                 TableBody()()(
@@ -72,8 +73,9 @@ object TrainerProfile {
                       TableCell()()(td.trainingProgramName),
                       TableCell()()(s"${progress.done} of ${progress.all}"),
                       TableCell()()(td.weight.map(v => s"${round2f(v)} kg").getOrElse("N/A").toString),
-                      TableCell()()(s"Body Mass Index"),
-                      TableCell()()(s"Body Fat Percentage")
+                      TableCell()()(td.bmi.map(v => s"${round2f(v)} kg/m²").getOrElse("N/A").toString),
+                      TableCell()()(td.bfp.map(v => s"${round2f(v)} %").getOrElse("N/A").toString),
+                      TableCell()()()
                     ).vdomElement
                   }): _*
                 )
