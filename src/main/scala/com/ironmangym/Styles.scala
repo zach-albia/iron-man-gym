@@ -45,6 +45,10 @@ object Styles extends StyleSheet.Inline {
     marginBottom(12.px)
   )
 
+  val width100 = style(
+    width(100.%%)
+  )
+
   val subheadingMargin = style(
     marginTop(24.px),
     marginBottom(12.px)
@@ -89,6 +93,10 @@ object Styles extends StyleSheet.Inline {
 
   val dangerButton = style(
     backgroundColor(Color(s"${Colors(Colors.red, _A700)}"))
+  )
+
+  val marginRight16 = style(
+    marginRight(16.px)
   )
 
   implicit def styleAToClassName(styleA: StyleA): String =

@@ -17,7 +17,6 @@ object Main {
   object Page {
     case object Landing extends Page
     case object TrainingModules extends Page
-    case class TrainingModule(index: String) extends Page
   }
 
   val routerConfig: RouterConfig[Page] = RouterConfigDsl[Page].buildConfig { dsl =>
@@ -30,14 +29,6 @@ object Main {
           renderR(ctl => { modelWrapper((proxy: ModelProxy[RootModel]) => Landing(ctl, proxy)) })
       | staticRoute("#training-modules", Page.TrainingModules) ~>
           renderR(ctl => modelWrapper(TrainingModules(ctl, _)))
-      | staticRoute("#training-modules/new", Page.TrainingModule("new")) ~>
-          renderR(ctl =>
-            trainingModulesWrapper((proxy: ModelProxy[Seq[TrainingModule]]) =>
-              TrainingModuleEditor("new", proxy, ctl)))
-      | dynamicRouteCT("#training-modules" / string("\\d+").caseClass[Page.TrainingModule]) ~>
-          dynRenderR[Page.TrainingModule, VdomElement]((p, ctl) =>
-            trainingModulesWrapper((proxy: ModelProxy[Seq[TrainingModule]]) =>
-              TrainingModuleEditor(p.index, proxy, ctl)))
     ).notFound(redirectToPage(Page.Landing)(Redirect.Replace))
   }.renderWith(layout)
 
@@ -72,7 +63,7 @@ object Main {
     addReactBigCalendarStyles()
   }
 
-  def addReactBigCalendarStyles() = {
+  private def addReactBigCalendarStyles() = {
     val head = document.head
     val link = document.createElement("link")
     link.setAttribute("type", "text/css")
