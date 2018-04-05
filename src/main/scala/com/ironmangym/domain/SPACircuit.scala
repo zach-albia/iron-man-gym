@@ -24,6 +24,10 @@ case class EnrolTrainingProgram(
 
 case class WorkoutDayChanged(trainee: Trainee, updatedWorkoutDay: WorkoutDay) extends Action
 
+case class UpdateTrainingModules(trainingModules: Seq[TrainingModule]) extends Action
+
+case class DeleteTrainingModule(index: Int) extends Action
+
 object Picklers {
   implicit val traineePickler = Pickler.materializePickler[Trainee]
   implicit val trainingProgramPickler = Pickler.materializePickler[TrainingProgram]
@@ -42,6 +46,7 @@ import com.ironmangym.domain.Picklers._
 
 object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
   val usersKey = "users"
+  val trainingModulesKey = "trainingModules"
 
   protected def initialModel: RootModel = RootModel(
     fromLocalStorage[Users]("users", Users(
@@ -62,7 +67,7 @@ object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
         )
       )
     )),
-    fromLocalStorage[Seq[TrainingModule]]("trainingModule", Seq(
+    fromLocalStorage[Seq[TrainingModule]]("trainingModules", Seq(
       TrainingModule(
         "4-Week Beginner's Workout", Beginner, List(
           Routine("Full Body", List(
@@ -252,11 +257,12 @@ object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
 
   protected def actionHandler: SPACircuit.HandlerFunction = composeHandlers(
     new AuthHandler(zoomRW(_.users)((m, v) => m.copy(users = v))),
-    new TrainingProfileHandler(zoomRW(identity)((_, v) => v))
+    new TrainingProfileHandler(zoomRW(identity)((_, v) => v)),
+    new TrainingModulesHandler(zoomRW(_.trainingModules)((m, v) => m.copy(trainingModules = v)))
   )
 }
 
-import com.ironmangym.domain.SPACircuit.usersKey
+import com.ironmangym.domain.SPACircuit.{ usersKey, trainingModulesKey }
 
 class TrainingProfileHandler[M](modelRW: ModelRW[M, RootModel]) extends ActionHandler(modelRW) {
   def handle = {
@@ -271,8 +277,19 @@ class TrainingProfileHandler[M](modelRW: ModelRW[M, RootModel]) extends ActionHa
   }
 }
 
-class AuthHandler[M](modelRW: ModelRW[M, Users]) extends ActionHandler(modelRW) {
+class TrainingModulesHandler[M](modelRW: ModelRW[M, Seq[TrainingModule]]) extends ActionHandler(modelRW) {
+  def handle = {
+    case UpdateTrainingModules(trainingModules) =>
+      dom.window.localStorage.setItem(trainingModulesKey, Pickle.intoString(trainingModules))
+      updated(trainingModules)
+    case DeleteTrainingModule(index) =>
+      val newVal = value.take(index) ++ value.drop(index + 1)
+      dom.window.localStorage.setItem(trainingModulesKey, Pickle.intoString(newVal))
+      updated(newVal)
+  }
+}
 
+class AuthHandler[M](modelRW: ModelRW[M, Users]) extends ActionHandler(modelRW) {
   def handle = {
     case CreateTraineeAccount(trainee) =>
       changeUsers(value.copy(trainees = value.trainees :+ trainee))

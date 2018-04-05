@@ -11,6 +11,11 @@ package object common {
   val monthNames = Seq("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 
   val difficulties = List[Difficulty](Beginner, Intermediate, Advanced)
+  implicit def strToDifficulty(s: String): Difficulty = s match {
+    case s: String if difficulties.exists(_.toString == s) =>
+      difficulties.find(_.toString == s).get
+    case _ => throw new IllegalArgumentException("Invalid difficulty")
+  }
 
   def getInputValue(e: ReactEvent): String = e.currentTarget.asInstanceOf[HTMLInputElement].value
 

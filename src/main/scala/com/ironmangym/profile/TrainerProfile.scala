@@ -61,23 +61,29 @@ object TrainerProfile {
                     TableCell()()("Workout Progress"),
                     TableCell()()("Weight"),
                     TableCell()()("Body Mass Index"),
-                    TableCell()()("Body Fat Percentage"),
-                    TableCell()()("Assessment")
+                    TableCell()()("Body Fat Percentage")
                   )
                 ),
-                TableBody()()(
-                  p.trainingData.map(td => {
-                    val progress = td.workoutProgress
-                    TableRow()()(
-                      TableCell()()(td.traineeName),
-                      TableCell()()(td.trainingProgramName),
-                      TableCell()()(s"${progress.done} of ${progress.all}"),
-                      TableCell()()(td.weight.map(v => s"${round2f(v)} kg").getOrElse("N/A").toString),
-                      TableCell()()(td.bmi.map(v => s"${round2f(v)} kg/m²").getOrElse("N/A").toString),
-                      TableCell()()(td.bfp.map(v => s"${round2f(v)} %").getOrElse("N/A").toString),
-                      TableCell()()()
-                    ).vdomElement
-                  }): _*
+                if (p.trainingData.nonEmpty) {
+                  TableBody()()(
+                    p.trainingData.map(td => {
+                      val progress = td.workoutProgress
+                      TableRow()()(
+                        TableCell()()(td.traineeName),
+                        TableCell()()(td.trainingProgramName),
+                        TableCell(numeric = true)()(s"${progress.done} of ${progress.all}"),
+                        TableCell(numeric = true)()(td.weight.map(v => s"${round2f(v)} kg").getOrElse("N/A").toString),
+                        TableCell(numeric = true)()(td.bmi.map(v => s"${round2f(v)} kg/m²").getOrElse("N/A").toString),
+                        TableCell(numeric = true)()(td.bfp.map(v => s"${round2f(v)} %").getOrElse("N/A").toString)
+                      ).vdomElement
+                    }): _*
+                  )
+                } else TableBody()()(
+                  TableRow()()(
+                    TableCell()()(
+                      Typography(variant = Typography.Variant.caption)()("You have no trainee assignments")
+                    )
+                  )
                 )
               )
             )
