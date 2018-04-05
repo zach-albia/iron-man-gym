@@ -46,10 +46,10 @@ import com.ironmangym.domain.Picklers._
 
 object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
   val usersKey = "users"
-  val trainingModuleskey = "trainingModules"
+  val trainingModulesKey = "trainingModules"
 
   protected def initialModel: RootModel = RootModel(
-    fromLocalStorage[Users](usersKey, Users(
+    fromLocalStorage[Users]("users", Users(
       Seq(
         Trainer(
           "Trainer Dude",
@@ -67,7 +67,7 @@ object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
         )
       )
     )),
-    fromLocalStorage[Seq[TrainingModule]](trainingModuleskey, Seq(
+    fromLocalStorage[Seq[TrainingModule]]("trainingModules", Seq(
       TrainingModule(
         "4-Week Beginner's Workout", Beginner, List(
           Routine("Full Body", List(
@@ -262,7 +262,7 @@ object SPACircuit extends Circuit[RootModel] with ReactConnector[RootModel] {
   )
 }
 
-import com.ironmangym.domain.SPACircuit.{ usersKey, trainingModuleskey }
+import com.ironmangym.domain.SPACircuit.{ usersKey, trainingModulesKey }
 
 class TrainingProfileHandler[M](modelRW: ModelRW[M, RootModel]) extends ActionHandler(modelRW) {
   def handle = {
@@ -280,11 +280,11 @@ class TrainingProfileHandler[M](modelRW: ModelRW[M, RootModel]) extends ActionHa
 class TrainingModulesHandler[M](modelRW: ModelRW[M, Seq[TrainingModule]]) extends ActionHandler(modelRW) {
   def handle = {
     case UpdateTrainingModules(trainingModules) =>
-      dom.window.localStorage.setItem(trainingModuleskey, Pickle.intoString(trainingModules))
+      dom.window.localStorage.setItem(trainingModulesKey, Pickle.intoString(trainingModules))
       updated(trainingModules)
     case DeleteTrainingModule(index) =>
       val newVal = value.take(index) ++ value.drop(index + 1)
-      dom.window.localStorage.setItem(trainingModuleskey, Pickle.intoString(newVal))
+      dom.window.localStorage.setItem(trainingModulesKey, Pickle.intoString(newVal))
       updated(newVal)
   }
 }
