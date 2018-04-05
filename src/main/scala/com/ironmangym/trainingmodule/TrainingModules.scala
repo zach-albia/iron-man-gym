@@ -22,20 +22,19 @@ object TrainingModules {
   case class Props(router: RouterCtl[Page], proxy: ModelProxy[RootModel])
 
   case class State(
-      deleteDialogOpen:       Boolean                = false,
-      selectedTrainingModule: Option[TrainingModule] = None
+      deleteDialogOpen: Boolean             = false,
+      trainingModules:  Seq[TrainingModule]
   )
 
   private class Backend($: BackendScope[Props, State]) {
     def render(p: Props, s: State): VdomElement = {
-      val tmName = s.selectedTrainingModule.map(_.name).getOrElse("N/A")
       val marginRight = js.Dynamic.literal(marginRight = 6.px)
       <.div(
         Styles.containerDiv,
-        Paper(className = Styles.paperPadding)()(
-          Typography(variant   = Typography.Variant.title, className = Styles.marginBottom12)()("Training Modules"),
-          <.div(
-            p.proxy().trainingModules.map(tm => {
+        Typography(variant   = Typography.Variant.title, className = Styles.marginBottom12)()("Training Modules"),
+        <.div(
+          p.proxy().trainingModules.zipWithIndex.map {
+            case (tm: TrainingModule, i: Int) => {
               ExpansionPanel()()(
                 ExpansionPanelSummary(expandIcon = ExpandMoreIcon()().rawElement)()(
                   Typography(variant = Typography.Variant.subheading)()(tm.name)
@@ -68,85 +67,83 @@ object TrainingModules {
                           )
                       )
                     ),
-                    Grid(container = true)()(
-                      Grid(item = true, xs = 12)()(
+                    Grid(container = true, spacing = 16)()(
+                      Grid(item = true, xs = 12, sm = 6)()(
                         Typography(
-                          variant   = Typography.Variant.subheading,
-                          className = Styles.subheadingMargin,
+                          variant   = Typography.Variant.title,
+                          className = Styles.marginTop24,
                           component = "p"
-                        )()("Routines"),
+                        )()("Routines")
+                      ),
+                      Grid(item = true, xs = 12, sm = 6)()(
                         <.div(
-                          tm.routines.zipWithIndex.map {
-                            case (r: Routine, i: Int) =>
-                              val width = 120.px
-                              ExpansionPanel()()(
-                                ExpansionPanelSummary(expandIcon = ExpandMoreIcon()().rawElement)()(
-                                  Typography()()(s"Day ${i + 1}: ${r.name}")
-                                ),
-                                ExpansionPanelDetails()()(
-                                  FormControl(className = Styles.width100)()(
-                                    TextField(
-                                      label     = "Name",
-                                      value     = r.name,
-                                      fullWidth = true
-                                    )()(),
-                                    TextField(
-                                      label     = "Exercises (one per line)",
-                                      multiline = true,
-                                      value     = r.exercises.mkString("\n"),
-                                      className = Styles.marginTop12,
-                                      fullWidth = true
-                                    )()(),
-                                    <.div(
-                                      Button(
-                                        variant = Button.Variant.raised
-                                      )("style" -> js.Dynamic.literal(
-                                        marginTop   = 12.px,
-                                        marginRight = 12.px,
-                                        width       = width
-                                      ))(SaveIcon(style = marginRight)(), "Save"),
-                                      Button(
-                                        variant = Button.Variant.raised
-                                      )("style" -> js.Dynamic.literal(
-                                        marginTop = 12.px,
-                                        width     = width
-                                      ))(DeleteIcon(style = marginRight)(), "Delete")
-                                    )
-                                  )
-                                )
-                              ).vdomElement
-                          }: _*
-                        ),
-                        <.div(
-                          ^.marginTop := 12.px,
-                          FormControl()()(
-                            TextField(
-                              label     = "New routine name",
-                              className = Styles.marginRight16
-                            )()(),
-                            Button(
-                              variant   = Button.Variant.raised,
-                              className = Styles.marginTop12
-                            )()(AddBoxIcon(style = marginRight)(), "Add Routine")
-                          )
+                          ^.display.flex,
+                          ^.marginBottom := 12.px,
+                          TextField(
+                            label      = "New routine name",
+                            className  = Styles.marginRight16,
+                            InputProps = js.Dynamic.literal(
+                              endAdornment =
+                                InputAdornment(position = InputAdornment.Position.end)()(
+                                  IconButton()()(AddCircleIcon()())
+                                ).rawNode.asInstanceOf[js.Any]
+                            ).asInstanceOf[Input.Props]
+                          )("style" -> js.Dynamic.literal(flex = "auto"))()
                         )
                       )
+                    ),
+                    <.div(
+                      tm.routines.zipWithIndex.map {
+                        case (r: Routine, j: Int) =>
+                          ExpansionPanel()()(
+                            ExpansionPanelSummary(expandIcon = ExpandMoreIcon()().rawElement)()(
+                              Typography(variant = Typography.Variant.subheading)()(s"Day ${j + 1}: ${r.name}")
+                            ),
+                            ExpansionPanelDetails()()(
+                              FormControl(className = Styles.width100)()(
+                                TextField(
+                                  label     = "Name",
+                                  value     = r.name,
+                                  fullWidth = true
+                                )()(),
+                                TextField(
+                                  label     = "Exercises (one per line)",
+                                  multiline = true,
+                                  value     = r.exercises.mkString("\n"),
+                                  className = Styles.marginTop12,
+                                  fullWidth = true
+                                )()()
+                              )
+                            ),
+                            ExpansionPanelActions()()(
+                              Button()()(SaveIcon(style = marginRight)(), "Save"),
+                              Button()()(DeleteIcon(style = marginRight)(), "Delete")
+                            )
+                          ).vdomElement
+                      }: _*
                     )
                   )
+                ),
+                ExpansionPanelActions()()(
+                  Button()()(SaveIcon(style = marginRight)(), "Save"),
+                  Button()()(DeleteIcon(style = marginRight)(), "Delete")
                 )
               ).vdomElement
-            }): _*
-          ),
-          FormControl()()(
-            TextField(
-              label     = "New training module name",
-              className = Styles.marginRight16
-            )()(),
-            Button(
-              variant   = Button.Variant.raised,
-              className = Styles.marginTop12
-            )()(AddBoxIcon(style = marginRight)(), "Add Training Module")
-          )
+            }
+          }: _*
+        ),
+        <.div(
+          ^.marginTop := 12.px,
+          TextField(
+            label      = "New training module name",
+            className  = Styles.marginRight16,
+            fullWidth  = true,
+            InputProps = js.Dynamic.literal(
+              endAdornment = InputAdornment(position = InputAdornment.Position.end)()(
+                IconButton()()(AddCircleIcon()())
+              ).rawNode.asInstanceOf[js.Any]
+            ).asInstanceOf[Input.Props]
+          )()()
         ),
         Dialog(
           open    = s.deleteDialogOpen,
@@ -155,7 +152,7 @@ object TrainingModules {
             DialogTitle()()("Delete Training Module"),
             DialogContent()()(
               DialogContentText()()(
-                s"""Are you sure you want to delete "$tmName"?"""
+                s"""Are you sure you want to delete "Blah"?"""
               )
             ),
             DialogActions()()(
@@ -175,19 +172,17 @@ object TrainingModules {
 
     private def closeDeleteDialog(e: ReactEvent) =
       $.modState(_.copy(
-        deleteDialogOpen       = false,
-        selectedTrainingModule = None
+        deleteDialogOpen = false
       ))
 
     private def openDeleteDialog(tm: TrainingModule)(e: ReactEvent) =
       $.modState(_.copy(
-        deleteDialogOpen       = true,
-        selectedTrainingModule = Some(tm)
+        deleteDialogOpen = true
       ))
   }
 
   private val component = ScalaComponent.builder[Props]("TrainingModules")
-    .initialState(State())
+    .initialStateFromProps(p => State(trainingModules = p.proxy().trainingModules))
     .renderBackend[Backend]
     .componentWillMount($ => {
       val router = $.props.router
