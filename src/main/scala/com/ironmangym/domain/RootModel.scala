@@ -125,7 +125,7 @@ case class FitnessStats(
 case class WorkoutDay(
     date:      Date         = new js.Date,
     name:      String       = "",
-    exercises: List[String] = List.empty,
+    exercises: Seq[String] = List.empty,
     done:      Boolean      = false,
     stats:     FitnessStats = FitnessStats()
 )
@@ -138,12 +138,12 @@ case object Advanced extends Difficulty
 case class TrainingModule(
     name:       String        = "",
     difficulty: Difficulty    = Beginner,
-    routines:   List[Routine] = List.empty
+    routines:   Seq[Routine] = Seq.empty
 )
 
 case class Routine(
     name:      String,
-    exercises: List[String]
+    exercises: Seq[String] = List.empty
 )
 
 case class PersistentUser(
