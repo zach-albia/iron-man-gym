@@ -119,7 +119,7 @@ case class FitnessStats(
     bodyFatPercentage: Option[Double] = None,
     bodyMassIndex:     Option[Double] = None,
     weight:            Option[Double] = None,
-    assessmentBMI:     Option[String]= None,
+    assessmentBMI:     Option[String] = None
 )
 
 case class WorkoutDay(

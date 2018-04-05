@@ -18,9 +18,11 @@ scalariformPreferences := scalariformPreferences.value
   .setPreference(NewlineAtEndOfFile, true)
 
 skip in packageJSDependencies := false
-webpackBundlingMode := BundlingMode.LibraryOnly()
+webpackBundlingMode in fastOptJS := BundlingMode.LibraryOnly()
+webpackBundlingMode in fullOptJS := BundlingMode.LibraryAndApplication()
 useYarn := true
-emitSourceMaps := true
+emitSourceMaps in fastOptJS := true
+emitSourceMaps in fullOptJS := false
 scalaJSUseMainModuleInitializer := true
 scalaJSUseMainModuleInitializer in Test := false
 scalacOptions += "-Ypartial-unification"
