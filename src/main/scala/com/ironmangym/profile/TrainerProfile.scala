@@ -14,6 +14,8 @@ import japgolly.scalajs.react.vdom.VdomElement
 import japgolly.scalajs.react.vdom.html_<^._
 import scalacss.ScalaCssReact._
 
+import scala.collection.immutable.{ NumericRange, Range }
+
 object TrainerProfile {
 
   case class Props(router: RouterCtl[Page], proxy: ModelProxy[RootModel], trainerUsername: String) {
@@ -28,9 +30,11 @@ object TrainerProfile {
           trainee.name,
           trainee.trainingProgram.get.name,
           trainee.trainingProgram.get.progress,
+          trainee.trainingProgram.get.goal.weight,
           trainee.latestWeight,
           trainee.latestBMI,
-          trainee.latestBFP
+          trainee.latestBFP,
+          trainee.latestBMIAssessment
         ))
   }
 
@@ -38,9 +42,11 @@ object TrainerProfile {
       traineeName:         String,
       trainingProgramName: String,
       workoutProgress:     Progress,
+      goalWeight:          Option[Double],
       weight:              Option[Double],
       bmi:                 Option[Double],
-      bfp:                 Option[Double]
+      bfp:                 Option[Double],
+      bmiAssessment:       Option[Assessment]
   )
 
   case class State()
@@ -53,15 +59,17 @@ object TrainerProfile {
           Grid(item = true, xs = 12)()(
             Paper(className = Styles.paperPadding)()(
               Typography(variant = Typography.Variant.title)()("Training Assignments"),
+
               Table()()(
                 TableHead()()(
                   TableRow()()(
-                    TableCell()()("Trainee"),
-                    TableCell()()("Training Program"),
-                    TableCell()()("Workout Progress"),
-                    TableCell()()("Weight"),
-                    TableCell()()("Body Mass Index"),
-                    TableCell()()("Body Fat Percentage")
+                    TableCell()()(Typography(variant = Typography.Variant.subheading, align = Typography.Alignment.center)()("Trainee")),
+                    TableCell()()(Typography(variant = Typography.Variant.subheading, align = Typography.Alignment.center)()("Training Program")),
+                    TableCell()()(Typography(variant = Typography.Variant.subheading, align = Typography.Alignment.center)()("Workout Progress")),
+                    TableCell()()(Typography(variant = Typography.Variant.subheading, align = Typography.Alignment.center)()("Weight Goal")),
+                    TableCell()()(Typography(variant = Typography.Variant.subheading, align = Typography.Alignment.center)()("Latest Weight")),
+                    TableCell()()(Typography(variant = Typography.Variant.subheading, align = Typography.Alignment.center)()("Body Mass Index")),
+                    TableCell()()(Typography(variant = Typography.Variant.subheading, align = Typography.Alignment.center)()("Body Fat Percentage"))
                   )
                 ),
                 if (p.trainingData.nonEmpty) {
@@ -69,12 +77,13 @@ object TrainerProfile {
                     p.trainingData.map(td => {
                       val progress = td.workoutProgress
                       TableRow()()(
-                        TableCell()()(td.traineeName),
-                        TableCell()()(td.trainingProgramName),
-                        TableCell(numeric = true)()(s"${progress.done} of ${progress.all}"),
-                        TableCell(numeric = true)()(td.weight.map(v => s"${round2f(v)} kg").getOrElse("N/A").toString),
-                        TableCell(numeric = true)()(td.bmi.map(v => s"${round2f(v)} kg/m²").getOrElse("N/A").toString),
-                        TableCell(numeric = true)()(td.bfp.map(v => s"${round2f(v)} %").getOrElse("N/A").toString)
+                        TableCell()()(Typography(align = Typography.Alignment.center)()(td.traineeName)),
+                        TableCell()()(Typography(align = Typography.Alignment.center)()(td.trainingProgramName)),
+                        TableCell(numeric = true)()(Typography(align = Typography.Alignment.center)()(s"${progress.done} of ${progress.all}")),
+                        TableCell(numeric = true)()(Typography(align = Typography.Alignment.center)()(td.goalWeight.map(v => s"${round2f(v)} kg").getOrElse("N/A").toString)),
+                        TableCell(numeric = true)()(Typography(align = Typography.Alignment.center)()(td.weight.map(v => s"${round2f(v)} kg").getOrElse("N/A").toString)),
+                        TableCell(numeric = true)()(Typography(align = Typography.Alignment.center)()(td.bmi.map(v => s"${round2f(v)} (${td.bmiAssessment.get})").getOrElse("N/A").toString)),
+                        TableCell(numeric = true)()(Typography(align = Typography.Alignment.center)()(td.bfp.map(v => s"${round2f(v)} %").getOrElse("N/A").toString))
                       ).vdomElement
                     }): _*
                   )

@@ -49,7 +49,7 @@ object TraineeProfile {
                 className = Styles.marginTop24
               )()("Latest Stats"),
               Typography()()(s"Weight: ${p.trainee.latestWeight.map(v => s"${round2f(v)} kg").getOrElse("N/A")}"),
-              Typography()()(s"BMI: ${p.trainee.latestBMI.map(v => round2f(v).toString).getOrElse("N/A")}"),
+              Typography()()(s"BMI: ${p.trainee.latestBMI.map(v => round2f(v).toString + s" (${p.trainee.latestBMIAssessment.get})").getOrElse("N/A")}"),
               Typography()()(s"Body Fat Percentage: ${p.trainee.latestBFP.map(v => s"${round2f(v)}%").getOrElse("N/A")}"),
               <.div(
                 Typography(

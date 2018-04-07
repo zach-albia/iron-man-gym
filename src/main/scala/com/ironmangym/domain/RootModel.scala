@@ -3,6 +3,7 @@ package com.ironmangym.domain
 import com.ironmangym.common
 import com.ironmangym.common._
 
+import scala.collection.immutable.{NumericRange, Range}
 import scala.language.implicitConversions
 import scala.scalajs.js
 import scala.util.Random
@@ -22,6 +23,7 @@ case class Trainee(
     credentials:     Credentials,
     trainingProgram: Option[TrainingProgram] = None
 ) extends User {
+
   def updateWorkoutDay(updatedWorkoutDay: WorkoutDay): Trainee = {
     val tp = trainingProgram.get
     val i = tp.workoutDays.indexWhere(_.date == updatedWorkoutDay.date)
@@ -61,12 +63,17 @@ case class Trainee(
     bmi <- ld.stats.bodyMassIndex
   } yield bmi
 
+  def latestBMIAssessment: Option[Assessment] = for {
+    tp <- trainingProgram
+    ld <- tp.workoutDays.filter(_.stats.assessment.isDefined).lastOption
+    ass <- ld.stats.assessment
+  } yield ass
+
   def latestBFP: Option[Double] = for {
     tp <- trainingProgram
     ld <- tp.workoutDays.filter(_.stats.bodyFatPercentage.isDefined).lastOption
     bfp <- ld.stats.bodyFatPercentage
   } yield bfp
-
 
   val age = common.age(birthday)
 
@@ -119,13 +126,27 @@ case class FitnessStats(
     bodyFatPercentage: Option[Double] = None,
     bodyMassIndex:     Option[Double] = None,
     weight:            Option[Double] = None,
-    assessmentBMI:     Option[String] = None
-)
+) {
+  def assessment: Option[Assessment] = bodyMassIndex.map {
+    case bmi if 0.00 <= bmi && bmi < 14.0 => SeverelyUnderweight
+    case bmi if 14.0 <= bmi && bmi < 18.5 => Underweight
+    case bmi if 18.5 <= bmi && bmi < 25.0 => Normal
+    case bmi if 25.0 <= bmi && bmi < 30.0 => Overweight
+    case bmi if 30.0 <= bmi && bmi < Double.MaxValue => Obese
+  }
+}
+
+sealed trait Assessment
+case object SeverelyUnderweight extends Assessment
+case object Underweight extends Assessment
+case object Normal extends Assessment
+case object Overweight extends Assessment
+case object Obese extends Assessment
 
 case class WorkoutDay(
     date:      Date         = new js.Date,
     name:      String       = "",
-    exercises: Seq[String] = List.empty,
+    exercises: Seq[String]  = List.empty,
     done:      Boolean      = false,
     stats:     FitnessStats = FitnessStats()
 )
@@ -136,8 +157,8 @@ case object Intermediate extends Difficulty
 case object Advanced extends Difficulty
 
 case class TrainingModule(
-    name:       String        = "",
-    difficulty: Difficulty    = Beginner,
+    name:       String       = "",
+    difficulty: Difficulty   = Beginner,
     routines:   Seq[Routine] = Seq.empty
 )
 
@@ -190,8 +211,6 @@ case class Users(
     val updatedTrainee = trainee.updateWorkoutDay(updatedWorkoutDay)
     copy(trainees = trainees.updated(i, updatedTrainee))
   }
-
-
 
   def findTrainer(username: String): Option[Trainer] =
     trainers.find(_.credentials.username == username)
