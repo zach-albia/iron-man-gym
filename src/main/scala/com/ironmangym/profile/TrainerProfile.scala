@@ -77,7 +77,7 @@ object TrainerProfile {
                     p.trainingData.map(td => {
                       val progress = td.workoutProgress
                       TableRow()()(
-                        TableCell()()(Typography(align = Typography.Alignment.center)()(td.traineeName)),
+                        TableCell()()(Typography(variant = Typography.Variant.button, align = Typography.Alignment.center)()(td.traineeName)),
                         TableCell()()(Typography(align = Typography.Alignment.center)()(td.trainingProgramName)),
                         TableCell(numeric = true)()(Typography(align = Typography.Alignment.center)()(s"${progress.done} of ${progress.all}")),
                         TableCell(numeric = true)()(Typography(align = Typography.Alignment.center)()(td.goalWeight.map(v => s"${round2f(v)} kg").getOrElse("N/A").toString)),

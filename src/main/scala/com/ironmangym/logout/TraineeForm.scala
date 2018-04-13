@@ -82,7 +82,7 @@ object TraineeForm {
             value      = s.heightInCm.getOrElse("").toString,
             onChange   = heightChanged(_),
             error      = s.wasMadeEmpty[State](_.heightInCm),
-            helperText = if (s.wasMadeEmpty[State](_.heightInCm)) "Your heigh in centimeters is required." else js.undefined
+            helperText = if (s.wasMadeEmpty[State](_.heightInCm)) "Your height in centimeters is required." else js.undefined
           )()(),
           TextField(
             id         = "traineeUsername",
