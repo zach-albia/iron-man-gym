@@ -3,7 +3,7 @@ package com.ironmangym.domain
 import com.ironmangym.common
 import com.ironmangym.common._
 
-import scala.collection.immutable.{NumericRange, Range}
+import scala.collection.immutable.{ NumericRange, Range }
 import scala.language.implicitConversions
 import scala.scalajs.js
 import scala.util.Random
@@ -125,13 +125,13 @@ case class Progress(done: Int, all: Int)
 case class FitnessStats(
     bodyFatPercentage: Option[Double] = None,
     bodyMassIndex:     Option[Double] = None,
-    weight:            Option[Double] = None,
+    weight:            Option[Double] = None
 ) {
   def assessment: Option[Assessment] = bodyMassIndex.map {
-    case bmi if 0.00 <= bmi && bmi < 14.0 => SeverelyUnderweight
-    case bmi if 14.0 <= bmi && bmi < 18.5 => Underweight
-    case bmi if 18.5 <= bmi && bmi < 25.0 => Normal
-    case bmi if 25.0 <= bmi && bmi < 30.0 => Overweight
+    case bmi if 0.00 <= bmi && bmi < 14.0            => SeverelyUnderweight
+    case bmi if 14.0 <= bmi && bmi < 18.5            => Underweight
+    case bmi if 18.5 <= bmi && bmi < 25.0            => Normal
+    case bmi if 25.0 <= bmi && bmi < 30.0            => Overweight
     case bmi if 30.0 <= bmi && bmi < Double.MaxValue => Obese
   }
 }

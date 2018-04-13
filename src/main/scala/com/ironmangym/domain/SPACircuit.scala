@@ -24,6 +24,8 @@ case class EnrolTrainingProgram(
 
 case class WorkoutDayChanged(trainee: Trainee, updatedWorkoutDay: WorkoutDay) extends Action
 
+case class CreateTrainingModule(trainingModule: TrainingModule) extends Action
+
 case class UpdateTrainingModules(trainingModules: Seq[TrainingModule]) extends Action
 
 case class DeleteTrainingModule(index: Int) extends Action
@@ -279,6 +281,10 @@ class TrainingProfileHandler[M](modelRW: ModelRW[M, RootModel]) extends ActionHa
 
 class TrainingModulesHandler[M](modelRW: ModelRW[M, Seq[TrainingModule]]) extends ActionHandler(modelRW) {
   def handle = {
+    case CreateTrainingModule(trainingModule) =>
+      val newVal = value :+ trainingModule
+      dom.window.localStorage.setItem(trainingModulesKey, Pickle.intoString(newVal))
+      updated(newVal)
     case UpdateTrainingModules(trainingModules) =>
       dom.window.localStorage.setItem(trainingModulesKey, Pickle.intoString(trainingModules))
       updated(trainingModules)

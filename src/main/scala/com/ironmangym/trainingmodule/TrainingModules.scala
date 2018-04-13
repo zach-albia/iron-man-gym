@@ -159,8 +159,10 @@ object TrainingModules {
       )
     }
 
-    private def trainingModuleModified(p: Props, s: State, i: Int) =
-      p.proxy().trainingModules(i) != s.trainingModules(i)
+    private def trainingModuleModified(p: Props, s: State, i: Int) = {
+      val tms = p.proxy().trainingModules
+      tms(i) != s.trainingModules(i)
+    }
 
     private def trainingNameChanged(i: Int)(e: ReactEvent) = {
       val newName = getInputValue(e)
@@ -202,7 +204,11 @@ object TrainingModules {
       val input = e.currentTarget.parentNode.previousSibling.domAsHtml.asInstanceOf[HTMLInputElement]
       val trainingModuleName = input.value
       input.value = ""
-      fieldChanged[Props, State]($, s => s.copy(s.trainingModules :+ TrainingModule(trainingModuleName)))
+      val newTrainingModule = TrainingModule(trainingModuleName)
+      fieldChanged[Props, State]($, s => {
+        s.copy(s.trainingModules :+ newTrainingModule)
+      }) >>
+        $.props >>= { p => p.proxy.dispatchCB(CreateTrainingModule(newTrainingModule)) }
     }
 
     private def deleteTrainingModule(i: Int)(value: Any) =
