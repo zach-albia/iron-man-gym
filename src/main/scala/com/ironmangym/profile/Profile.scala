@@ -12,16 +12,18 @@ object Profile {
 
   case class Props(router: RouterCtl[Page], proxy: ModelProxy[RootModel])
 
+  // We only render profiles when a user is logged in.
   private val component = ScalaComponent.builder[Props]("Profile")
     .render_P { p =>
       val users = p.proxy().users
       val currentUser = users.currentUser.get
-      val trainer = users.findTrainer(currentUser.credentials.username)
-      val trainee = users.findTrainee(currentUser.credentials.username)
-      if (trainer.isDefined)
-        TrainerProfile(p.router, p.proxy, trainer.get.credentials.username)
+      val trainerUsername = users.findTrainer(currentUser.credentials.username).map(_.credentials.username)
+      val traineeIndex = users.trainees.indexWhere(_.credentials.username == currentUser.credentials.username)
+      // It's always either a trainer or trainee at this point.
+      if (trainerUsername.isDefined)
+        TrainerProfile(p.router, p.proxy, trainerUsername.get)
       else
-        TraineeProfile(p.router, p.proxy, trainee.get.credentials.username)
+        TraineeProfile(p.router, p.proxy, traineeIndex, readOnly = false)
     }
     .build
 

@@ -13,6 +13,7 @@ import japgolly.scalajs.react.extra.router.RouterCtl
 import japgolly.scalajs.react.vdom.VdomElement
 import japgolly.scalajs.react.vdom.html_<^._
 import scalacss.ScalaCssReact._
+import japgolly.scalajs.react._
 
 import scala.collection.immutable.{ NumericRange, Range }
 
@@ -22,23 +23,28 @@ object TrainerProfile {
     def trainer: Trainer =
       proxy().users.findTrainer(trainerUsername).get
 
-    def trainingData: Seq[TrainingData] =
-      proxy().users.trainees
-        .filter(_.trainingProgram.isDefined)
-        .filter(_.trainingProgram.get.trainer.credentials.username == trainerUsername)
-        .map(trainee => TrainingData(
-          trainee.name,
-          trainee.trainingProgram.get.name,
-          trainee.trainingProgram.get.progress,
-          trainee.trainingProgram.get.goal.weight,
-          trainee.latestWeight,
-          trainee.latestBMI,
-          trainee.latestBFP,
-          trainee.latestBMIAssessment
-        ))
+    def trainingData: Seq[TrainingData] = {
+      val trainees = proxy().users.trainees
+      trainees.zipWithIndex.filter(_._1.hasTrainingProgramWith(trainerUsername))
+        .map(zipped => {
+          val (trainee, index) = zipped
+          TrainingData(
+            index,
+            trainee.name,
+            trainee.trainingProgram.get.name,
+            trainee.trainingProgram.get.progress,
+            trainee.trainingProgram.get.goal.weight,
+            trainee.latestWeight,
+            trainee.latestBMI,
+            trainee.latestBFP,
+            trainee.latestBMIAssessment
+          )
+        })
+    }
   }
 
   case class TrainingData(
+      index:               Int,
       traineeName:         String,
       trainingProgramName: String,
       workoutProgress:     Progress,
@@ -77,7 +83,7 @@ object TrainerProfile {
                     p.trainingData.map(td => {
                       val progress = td.workoutProgress
                       TableRow()()(
-                        TableCell()()(Typography(variant = Typography.Variant.button, align = Typography.Alignment.center)()(td.traineeName)),
+                        TableCell()()(p.router.link(Page.Trainee(td.index))(Typography()()(td.traineeName))),
                         TableCell()()(Typography(align = Typography.Alignment.center)()(td.trainingProgramName)),
                         TableCell(numeric = true)()(Typography(align = Typography.Alignment.center)()(s"${progress.done} of ${progress.all}")),
                         TableCell(numeric = true)()(Typography(align = Typography.Alignment.center)()(td.goalWeight.map(v => s"${round2f(v)} kg").getOrElse("N/A").toString)),
@@ -100,6 +106,7 @@ object TrainerProfile {
         )
       )
     }
+
   }
 
   private val component = ScalaComponent.builder[Props]("TrainerProfile")

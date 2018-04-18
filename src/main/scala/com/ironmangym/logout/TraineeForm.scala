@@ -69,7 +69,7 @@ object TraineeForm {
             value    = s.contactNumber.getOrElse("").toString
           )()(),
           FormLabel(component = "legend", className = Styles.marginTop24)()("Birthday"),
-          DatePicker(s.birthday, onDateChange(_)),
+          DatePicker(s.birthday, onDateChange(_), readOnly = false),
           TextField(
             id         = "height",
             label      = "Height",

@@ -14,7 +14,8 @@ object DatePicker {
 
   case class Props(
       initialDate: js.UndefOr[js.Date] = js.undefined,
-      onChange:    Handler1[js.Date]   = js.undefined
+      onChange:    Handler1[js.Date]   = js.undefined,
+      readOnly:    Boolean
   )
 
   private class Backend($: BackendScope[Props, js.Date]) {
@@ -22,6 +23,7 @@ object DatePicker {
       <.div(
         ^.overflow.hidden,
         TextField(
+          disabled    = p.readOnly,
           select      = true,
           SelectProps = js.Dynamic.literal(
             native = true,
@@ -33,6 +35,7 @@ object DatePicker {
               <.option(^.key := s"year-$year", ^.value := year, year).render): _*
           ),
         TextField(
+          disabled    = p.readOnly,
           select      = true,
           SelectProps = js.Dynamic.literal(
             native = true,
@@ -45,6 +48,7 @@ object DatePicker {
             ): _* // Seq[VdomNode] => VdomNode*
           ),
         TextField(
+          disabled    = p.readOnly,
           select      = true,
           SelectProps = js.Dynamic.literal(
             native = true,
@@ -102,6 +106,7 @@ object DatePicker {
 
   def apply(
       date:         js.UndefOr[js.Date] = js.undefined,
-      onDateChange: Handler1[js.Date]   = js.undefined
-  ): VdomElement = component(Props(date, onDateChange))
+      onDateChange: Handler1[js.Date]   = js.undefined,
+      readOnly:     Boolean
+  ): VdomElement = component(Props(date, onDateChange, readOnly))
 }

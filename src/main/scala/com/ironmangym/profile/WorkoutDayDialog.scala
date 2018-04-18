@@ -18,7 +18,8 @@ object WorkoutDayDialog {
       traineeUsername: String,
       open:            Boolean,
       workoutDate:     Option[js.Date],
-      onClose:         ReactHandler1[ReactEvent]
+      onClose:         ReactHandler1[ReactEvent],
+      readOnly:        Boolean
   ) {
     def trainee: Trainee =
       proxy().users.findTrainee(traineeUsername).get
@@ -53,10 +54,12 @@ object WorkoutDayDialog {
               p.trainee.age,
               s"dialog-fitness-stats-editor-${p.workoutDay.date.getTime}",
               p.workoutDay.stats,
-              fitnessStatsChanged(p.workoutDay)(_)
+              fitnessStatsChanged(p.workoutDay)(_),
+              readOnly = p.readOnly
             ),
             FormControlLabel(
               control = Checkbox(
+                disabled = p.readOnly,
                 checked  = p.workoutDay.done,
                 value    = "done",
                 onChange = doneChanged(p.workoutDay)(_, _)
@@ -101,6 +104,7 @@ object WorkoutDayDialog {
       traineeUsername: String,
       open:            Boolean                   = false,
       workoutDate:     Option[js.Date]           = None,
-      onClose:         ReactHandler1[ReactEvent] = js.undefined
-  ): VdomElement = component(Props(proxy, traineeUsername, open, workoutDate, onClose))
+      onClose:         ReactHandler1[ReactEvent] = js.undefined,
+      readOnly:        Boolean
+  ): VdomElement = component(Props(proxy, traineeUsername, open, workoutDate, onClose, readOnly))
 }

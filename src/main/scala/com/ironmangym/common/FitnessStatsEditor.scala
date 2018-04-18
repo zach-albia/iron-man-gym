@@ -16,13 +16,15 @@ object FitnessStatsEditor {
       age:                 Int,
       key:                 String,
       initialFitnessStats: FitnessStats           = FitnessStats(),
-      onChange:            Handler1[FitnessStats] = js.undefined
+      onChange:            Handler1[FitnessStats] = js.undefined,
+      readOnly:            Boolean
   )
 
   private class Backend($: BackendScope[Props, FitnessStats]) {
     def render(p: Props, s: FitnessStats): VdomElement =
       FormControl()("key" -> p.key)(
         TextField(
+          disabled   = p.readOnly,
           label      = "Weight (in kg)",
           InputProps = js.Dynamic.literal(
             endAdornment = InputAdornment(position = InputAdornment.Position.end)()("kg")
@@ -33,6 +35,7 @@ object FitnessStatsEditor {
           onChange   = weightChanged(p.heightInCm, p.age)(_)
         )()(),
         TextField(
+          disabled   = p.readOnly,
           label      = "Body Mass Index",
           InputProps = js.Dynamic.literal(
             endAdornment = InputAdornment(position = InputAdornment.Position.end)()("kg/m²")
@@ -43,6 +46,7 @@ object FitnessStatsEditor {
           onChange   = bmiChanged(p.age)(_)
         )()(),
         TextField(
+          disabled   = p.readOnly,
           label      = "Body Fat Percentage",
           InputProps = js.Dynamic.literal(
             endAdornment = InputAdornment(position = InputAdornment.Position.end)()("%")
@@ -106,7 +110,8 @@ object FitnessStatsEditor {
       age:                 Int,
       key:                 String,
       initialFitnessStats: FitnessStats           = FitnessStats(),
-      onChange:            Handler1[FitnessStats] = js.undefined
+      onChange:            Handler1[FitnessStats] = js.undefined,
+      readOnly:            Boolean
   ): VdomElement =
-    component(Props(heightInCm, age, key, initialFitnessStats, onChange))
+    component(Props(heightInCm, age, key, initialFitnessStats, onChange, readOnly))
 }

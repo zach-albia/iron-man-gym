@@ -20,9 +20,9 @@ import scala.scalajs.js.UndefOr._
 
 object TraineeProfile {
 
-  case class Props(router: RouterCtl[Page], proxy: ModelProxy[RootModel], traineeUsername: String) {
+  case class Props(router: RouterCtl[Page], proxy: ModelProxy[RootModel], index: Int, readOnly: Boolean) {
     def trainee: Trainee =
-      proxy().users.findTrainee(traineeUsername).get
+      proxy().users.trainees(index)
   }
 
   case class State(
@@ -62,7 +62,7 @@ object TraineeProfile {
                 Typography(
                   className = Styles.marginTop12
                 )()(s"Trainer: ${currentTrainingProgram.map(_.trainer.name).getOrElse("None")}"),
-                FormControl()()(
+                FormControl(disabled = p.readOnly)()(
                   Typography(
                     variant   = Typography.Variant.subheading,
                     className = Styles.marginTop24
@@ -77,7 +77,7 @@ object TraineeProfile {
                     className = Styles.marginTop24,
                     variant   = Typography.Variant.subheading
                   )()("Select start date"),
-                  DatePicker(onDateChange = dateChanged(_)),
+                  DatePicker(onDateChange = dateChanged(_), readOnly = p.readOnly),
                   Typography(
                     className = Styles.marginTop24,
                     variant   = Typography.Variant.subheading
@@ -87,12 +87,14 @@ object TraineeProfile {
                     age                 = age(p.trainee.birthday),
                     key                 = "trainee-profile-goal-fitness-stats-editor",
                     initialFitnessStats = s.goal,
-                    onChange            = fitnessStatsChanged(_)
+                    onChange            = fitnessStatsChanged(_),
+                    readOnly            = p.readOnly
                   ),
                   Button(
                     variant   = Button.Variant.raised,
                     className = Styles.marginTop24,
-                    onClick   = enrolSelection(_)
+                    onClick   = enrolSelection(_),
+                    disabled  = p.readOnly
                   )()(if (currentTrainingProgram.isDefined) "Change" else "Enrol")
                 )
               )
@@ -123,7 +125,8 @@ object TraineeProfile {
           proxy           = p.proxy,
           open            = s.selectedWorkoutDay.isDefined,
           workoutDate     = s.selectedWorkoutDay.map(_.date).map(toJsDate).toOption,
-          onClose         = (_: ReactEvent) => $.modState(_.copy(selectedWorkoutDay = js.undefined))
+          onClose         = (_: ReactEvent) => $.modState(_.copy(selectedWorkoutDay = js.undefined)),
+          readOnly        = p.readOnly
         )
       )
     }
@@ -185,6 +188,6 @@ object TraineeProfile {
     .renderBackend[Backend]
     .build
 
-  def apply(router: RouterCtl[Page], proxy: ModelProxy[RootModel], traineeUsername: String): VdomElement =
-    component(Props(router, proxy, traineeUsername))
+  def apply(router: RouterCtl[Page], proxy: ModelProxy[RootModel], index: Int, readOnly: Boolean): VdomElement =
+    component(Props(router, proxy, index, readOnly))
 }

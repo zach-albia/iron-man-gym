@@ -3,6 +3,7 @@ package com.ironmangym
 import com.ironmangym.CssSettings._
 import com.ironmangym.Styles._
 import com.ironmangym.domain.{RootModel, SPACircuit}
+import com.ironmangym.profile.TraineeProfile
 import com.ironmangym.logout._
 import com.ironmangym.trainingmodule._
 import com.pangwarta.sjrmui._
@@ -17,6 +18,7 @@ object Main {
   object Page {
     case object Landing extends Page
     case object TrainingModules extends Page
+    case class Trainee(index: Int) extends Page
   }
 
   val routerConfig: RouterConfig[Page] = RouterConfigDsl[Page].buildConfig { dsl =>
@@ -29,6 +31,9 @@ object Main {
           renderR(ctl => { modelWrapper((proxy: ModelProxy[RootModel]) => Landing(ctl, proxy)) })
       | staticRoute("#training-modules", Page.TrainingModules) ~>
           renderR(ctl => modelWrapper(TrainingModules(ctl, _)))
+      | dynamicRouteCT("#trainee" / int.caseClass[Page.Trainee])~>
+          dynRenderR((p: Page.Trainee, ctl: RouterCtl[Page]) =>
+            modelWrapper((proxy: ModelProxy[RootModel]) => TraineeProfile(ctl, proxy, p.index, readOnly = true)))
     ).notFound(redirectToPage(Page.Landing)(Redirect.Replace))
   }.renderWith(layout)
 

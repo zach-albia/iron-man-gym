@@ -75,6 +75,9 @@ case class Trainee(
     bfp <- ld.stats.bodyFatPercentage
   } yield bfp
 
+  def hasTrainingProgramWith(trainerUsername: String): Boolean =
+    trainingProgram.exists(_.trainer.credentials.username == trainerUsername)
+
   val age = common.age(birthday)
 
   override def isTrainer: Boolean = false
