@@ -99,6 +99,14 @@ object Styles extends StyleSheet.Inline {
     marginRight(16.px)
   )
 
+  val snackbarBgColor = style(
+    backgroundColor(Color(s"${Colors(Colors.green, _600)}"))
+  )
+
+  val successIcon = style(
+    fontSize(20.px)
+  )
+
   implicit def styleAToClassName(styleA: StyleA): String =
     styleA.className.value
 

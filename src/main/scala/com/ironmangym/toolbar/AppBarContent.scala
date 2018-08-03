@@ -1,9 +1,12 @@
 package com.ironmangym.toolbar
 
 import com.ironmangym.Main.Page
+import com.ironmangym.Styles
+import com.ironmangym.Styles._
 import com.ironmangym.domain.{ LogOut, Users }
-import com.pangwarta.sjrmui.icons.MuiSvgIcons.AccountBoxIcon
-import com.pangwarta.sjrmui.{ Button, Hidden, IconButton, Menu, MenuItem, Popover, Tooltip, Typography }
+import com.pangwarta.sjrmui.Snackbar.{ Horizontal, Vertical }
+import com.pangwarta.sjrmui.icons.MuiSvgIcons.{ AccountBoxIcon, CheckCircleIcon }
+import com.pangwarta.sjrmui.{ Button, Hidden, IconButton, Menu, MenuItem, Popover, Snackbar, SnackbarContent, Tooltip, Typography }
 import diode.react.ModelProxy
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router.RouterCtl
@@ -16,7 +19,12 @@ object AppBarContent {
 
   case class Props(router: RouterCtl[Page], proxy: ModelProxy[Users])
 
-  case class State(anchorEl: js.UndefOr[html.Element], dialogOpen: Boolean = false)
+  case class State(
+      anchorEl:                 js.UndefOr[html.Element],
+      loginDialogOpen:          Boolean                  = false,
+      forgotPasswordDialogOpen: Boolean                  = false,
+      snackbarOpen:             Boolean                  = false
+  )
 
   private class Backend($: BackendScope[Props, State]) {
 
@@ -58,7 +66,24 @@ object AppBarContent {
             else
               MenuItem()("onClick" -> handleSignOutMenuItem)("Sign Out")
           ),
-        LoginDialog(p.router, p.proxy, s.dialogOpen, closeLoginDialog(_))
+        LoginDialog(p.router, p.proxy, s.loginDialogOpen, openForgotPasswordDialog(_), closeLoginDialog(_)),
+        ForgotPasswordDialog(s.forgotPasswordDialogOpen, closeForgotPasswordDialog(_), onSubmit(_)),
+        Snackbar(
+          anchorOrigin     = Snackbar.Origin(Left(Horizontal.left), Left(Vertical.bottom)),
+          open             = s.snackbarOpen,
+          autoHideDuration = 6000,
+          onClose          = onSnackbarClose(_, _)
+        )()(
+            SnackbarContent(
+              className = Styles.snackbarBgColor,
+              message   = <.span(
+                ^.alignItems.center,
+                ^.display.flex,
+                CheckCircleIcon()(),
+                <.span(^.paddingLeft := 8.px, "Login details sent!")
+              ).render.rawElement
+            )()
+          )
       )
     }
 
@@ -70,11 +95,23 @@ object AppBarContent {
     def handleCloseMenu(e: ReactEvent): Callback =
       $.modState(_.copy(anchorEl = js.undefined))
 
+    def openForgotPasswordDialog(e: ReactEvent): Callback =
+      $.modState(_.copy(forgotPasswordDialogOpen = true, loginDialogOpen = false))
+
     def openLoginDialog(e: ReactEvent): Callback =
-      $.modState(_.copy(dialogOpen = true))
+      $.modState(_.copy(loginDialogOpen = true))
 
     def closeLoginDialog(e: ReactEvent): Callback =
-      $.modState(_.copy(dialogOpen = false))
+      $.modState(_.copy(loginDialogOpen = false))
+
+    def closeForgotPasswordDialog(e: ReactEvent): Callback =
+      $.modState(_.copy(forgotPasswordDialogOpen = false))
+
+    def onSubmit(e: ReactMouseEvent): Callback =
+      $.modState(_.copy(snackbarOpen             = true, forgotPasswordDialogOpen = false))
+
+    def onSnackbarClose(e: ReactEvent, s: String): Callback =
+      $.modState(_.copy(snackbarOpen = false))
 
     val goToTrainingModules: Callback =
       $.props.flatMap(_.router.set(Page.TrainingModules))

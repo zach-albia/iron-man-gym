@@ -16,10 +16,11 @@ import scala.scalajs.js
 object LoginDialog {
 
   case class Props(
-      router:  RouterCtl[Page],
-      proxy:   ModelProxy[Users],
-      open:    Boolean,
-      onClose: ReactHandler1[ReactEvent]
+      router:                RouterCtl[Page],
+      proxy:                 ModelProxy[Users],
+      open:                  Boolean,
+      onForgotPasswordClick: ReactHandler1[ReactEvent],
+      onClose:               ReactHandler1[ReactEvent]
   )
 
   case class State(
@@ -42,7 +43,7 @@ object LoginDialog {
       Dialog(
         open    = p.open || s.loginValid.contains(false),
         onClose = resetAndClose(_)
-      )("onKeyUp" -> { (e: ReactKeyboardEvent) =>
+      )("onKeyUp" -> { e: ReactKeyboardEvent =>
           if (e.keyCode == 13 & s.formValid)
             dom.document.getElementById("loginDialogSubmit").domAsHtml.click()
         }, "transitionDuration" -> 0)(
@@ -71,6 +72,9 @@ object LoginDialog {
               )
             ),
             DialogActions()()(
+              Button(
+                onClick = p.onForgotPasswordClick
+              )()("Forgot Password?"),
               Button(
                 onClick  = handleGoButton(_),
                 variant  = Button.Variant.raised,
@@ -112,15 +116,16 @@ object LoginDialog {
     }
   }
 
-  private val component = ScalaComponent.builder[Props]("Login Form")
+  private val component = ScalaComponent.builder[Props]("LoginDialog")
     .initialStateFromProps(p => State(p.proxy.connect(identity)))
     .renderBackend[Backend]
     .build
 
   def apply(
-      router:  RouterCtl[Page],
-      proxy:   ModelProxy[Users],
-      open:    Boolean,
-      onClose: ReactHandler1[ReactEvent]
-  ): VdomElement = component(Props(router, proxy, open, onClose))
+      router:                RouterCtl[Page],
+      proxy:                 ModelProxy[Users],
+      open:                  Boolean,
+      onForgotPasswordClick: ReactHandler1[ReactEvent],
+      onClose:               ReactHandler1[ReactEvent]
+  ): VdomElement = component(Props(router, proxy, open, onForgotPasswordClick, onClose))
 }
